@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ficha Automatizada — Persona</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@500;700&display=swap" rel="stylesheet">
+  <!-- Bibliotecas -->
+  <!-- Polyfills leves para navegadores modernos que possam faltar APIs -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?flags=gated&features=default"></script>
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <!-- Estilos -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="captureRoot" class="wrap">
+    <header class="hud">
+      <div class="slash" aria-hidden="true"></div>
+      <div class="brand">
+        <h1>Ficha • Persona</h1>
+        <div class="sub">“Tu és eu… Eu sou tu. Do oceano da tua alma, emergirei.”</div>
+      </div>
+      <div class="theme-switcher">
+        <label for="themeSelect" style="font-size:13px;font-weight:700;margin-right:8px;">Tema:</label>
+        <select id="themeSelect">
+          <option value="padrao">Padrão</option>
+          <option value="roxo">Roxo</option>
+          <option value="claro">Claro</option>
+          <option value="amarelo">Amarelo</option>
+          <option value="vermelho">Vermelho</option>
+          <option value="degrade">Degradê Verde/Roxo</option>
+        </select>
+      </div>
+    </header>
+
+    <!-- TABS -->
+    <nav class="tabs" id="tabs">
+  <button class="tab active" data-view="acessorapido">Acesso Rápido</button>
+  <button class="tab" data-view="persona">Persona</button>
+    <button class="tab" data-view="feitos">Feitos</button>
+  <button class="tab" data-view="equip">Equipamentos</button>
+  <button class="tab" data-view="vinculos">Vínculos</button>
+  <button class="tab" data-view="notes">Anotações</button>
+  <button class="tab" data-view="background">Lore</button>
+    </nav>
+
+    <!-- VIEW: GERAL -->
+  <div class="view active" id="acessorapido">
+      <main class="grid one">
+        <!-- ACESSO RÁPIDO -->
+        <section class="card">
+          <div class="section-title"><div class="bar"></div><h2>Informações do Personagem</h2></div>
+          <div class="row row2">
+            <div><label>Classe <span class="field-required-indicator" title="Campo obrigatório">*</span></label><input id="CharClass" placeholder="Emergentes, Cartas-Coringa, Sombras, Supressores, Tochas" required/></div>
+            <div><label>Nível</label><input id="CharLvl" type="number" min="1" max="99" value="1"/></div>
+          </div>
+          <div class="row row2">
+            <div><label>Arcana</label><select id="CharArcana"></select></div>
+            <div><label>Nome do Personagem <span class="field-required-indicator" title="Campo obrigatório">*</span></label><input id="CharPlayer" placeholder="Nome do personagem" required/></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-title"><div class="bar"></div><h2>Combate</h2></div>
+          <div class="hint" style="margin-bottom:8px;">Distribua <b>18 pontos</b> entre as suas Habilidades de Combate.<br>O valor mínimo para cada Habilidade de Combate é <b>1</b>; o valor máximo por Habilidade é <b>12</b>.</div>
+          <div class="row row3">
+            <div><label>STR</label><input id="CharSTR" type="range" min="1" max="12" value="1"><span class="badge" id="bSTR">1</span></div>
+            <div><label>MAG</label><input id="CharMAG" type="range" min="1" max="12" value="1"><span class="badge" id="bMAG">1</span></div>
+            <div><label>TEC</label><input id="CharTEC" type="range" min="1" max="12" value="1"><span class="badge" id="bTEC">1</span></div>
+          </div>
+          <div class="row row3">
+            <div><label>AGI</label><input id="CharAGI" type="range" min="1" max="12" value="1"><span class="badge" id="bAGI">1</span></div>
+            <div><label>VIT</label><input id="CharVIT" type="range" min="1" max="12" value="1"><span class="badge" id="bVIT">1</span></div>
+            <div><label>LCK</label><input id="CharLCK" type="range" min="1" max="12" value="1"><span class="badge" id="bLCK">1</span></div>
+          </div>
+          <div class="row row3">
+            <div><label>Pontos de Vida (Máx)</label><input id="MaxHP" readonly/></div>
+            <div><label>Pontos de Vida (Atual)</label><input id="CurrentHP" type="number" min="0" value="0"/></div>
+            <div><label>Redução de Dano</label><input id="DmgRed" type="number" min="0" max="99" value="0"/></div>
+          </div>
+          <div class="row row3">
+            <div><label>Mana (PM) Máximo</label><input id="EnergyMax" readonly/></div>
+            <div><label>Mana (PM) Atual</label><input id="CurrentPM" type="number" min="0" value="0"/></div>
+            <div></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-title"><div class="bar"></div><h2>Habilidades Sociais</h2></div>
+          <div class="hint" style="margin-bottom:8px;">Distribua pontos entre as suas Habilidades Sociais. Total inicial: <strong id="social-pool-display">7</strong> (máx 25).</div>
+            <div class="row" style="align-items:center;gap:8px;margin-top:6px;">
+              <div style="flex:1"><label>Pontos Sociais (total)</label><input id="socialPoolInput" type="number" min="1" max="25" value="7" style="width:120px;padding:8px;"/></div>
+              <div style="font-size:13px;color:var(--ink-dim);margin-left:8px;">Ajuste o total disponível para distribuir. (Padrão: 7)</div>
+            </div>
+          <div class="row row3">
+            <div><label>Conhecimento</label><input id="KNOPts" type="number" min="0" max="10" value="0"/></div>
+            <div><label>Disciplina</label><input id="DISPts" type="number" min="0" max="10" value="0"/></div>
+            <div><label>Empatia</label><input id="EMPpts" type="number" min="0" max="10" value="0"/></div>
+          </div>
+          <div class="row row3">
+            <div><label>Expressão</label><input id="EXPPts" type="number" min="0" max="10" value="0"/></div>
+            <div><label>Coragem</label><input id="COUPts" type="number" min="0" max="10" value="0"/></div>
+            <div><label>Charme</label><input id="CHAPts" type="number" min="0" max="10" value="0"/></div>
+          </div>
+          <div class="row" style="margin-top:10px;align-items:center;">
+            <div><strong>Pontos Restantes: <span id="social-remaining">7</span></strong></div>
+            <div style="margin-left:12px;color:var(--ink-dim);font-size:13px;" id="social-msg"></div>
+          </div>
+          <div id="social-tier-list" style="margin-top:12px;">
+            <!-- JS irá popular as descrições e tiers aqui -->
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-title"><div class="bar"></div><h2>Aspectos & Buffs</h2></div>
+          <div class="row row2">
+            <div><label>Aspectos</label><input id="Aspectos" placeholder="Aspectos"/></div>
+            <div><label>Pontos de Aspecto</label><input id="AspectPoints" type="number" min="0" max="99" value="0"/></div>
+          </div>
+          <div class="row row2">
+            <div style="position:relative">
+              <label style="display:flex;align-items:center;gap:8px;">Buffs/Condições
+                <button type="button" class="mini expand-btn" data-target="Buffs">⤡</button>
+              </label>
+              <textarea id="Buffs" class="expandable" placeholder="Buffs ou condições"></textarea>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-title"><div class="bar"></div><h2>Persona (Acesso Rápido)</h2></div>
+          <div class="row row2">
+            <div><label>SP</label><input id="PerSP" type="number" min="0" max="999" value="0"/></div>
+            <div><label>Tipos</label><input id="PerTypes" placeholder="Tipos"/></div>
+          </div>
+          <div class="row row2">
+            <div><label>Convicção</label><input id="Conviction" placeholder="Convicção"/></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-title"><div class="bar"></div><h2>Equipamento</h2></div>
+          <div class="row row3">
+            <div><label>Arma</label><input id="Weapon" placeholder="Arma"/></div>
+            <div><label>Dano</label><input id="WeaponDmg" placeholder="Dano"/></div>
+            <div><label>Alcance</label><input id="WeaponReach" placeholder="Alcance"/></div>
+          </div>
+          <div class="row row2">
+            <div><label>Efeito</label><input id="WeaponEffect" placeholder="Efeito"/></div>
+          </div>
+          <div class="row row2">
+            <div><label>Armadura</label><input id="Armor" placeholder="Armadura"/></div>
+            <div><label>Redução de Dano</label><input id="ArmorDmgRed" placeholder="Redução de dano"/></div>
+          </div>
+          <div class="row row2">
+            <div><label>Efeito</label><input id="ArmorEffect" placeholder="Efeito"/></div>
+          </div>
+          <div class="row row2">
+            <div><label>Acessório</label><input id="Accessory" placeholder="Acessório"/></div>
+            <div><label>Efeito</label><input id="AccessoryEffect" placeholder="Efeito"/></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-title"><div class="bar"></div><h2>Resistências</h2></div>
+          <div class="row row2">
+            <div><label>Resistências</label><input id="Resistances" placeholder="Resistências"/></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-title"><div class="bar"></div><h2>Ações</h2></div>
+          <div class="actions">
+            <button id="save" class="btn-feedback">Salvar</button>
+            <button id="load" class="btn-feedback">Carregar</button>
+            <button id="export" class="btn-feedback">Exportar JSON</button>
+            <button id="import" class="btn-feedback">Importar JSON</button>
+            <button id="reset" class="btn-feedback">Resetar Ficha</button>
+          </div>
+          <p class="hint">Em testes por favor relevar se ocorrer algum erro.</p>
+        </section>
+
+        <section class="card" id="tests-card" style="display:none">
+          <div class="section-title"><div class="bar"></div><h2>Resultados dos Testes</h2></div>
+          <div id="tests-out" class="hint">Clique em <b>Testes</b> para rodar as verificações.</div>
+        </section>
+      </main>
+    </div>
+
+    <!-- VIEW: FEITOS -->
+  <div class="view" id="feitos">
+    <section class="card">
+      <div class="section-title"><div class="bar"></div><h2>Feitos</h2></div>
+      <div class="actions"><button class="mini" id="add-feito">+ Adicionar Feito</button></div>
+      <div id="feitos-msg" class="feitos-msg" style="display:none;margin-top:8px;"></div>
+      <div class="hint">Feitos são habilidades especiais; níveis pares apenas (2–20). Alguns possuem requisitos.</div>
+      <table id="tbl-feitos">
+        <thead>
+          <tr><th>Feito</th><th>Rank</th><th>Nível</th><th>Descrição</th><th>Selecionado</th><th></th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </div>
+
+    <!-- VIEW: BACKGROUND -->
+    <div class="view" id="background">
+      <section class="card">
+        <div class="section-title"><div class="bar"></div><h2>Retrato do Personagem</h2></div>
+        <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
+          <div>
+            <input type="file" id="portraitInput" accept="image/*" style="display:none">
+            <button class="mini" id="portraitBtn">Selecionar Imagem</button>
+            <button class="mini" id="portraitZoomBtn" style="margin-left:8px;">Ampliar Imagem</button>
+            <div id="portraitPreview" style="margin-top:10px;"></div>
+          </div>
+        </div>
+        <div id="portraitModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;">
+          <img id="portraitModalImg" src="" alt="Retrato Ampliado" style="max-width:90vw;max-height:90vh;border-radius:18px;border:3px solid var(--accent);box-shadow:0 0 40px #000;" />
+          <button id="portraitModalClose" style="position:absolute;top:24px;right:32px;font-size:22px;padding:10px 18px;border-radius:12px;background:var(--accent);color:#222;font-weight:900;cursor:pointer;">Fechar</button>
+        </div>
+      </section>
+      <section class="card">
+        <div class="section-title"><div class="bar"></div><h2>Histórico e Detalhes</h2></div>
+        <div class="grid two">
+          <div>
+            <label>Cidade Natal</label><input id="bgHometown" placeholder="Ex: São Paulo, interior, estrangeiro..."/>
+            <label>Pais/Responsáveis</label><input id="bgParents" placeholder="Ex: Mãe solteira, avós, tutores..."/>
+            <label>Eventos Notáveis</label><input id="bgEvents" placeholder="Ex: Mudança, acidente, prêmio, trauma..."/>
+            <label>Ocupação/Hobbies</label><input id="bgOccHobbies" placeholder="Ex: Estudante, atleta, músico, gamer..."/>
+            <label>Educação Formal</label><input id="bgEducation" placeholder="Ex: Ensino médio, faculdade, curso técnico..."/>
+            <label>Trabalho</label><input id="bgJob" placeholder="Ex: Estagiário, vendedor, autônomo..."/>
+            <label>Experiências Passadas</label><input id="bgPastExp" placeholder="Ex: Viagens, empregos, voluntariado..."/>
+            <label>Hobbies</label><input id="bgHobbies" placeholder="Ex: Leitura, esportes, coleções..."/>
+            <label>Pessoal</label><input id="bgPersonal" placeholder="Ex: Reservado, extrovertido, tímido..."/>
+            <label>Medos</label><input id="bgFears" placeholder="Ex: Altura, escuro, rejeição..."/>
+            <label>Ambições</label><input id="bgAmbitions" placeholder="Ex: Ser famoso, ajudar pessoas..."/>
+            <label>Sonho</label><input id="bgDream" placeholder="Ex: Viajar o mundo, publicar um livro..."/>
+            <label>Filosofia/Preferências</label><input id="bgPhilosophy" placeholder="Ex: Otimismo, minimalismo, espiritualidade..."/>
+          </div>
+          <div>
+            <label>Comida Favorita</label><input id="bgFood" placeholder="Ex: Sushi, pizza, churrasco..."/>
+            <label>Música</label><input id="bgMusic" placeholder="Ex: Rock, pop, MPB, clássica..."/>
+            <label>Televisão</label><input id="bgTV" placeholder="Ex: Séries, novelas, reality show..."/>
+            <label>Literatura</label><input id="bgLiterature" placeholder="Ex: Fantasia, romance, mangá..."/>
+            <label>Economia</label><input id="bgEconomic" placeholder="Ex: Classe média, dificuldades..."/>
+            <label>Situação Financeira</label><input id="bgFinancial" placeholder="Ex: Estável, endividado, confortável..."/>
+            <label>Moradia</label><input id="bgHousing" placeholder="Ex: Apartamento, casa, república..."/>
+            <label>Vida Social</label><input id="bgSocial" placeholder="Ex: Muitos amigos, poucos contatos..."/>
+            <label>Relacionamentos</label><input id="bgRelationships" placeholder="Ex: Solteiro, namorando, família próxima..."/>
+            <label>Idiomas</label><input id="bgLanguages" placeholder="Ex: Português, inglês, japonês..."/>
+            <label>Aliados</label><input id="bgAllies" placeholder="Ex: Amigos, colegas, mentores..."/>
+            <label>Rivais</label><input id="bgRivals" placeholder="Ex: Concorrentes, inimigos, ex..."/>
+            <label>Fama</label><input id="bgFame" placeholder="Ex: Conhecido na escola, anônimo..."/>
+          </div>
+        </div>
+      </section>
+      <section class="card">
+        <div class="section-title"><div class="bar"></div><h2>Características Físicas</h2></div>
+        <div class="grid two">
+          <div>
+            <label>Altura/Peso</label><input id="bgHeightWeight" placeholder="Ex: 1,75m / 68kg"/>
+            <label>Cabelo</label><input id="bgHair" placeholder="Ex: Preto, curto, cacheado..."/>
+            <label>Olhos</label><input id="bgEyes" placeholder="Ex: Castanhos, verdes, grandes..."/>
+            <label>Piercings/Tatuagens</label><input id="bgPiercingTattoo" placeholder="Ex: Tatuagem no braço, piercing no nariz..."/>
+          </div>
+          <div>
+            <label>Cicatrizes</label><input id="bgScars" placeholder="Ex: Corte na sobrancelha, queimadura..."/>
+            <label>Vestuário</label><input id="bgClothing" placeholder="Ex: Jaqueta, tênis, estilo casual..."/>
+            <label>Constituição</label><input id="bgBuild" placeholder="Ex: Forte, magro, atlético..."/>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- VIEW: PERSONA -->
+  <div class="view" id="persona">
+      <section class="card">
+        <div class="section-title"><div class="bar"></div><h2>Persona — Identidade</h2></div>
+        <div class="row row3">
+          <div><label>Nome da Persona <span class="field-required-indicator" title="Campo obrigatório">*</span></label><input id="PerName" placeholder="Ex.: Orfeu" required/></div>
+          <div><label>Arcana</label><select id="PerArcana"></select></div>
+          <div><label>Nível</label><input id="PerLvl" type="number" min="1" max="99" value="1"/></div>
+        </div>
+        <label>Notas</label>
+        <textarea id="PerNotes" placeholder="Traços, origem mítica, gatilhos de despertar..."></textarea>
+      </section>
+
+      <section class="card">
+        <div class="section-title"><div class="bar"></div><h2>Magias & Técnicas</h2></div>
+        <div class="actions"><button class="mini" id="add-spell">+ Adicionar</button></div>
+  <div class="hint">MAGIA/TÉCNICA: Nome | EFEITO: Efeito | ALVO: Alvo | TIPO: Tipo | NÍVEL: Nível | USOS: Usos</div>
+        <table id="tbl-spell">
+          <thead>
+            <tr>
+              <th style="width:20%">MAGIA/TÉCNICA</th>
+              <th style="width:12%">ALVO</th>
+              <th style="width:12%">TIPO</th>
+              <th style="width:32%">EFEITO</th>
+              <th style="width:8%">NÍVEL</th>
+              <th style="width:8%">USOS</th>
+              <th style="width:8%"> </th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <section class="card">
+        <div class="section-title"><div class="bar"></div><h2>Afinidades</h2></div>
+        <div class="hint">Selecione uma relação por elemento (Fraco, Normal, Resiste, Anula, Reflete, Absorve).</div>
+        <table>
+          <thead><tr><th>Elemento</th><th>Relação</th><th>Elemento</th><th>Relação</th></tr></thead>
+          <tbody id="af-body"></tbody>
+        </table>
+      </section>
+    </div>
+
+    <!-- VIEW: EQUIPAMENTOS -->
+  <div class="view" id="equip">
+      <section class="card">
+        <div class="section-title"><div class="bar"></div><h2>Equipamentos & Itens</h2></div>
+        <div class="actions"><button class="mini" id="add-eq">+ Adicionar</button></div>
+        <div class="hint">Use para armas, armaduras, acessórios e itens diversos.</div>
+        <table id="tbl-eq">
+          <thead><tr><th>Tipo</th><th>Nome</th><th>Efeito/Notas</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </section>
+    </div>
+
+    <!-- VIEW: MAGIAS -->
+  <!-- VIEW: MAGIAS (removido, não utilizado)-->
+
+    <!-- VIEW: VÍNCULOS -->
+    <div class="view" id="vinculos">
+      <section class="card">
+        <div class="section-title"><div class="bar"></div><h2>Vínculos (Arcana)</h2></div>
+        <div class="actions"><button class="mini" id="add-link">+ Adicionar</button></div>
+        <div class="hint">Registre NPC, Arcana e Rank (1–10), com observações.</div>
+        <table id="tbl-link">
+          <thead><tr><th>Nome</th><th>Arcana</th><th>Rank</th><th>Observações</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </section>
+    </div>
+
+    <!-- VIEW: ANOTAÇÕES -->
+    <div class="view" id="notes">
+      <section class="card">
+        <div class="section-title"><div class="bar"></div><h2>Anotações — Diário & Objetivos</h2></div>
+        <div class="row row2">
+          <div>
+            <label>Diário</label>
+            <textarea id="NotesDiary" placeholder="Resumo das sessões, momentos marcantes, pensamentos do personagem..."></textarea>
+          </div>
+          <div>
+            <label>Objetivos</label>
+            <textarea id="NotesGoals" placeholder="Curto prazo (semana), médio (bimestre), longo (ano)."></textarea>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-title"><div class="bar"></div><h2>Pistas / Âncoras</h2></div>
+        <div class="actions"><button class="mini" id="add-clue">+ Adicionar Pista</button></div>
+        <table id="tbl-clue">
+          <thead><tr><th>Título</th><th>Descrição</th><th>Evidência</th><th>Status</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <section class="card">
+        <div class="section-title"><div class="bar"></div><h2>Contatos & Locais</h2></div>
+        <div class="actions"><button class="mini" id="add-ctt">+ Adicionar Contato/Local</button></div>
+        <table id="tbl-ctt">
+          <thead><tr><th>Nome</th><th>Tipo</th><th>Observações</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </section>
+    </div>
+
+    </div>
+
+  <!-- Scripts do app -->
+  <script src="app.js"></script>
+</body>
+</html>
