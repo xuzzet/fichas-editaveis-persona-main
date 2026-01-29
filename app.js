@@ -507,9 +507,9 @@ function buildSocialUI(){
   const vit = clampInt(ids.CharVIT?.value||1,1,12);
     if(ids.MaxHP) ids.MaxHP.value = 25 + ((5 + vit) * lvl);
   const mag = clampInt(ids.CharMAG?.value||1,1,99);
-    const pmBase = 15 + (mag + 5);
-    const pmCorrect = pmBase + ((lvl - 1) * 5);
-    if(ids.EnergyMax) ids.EnergyMax.value = Math.trunc(pmCorrect);
+    const pmBase = 15 + ((mag + 5) * 2);
+    const pmMax = pmBase + ((lvl - 1) * 5);
+    if(ids.EnergyMax) ids.EnergyMax.value = Math.trunc(pmMax);
     ["STR","MAG","TEC","AGI","VIT","LCK"].forEach(k=>{
       const el = document.getElementById("b"+k);
       if(el && ids["Char"+k]) el.textContent = ids["Char"+k].value;
