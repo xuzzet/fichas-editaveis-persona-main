@@ -40,7 +40,7 @@ body.theme-padrao {
 }
 body.theme-roxo,
 body.theme-claro,
-body.theme-amarelo,
+body.theme-dourado,
 body.theme-vermelho,
 body.theme-degrade {
   background: var(--bg);
@@ -49,54 +49,54 @@ body.theme-degrade {
   background-size: cover;
 }
 body.theme-roxo {
-  --accent: #9d5cdb;
-  --accent-2: #7840a8;
-  --ink: #f0e8ff;
-  --ink-dim: #bfb0db;
-  --bg: linear-gradient(135deg, #2a1a45 0%, #45275f 100%);
-  --bg-2: #342050;
-  --bg-3: #4a3070;
-  --stroke: #6b4a88;
+  --accent: #c084dd;
+  --accent-2: #d9a5f0;
+  --ink: #ffffff;
+  --ink-dim: #d9a5f0;
+  --bg: #1a0f2e;
+  --bg-2: #32166b;
+  --bg-3: #4a2080;
+  --stroke: #7d4bb8;
 }
 body.theme-claro {
-  --accent: #0fa8d4;
-  --accent-2: #4dd9ba;
-  --ink: #1a1a2e;
-  --ink-dim: #666d7a;
-  --bg: linear-gradient(135deg, #f0f5ff 0%, #e0eff8 100%);
+  --accent: #0d8fd6;
+  --accent-2: #1ab5d9;
+  --ink: #0a0a0a;
+  --ink-dim: #4a5568;
+  --bg: #f8fafc;
   --bg-2: #e5f2ff;
-  --bg-3: #d8ecff;
-  --stroke: #a8b8d8;
+  --bg-3: #d0e7f8;
+  --stroke: #7b9fc9;
 }
-body.theme-amarelo {
-  --accent: #d4af37;
-  --accent-2: #e8c854;
-  --ink: #f5e6d3;
-  --ink-dim: #c9b87a;
-  --bg: linear-gradient(135deg, #2a1f0a 0%, #3d2d10 100%);
-  --bg-2: #332410;
-  --bg-3: #453020;
-  --stroke: #6b5a2a;
+body.theme-dourado {
+  --accent: #ffc71f;
+  --accent-2: #ffb800;
+  --ink: #0a0805;
+  --ink-dim: #7a6a38;
+  --bg: #faf6ed;
+  --bg-2: #c29100;
+  --bg-3: #e6a72e;
+  --stroke: #d4a336;
 }
 body.theme-vermelho {
-  --accent: #d95577;
-  --accent-2: #e87a93;
-  --ink: #f5e8eb;
-  --ink-dim: #c9a8b5;
-  --bg: linear-gradient(135deg, #2c0f1f 0%, #461a2a 100%);
-  --bg-2: #341520;
-  --bg-3: #4b2035;
-  --stroke: #b05570;
+  --accent: #ff4757;
+  --accent-2: #ff5f6d;
+  --ink: #ffffff;
+  --ink-dim: #ff8a96;
+  --bg: #2a0a15;
+  --bg-2: #5a1f2c;
+  --bg-3: #7a2f3c;
+  --stroke: #c9406d;
 }
 body.theme-degrade {
-  --accent: #5d9e6e;
-  --accent-2: #6bb379;
-  --ink: #e8f4f1;
-  --ink-dim: #a8bfb8;
-  --bg: linear-gradient(135deg, #1a3d2a 0%, #2a2540 50%, #1f2a3a 100%);
-  --bg-2: #1f3228;
-  --bg-3: #263040;
-  --stroke: #4a7a5a;
+  --accent: #6bd97d;
+  --accent-2: #7ee89d;
+  --ink: #ffffff;
+  --ink-dim: #9ff0ad;
+  --bg: #0f2818;
+  --bg-2: #1a4a2e;
+  --bg-3: #2a6a42;
+  --stroke: #4a9a5a;
 }
 /* Persona 3 Reload — Skin */
 :root {
@@ -110,7 +110,7 @@ body.theme-degrade {
   --accent-2: #88dfff;
   --danger: #ff4b6e;
   --ok: #60f5a1;
-  --radius: 18px;
+  --radius: 12px;
   --mobile-padding: 10px;
   --mobile-radius: 12px;
   --mobile-font: 15px;
@@ -192,30 +192,18 @@ body.theme-degrade {
   }
 }
 .toast.success {
-  background: linear-gradient(
-    135deg,
-    rgba(96, 245, 161, 0.1),
-    rgba(96, 245, 161, 0.05)
-  );
-  border: 1px solid rgba(96, 245, 161, 0.3);
+  background: rgba(96, 245, 161, 0.1);
+  border: 2px solid rgba(96, 245, 161, 0.4);
   color: #60f5a1;
 }
 .toast.error {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 75, 110, 0.1),
-    rgba(255, 75, 110, 0.05)
-  );
-  border: 1px solid rgba(255, 75, 110, 0.3);
+  background: rgba(255, 75, 110, 0.1);
+  border: 2px solid rgba(255, 75, 110, 0.4);
   color: #ff6b80;
 }
 .toast.info {
-  background: linear-gradient(
-    135deg,
-    rgba(46, 164, 255, 0.1),
-    rgba(46, 164, 255, 0.05)
-  );
-  border: 1px solid rgba(46, 164, 255, 0.3);
+  background: rgba(46, 164, 255, 0.1);
+  border: 2px solid rgba(46, 164, 255, 0.4);
   color: #88dfff;
 }
 
@@ -252,22 +240,8 @@ body {
 body {
   margin: 0;
   color: var(--ink);
-  background-color: #030712; /* fallback solid */
-  background-image:
-    radial-gradient(
-      1000px 600px at 80% 0%,
-      rgba(46, 164, 255, 0.18),
-      transparent 60%
-    ),
-    radial-gradient(
-      1200px 700px at 0% 100%,
-      rgba(136, 223, 255, 0.09),
-      transparent 60%
-    ),
-    linear-gradient(180deg, #070d1b 0%, #051022 60%, #04101e 100%);
-  background-repeat: no-repeat;
-  background-attachment: fixed, fixed, fixed; /* parallax-like stability */
-  background-size: cover, cover, cover;
+  background-color: var(--bg);
+  background-image: none;
   font:
     500 16px/1.45 "Montserrat",
     Inter,
@@ -383,23 +357,17 @@ body {
   width: 12px;
   height: 58px;
   border-radius: 2px;
-  background: linear-gradient(180deg, var(--accent), var(--accent-2));
+  background: var(--accent);
   transform: skewX(-18deg);
-  box-shadow: 0 0 16px rgba(46, 164, 255, 0.8);
+  box-shadow: none;
 }
 .brand {
   padding: 14px 18px 12px;
-  background: linear-gradient(
-    180deg,
-    var(--bg-3, #0b153a),
-    var(--bg-2, #081330)
-  );
-  border: 1px solid var(--stroke);
+  background: var(--bg-2);
+  border: 2px solid var(--stroke);
   border-radius: 12px;
   clip-path: polygon(0 0, 92% 0, 100% 28%, 100% 100%, 0 100%);
-  box-shadow:
-    0 16px 60px rgba(0, 0, 0, 0.55),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   transition:
     background 0.2s,
     color 0.2s,
@@ -408,11 +376,11 @@ body {
 .brand h1 {
   margin: 0;
   font-family: "Barlow Condensed", Inter, sans-serif;
-  font-weight: 900;
-  letter-spacing: 0.08em;
+  font-weight: 1000;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  font-size: clamp(22px, 3.2vw, 30px);
-  color: var(--ink);
+  font-size: clamp(24px, 4vw, 36px);
+  color: var(--accent);
   transition: color 0.2s;
 }
 .brand .sub {
@@ -433,46 +401,36 @@ body {
   position: relative;
   cursor: pointer;
   color: var(--ink);
-  background: linear-gradient(
-    180deg,
-    var(--bg-3, #0b173f),
-    var(--bg-2, #0a1432)
-  );
-  border: 1px solid var(--stroke);
-  padding: 12px 18px 11px;
+  background: var(--bg-2);
+  border: 3px solid var(--stroke);
+  padding: 12px 20px 11px;
   font-weight: 900;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   font-family:
     "Montserrat", "Rodin", "New Rodin", "Barlow Condensed", Inter, sans-serif;
-  clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+  clip-path: none;
   transition:
-    border 0.18s ease,
-    box-shadow 0.18s ease,
-    transform 0.06s ease,
-    background 0.2s,
-    color 0.2s;
+    border 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
+  font-size: 13px;
 }
 .tab::after {
-  content: "▶";
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  translate: 0 -50%;
-  opacity: 0;
-  transition: 0.18s;
-  color: var(--accent);
+  content: none;
 }
 .tab:hover {
   border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(46, 164, 255, 0.18) inset;
+  background: var(--bg-3);
+  color: var(--accent);
 }
 .tab.active {
   border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(46, 164, 255, 0.3) inset;
+  background: var(--accent);
+  color: var(--bg);
 }
 .tab.active::after {
-  opacity: 0.9;
+  opacity: 0;
 }
 .grid {
   display: grid;
@@ -497,32 +455,16 @@ body {
   }
 }
 .card {
-  background: linear-gradient(
-    180deg,
-    var(--bg-2, #070e21) 0,
-    var(--bg-3, #0a1430) 100%
-  );
-  border: 1px solid var(--stroke, #1a2f5a);
+  background: var(--bg-2);
+  border: 3px solid var(--stroke);
   border-radius: var(--radius);
   padding: 20px;
   position: relative;
-  box-shadow:
-    0 16px 60px rgba(0, 0, 0, 0.55),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
   min-width: 0;
 }
 .card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(
-    120deg,
-    rgba(46, 164, 255, 0.08),
-    transparent 35%
-  );
-  clip-path: polygon(0 0, 75% 0, 65% 100%, 0 100%);
-  border-radius: var(--radius);
+  content: none;
 }
 .section-title {
   display: flex;
@@ -534,10 +476,10 @@ body {
   margin: 0;
   font-family: "Barlow Condensed", Inter, sans-serif;
   font-weight: 900;
-  font-size: 15px;
-  letter-spacing: 0.26em;
+  font-size: 18px;
+  letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: var(--ink, #e3f4ff);
+  color: var(--accent);
   transition: color 0.2s;
 }
 .bar {
@@ -545,46 +487,41 @@ body {
   width: 84px;
   transform: skewX(-18deg);
   border-radius: 2px;
-  background:
-    linear-gradient(90deg, var(--accent), transparent 80%),
-    repeating-linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.25) 0 2px,
-      transparent 2px 8px
-    );
-  box-shadow: 0 0 10px rgba(46, 164, 255, 0.35) inset;
+  background: var(--accent);
+  box-shadow: none;
 }
 label {
   display: block;
   margin: 8px 0 6px;
   font-weight: 900;
-  letter-spacing: 0.14em;
-  font-size: 12px;
+  letter-spacing: 0.16em;
+  font-size: 13px;
   text-transform: uppercase;
-  color: var(--ink-dim, #d4e9ff);
+  color: var(--accent);
   font-family: "Barlow Condensed", Inter, sans-serif;
   transition: color 0.2s ease;
 }
 label:hover {
-  color: var(--accent, #2ea4ff);
+  color: var(--accent-2);
 }
 input,
 select,
 textarea {
   width: 100%;
-  padding: 12px 14px;
+  padding: 14px 16px;
   color: var(--ink);
-  background: var(--bg-2, #091537);
-  border: 1.5px solid var(--stroke, #1a2f5a);
-  border-radius: 14px;
+  background: var(--bg-2);
+  border: 2px solid var(--stroke);
+  border-radius: 8px;
   outline: none;
   font-size: 15px;
   min-width: 0;
   transition:
-    border-color 0.25s ease,
-    box-shadow 0.25s ease,
-    background 0.25s ease,
-    color 0.2s;
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease,
+    color 0.18s;
+  font-weight: 600;
 }
 input::placeholder,
 textarea::placeholder {
@@ -596,9 +533,7 @@ select:focus,
 textarea:focus {
   border-color: var(--accent);
   background: var(--bg-2, #091537);
-  box-shadow:
-    0 0 0 3px rgba(46, 164, 255, 0.28),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 0 2px var(--accent);
 }
 input:focus::placeholder,
 textarea:focus::placeholder {
@@ -685,9 +620,9 @@ select {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #bff, var(--accent));
-  border: 2px solid #0b1636;
-  box-shadow: 0 0 12px rgba(46, 164, 255, 0.45);
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 .badge {
   text-align: center;
@@ -724,14 +659,12 @@ select {
   font-family: "Barlow Condensed";
 }
 .value {
-  font-size: 44px;
+  font-size: 52px;
   font-weight: 1000;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.05em;
   font-variant-numeric: tabular-nums;
   font-family: "Barlow Condensed", Inter, sans-serif;
-  text-shadow:
-    0 2px 0 rgba(0, 0, 0, 0.55),
-    0 0 18px rgba(46, 164, 255, 0.3);
+  text-shadow: none;
 }
 .value.pv {
   color: #5ef7d4;
@@ -748,11 +681,12 @@ table {
 th,
 td {
   text-align: left;
-  padding: 10px 12px;
-  background: var(--bg-2, #0a1432);
-  border: 1px solid var(--stroke, #1a2f5a);
+  padding: 12px 14px;
+  background: var(--bg-2);
+  border: 2px solid var(--stroke);
   min-width: 0;
   vertical-align: top;
+  font-weight: 600;
 }
 
 #tbl-spell .sp-t {
@@ -876,32 +810,30 @@ th:last-child {
 }
 button {
   cursor: pointer;
-  border: 1px solid var(--stroke);
+  border: 3px solid var(--stroke);
   color: var(--ink);
-  background: linear-gradient(
-    180deg,
-    var(--bg-3, #0d1a3d),
-    var(--bg-2, #0b1634)
-  );
-  padding: 12px 16px;
-  border-radius: 12px;
+  background: var(--bg-2);
+  padding: 14px 18px;
+  border-radius: 10px;
   font-weight: 900;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   font-family: "Barlow Condensed";
   min-width: 0;
+  font-size: 13px;
   transition:
-    border-color 0.25s ease,
-    box-shadow 0.25s ease,
-    transform 0.15s ease;
+    border-color 0.15s ease,
+    background 0.15s ease,
+    transform 0.15s ease,
+    color 0.15s ease;
 }
 button:hover {
   border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(46, 164, 255, 0.2) inset;
-  transform: translateY(-1px);
+  background: var(--bg-3);
+  color: var(--accent);
 }
 button:active {
-  transform: translateY(0);
+  transform: scale(0.98);
 }
 .hint {
   color: var(--ink-dim);
@@ -1043,54 +975,23 @@ button:active {
 /* Menu visual enhancements: vibrant gradients, diagonal overlays and decorative glow */
 .tabs {
   position: relative;
-  z-index: 2; /* keep tabs above decorative background */
+  z-index: 2;
   padding: 6px 2px;
 }
 .tabs::before {
-  content: "";
-  position: absolute;
-  left: -6%;
-  right: -6%;
-  top: -36%;
-  height: 160%;
-  background: linear-gradient(
-    135deg,
-    rgba(46, 164, 255, 0.14),
-    rgba(136, 223, 255, 0.06)
-  );
-  transform: skewY(-8deg);
-  z-index: 0;
-  filter: blur(20px);
-  border-radius: 22px;
-  pointer-events: none;
+  content: none;
 }
 .brand {
-  overflow: visible; /* allow decorative pseudo-elements to extend */
+  overflow: visible;
 }
 .brand::after {
-  content: "";
-  position: absolute;
-  right: -8%;
-  top: -24%;
-  width: 420px;
-  height: 420px;
-  background: radial-gradient(
-    circle at 30% 30%,
-    rgba(46, 164, 255, 0.12),
-    transparent 32%
-  );
-  transform: rotate(16deg);
-  z-index: 0;
-  pointer-events: none;
-  mix-blend-mode: screen;
+  content: none;
 }
 .tab {
   position: relative;
   z-index: 3;
   font-family: "Rodin", "New Rodin", "Barlow Condensed", Inter, sans-serif;
-  background-image:
-    linear-gradient(180deg, rgba(46, 164, 255, 0.04), transparent 50%),
-    linear-gradient(180deg, var(--bg-3), var(--bg-2));
+  background-image: none;
   border-radius: 10px;
 }
 .tab::before {
@@ -1099,38 +1000,31 @@ button:active {
   left: 0;
   top: 0;
   bottom: 0;
-  width: 8px;
-  background: linear-gradient(180deg, var(--accent), var(--accent-2));
+  width: 4px;
+  background: var(--accent);
   transform: skewX(-12deg);
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
-  opacity: 0.95;
+  opacity: 0;
+  transition: opacity 0.2s;
 }
 .tab.active {
-  box-shadow: 0 8px 30px rgba(46, 164, 255, 0.14);
-  background-image:
-    linear-gradient(
-      180deg,
-      rgba(46, 164, 255, 0.12),
-      rgba(136, 223, 255, 0.02)
-    ),
-    linear-gradient(180deg, var(--bg-3), var(--bg-2));
+  box-shadow: none;
+  background-image: none;
+}
+.tab.active::before {
+  opacity: 1;
 }
 
 @media (max-width: 720px) {
   .tabs::before {
-    top: -50%;
-    filter: blur(14px);
+    content: none;
   }
   .brand::after {
-    width: 260px;
-    height: 260px;
-    right: -18%;
-    top: -36%;
-    opacity: 0.9;
+    content: none;
   }
   .tab::before {
-    width: 6px;
+    width: 4px;
   }
 }
 @media print {
@@ -1267,11 +1161,7 @@ button:active {
       border-color 0.25s ease;
   }
   button:active {
-    background: linear-gradient(
-      180deg,
-      var(--bg-2, #0b1634),
-      var(--bg-1, #0a0f24)
-    );
+    background: var(--bg-3);
     transform: scale(0.98);
   }
   input,

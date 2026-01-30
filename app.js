@@ -77,7 +77,7 @@ const EL_IDS = {
     padrao: 'theme-padrao',
     roxo: 'theme-roxo',
     claro: 'theme-claro',
-    amarelo: 'theme-amarelo',
+    dourado: 'theme-dourado',
     vermelho: 'theme-vermelho',
     degrade: 'theme-degrade'
   };
