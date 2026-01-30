@@ -69,14 +69,23 @@ body.theme-claro {
   --stroke: #7b9fc9;
 }
 body.theme-dourado {
-  --accent: #ffc71f;
-  --accent-2: #ffb800;
-  --ink: #0a0805;
-  --ink-dim: #7a6a38;
-  --bg: #faf6ed;
-  --bg-2: #c29100;
-  --bg-3: #e6a72e;
-  --stroke: #d4a336;
+  /* Paleta Dourada Profissional — Branco Quente + Dourado Saturado */
+  /* Fundo principal: branco quente com leve tom dourado */
+  --bg: #fffbf5;
+  /* Cards e painéis: off-white dourado, contraste claro contra fundo */
+  --bg-2: #fff5d6;
+  /* Hover, focus, overlay: dourado claro mas mais saturado */
+  --bg-3: #ffe8a3;
+  /* Texto principal: preto muito escuro (não puro), máximo contraste */
+  --ink: #0f0c00;
+  /* Texto secundário: dourado escuro, legível mas diferenciado */
+  --ink-dim: #b8963d;
+  /* Accent principal: dourado saturado para elementos interativos */
+  --accent: #d4a336;
+  /* Accent secundário: dourado mais claro para hover/states */
+  --accent-2: #e8b85c;
+  /* Borda/stroke: dourado médio, sutil mas visível */
+  --stroke: #d4c07a;
 }
 body.theme-vermelho {
   --accent: #ff4757;
