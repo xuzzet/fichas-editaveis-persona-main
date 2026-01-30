@@ -134,13 +134,14 @@ const EL_IDS = {
       }
     });
     // Limpa tabelas dinâmicas se existirem
-    ['tbl-eq','tbl-spell','tbl-link','tbl-clue','tbl-ctt','tbl-feitos'].forEach(id => {
+    ['tbl-eq','tbl-spell','tbl-link','tbl-clue','tbl-ctt','tbl-feitos','tbl-conditions'].forEach(id => {
       const tbody = document.querySelector(`#${id} tbody`);
       if (tbody) tbody.innerHTML = '';
     });
     // Limpa afinidades
     const afBody = document.getElementById('af-body');
     if (afBody) afBody.innerHTML = '';
+    if(typeof buildAffinityTable === 'function') buildAffinityTable();
     // Limpa notas de teste
     const testsOut = document.getElementById('tests-out');
     if (testsOut) testsOut.textContent = 'Clique em Testes para rodar as verificações.';
