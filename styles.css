@@ -49,14 +49,14 @@ body.theme-degrade {
   background-size: cover;
 }
 body.theme-roxo {
-  --accent: #c084dd;
-  --accent-2: #d9a5f0;
-  --ink: #ffffff;
-  --ink-dim: #d9a5f0;
-  --bg: #1a0f2e;
-  --bg-2: #32166b;
-  --bg-3: #4a2080;
-  --stroke: #7d4bb8;
+  --accent: #b88dd6;
+  --accent-2: #d4aef0;
+  --ink: #f5f0ff;
+  --ink-dim: #c8b3e6;
+  --bg: #1b0d33;
+  --bg-2: #3d1f6b;
+  --bg-3: #563191;
+  --stroke: #8a5fc9;
 }
 body.theme-claro {
   --accent: #0d8fd6;
