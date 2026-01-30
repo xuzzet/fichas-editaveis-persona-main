@@ -162,6 +162,8 @@ function initTabs() {
   $$(".tab").forEach(btn=>btn.addEventListener("click",()=>{
     $$(".tab").forEach(b=>b.classList.remove("active")); btn.classList.add("active");
     $$(".view").forEach(v=>v.classList.remove("active")); $("#"+btn.dataset.view).classList.add("active");
+    const resizeNow = ()=>{ if(typeof window.initAutoResizeTextareas === 'function') window.initAutoResizeTextareas(); };
+    if(typeof window.requestAnimationFrame === 'function') window.requestAnimationFrame(resizeNow); else setTimeout(resizeNow, 0);
   }));
 }
 
@@ -487,16 +489,26 @@ function buildSocialUI(){
   // ===== Auto-resize textareas =====
   function autoResizeTextarea(textarea){
     if(!textarea || textarea.tagName !== 'TEXTAREA') return;
+    if(textarea.offsetParent === null) return;
+    textarea.style.overflowY = 'auto';
     textarea.style.height = 'auto';
-    const newHeight = Math.min(textarea.scrollHeight, 400);
-    textarea.style.height = newHeight + 'px';
+    const maxHeight = 420;
+    const style = window.getComputedStyle(textarea);
+    const minHeight = parseFloat(style.minHeight) || textarea.offsetHeight || 0;
+    const newHeight = Math.min(textarea.scrollHeight, maxHeight);
+    textarea.style.height = Math.max(newHeight, minHeight) + 'px';
   }
   function initAutoResizeTextareas(){
     Array.from(document.querySelectorAll('textarea')).forEach(textarea=>{
       autoResizeTextarea(textarea);
-      textarea.addEventListener('input', ()=> autoResizeTextarea(textarea));
+      if(textarea.dataset.autoresizeInit !== '1'){
+        textarea.addEventListener('input', ()=> autoResizeTextarea(textarea));
+        textarea.dataset.autoresizeInit = '1';
+      }
     });
   }
+  window.autoResizeTextarea = autoResizeTextarea;
+  window.initAutoResizeTextareas = initAutoResizeTextareas;
   initAutoResizeTextareas();
   // also monitor for dynamically added textareas
   const observer = new MutationObserver(()=> initAutoResizeTextareas());
@@ -543,7 +555,7 @@ function buildSocialUI(){
     const tr = document.createElement("tr");
     tr.innerHTML = `<td><select class="eq-tipo"><option>Arma</option><option>Armadura</option><option>Acessório</option><option>Item</option></select></td>
                     <td><input class="eq-nome" placeholder="Nome"/></td>
-                    <td><input class="eq-ef" placeholder="Efeito/Notas"/></td>
+                    <td><textarea class="eq-ef" rows="1" placeholder="Efeito/Notas"></textarea></td>
                     <td class="row-actions"><button class="mini del">Remover</button></td>`;
     eqBody.appendChild(tr);
     const [tipo,nome,ef] = [tr.querySelector('.eq-tipo'), tr.querySelector('.eq-nome'), tr.querySelector('.eq-ef')];
@@ -606,7 +618,7 @@ function buildSocialUI(){
     tr.innerHTML = `<td><input class="lk-n" placeholder="Nome do NPC"/></td>
                     <td><select class="lk-a"></select></td>
                     <td><input class="lk-r" type="number" min="1" max="10" value="1"/></td>
-                    <td><input class="lk-o" placeholder="Observações"/></td>
+                    <td><textarea class="lk-o" rows="1" placeholder="Observações"></textarea></td>
                     <td class="row-actions"><button class="mini del">Remover</button></td>`;
     linkBody.appendChild(tr);
     const asel = tr.querySelector('.lk-a'); ARCANAS.forEach(a=>{ const o=document.createElement('option'); o.textContent=a; o.value=a; asel.appendChild(o); });
@@ -623,8 +635,8 @@ function buildSocialUI(){
     if(!clueBody) return;
     const tr = document.createElement('tr');
     tr.innerHTML = `<td><input class="cl-t" placeholder="Título"/></td>
-                    <td><input class="cl-d" placeholder="Descrição / Ancoragem"/></td>
-                    <td><input class="cl-e" placeholder="Evidência (onde/quem/como)"/></td>
+                    <td><textarea class="cl-d" rows="1" placeholder="Descrição / Ancoragem"></textarea></td>
+                    <td><textarea class="cl-e" rows="1" placeholder="Evidência (onde/quem/como)"></textarea></td>
                     <td><select class="cl-s"><option>Aberta</option><option>Em andamento</option><option>Resolvida</option></select></td>
                     <td class="row-actions"><button class="mini del">Remover</button></td>`;
     clueBody.appendChild(tr);
@@ -645,7 +657,7 @@ function buildSocialUI(){
     const tr = document.createElement('tr');
     tr.innerHTML = `<td><input class="ct-n" placeholder="Nome"/></td>
                     <td><select class="ct-t"><option>NPC</option><option>Local</option><option>Clube</option><option>Comércio</option></select></td>
-                    <td><input class="ct-o" placeholder="Observações / pistas / horários"/></td>
+                    <td><textarea class="ct-o" rows="1" placeholder="Observações / pistas / horários"></textarea></td>
                     <td class="row-actions"><button class="mini del">Remover</button></td>`;
     cttBody.appendChild(tr);
     tr.querySelector('.ct-n').value = data.nome||"";
@@ -780,6 +792,7 @@ function buildSocialUI(){
   if(ids.CurrentHP && !hasCurrentHP) ids.CurrentHP.value = ids.MaxHP?.value || 0;
   if(ids.CurrentPM && !hasCurrentPM) ids.CurrentPM.value = ids.EnergyMax?.value || 0;
   validateCurrentValues();
+  if(typeof window.initAutoResizeTextareas === 'function') window.initAutoResizeTextareas();
   }
 
   const saveBtn = document.getElementById("save");
