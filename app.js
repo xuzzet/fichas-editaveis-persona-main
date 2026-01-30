@@ -671,7 +671,7 @@ function buildSocialUI(){
           <td><textarea class="sp-e" rows="2" placeholder="Efeito" style="width:100%;resize:vertical"></textarea></td>
           <td><input class="sp-tier" placeholder="Nível"/></td>
           <td><input class="sp-uses" placeholder="PM"/></td>
-          <td class="row-actions"><button class="mini up" title="Mover para cima">↑</button><button class="mini down" title="Mover para baixo">↓</button><button class="mini del">Remover</button></td>`;
+          <td class="row-actions"><button class="mini up" title="Mover para cima">↑</button><button class="mini down" title="Mover para baixo">↓</button><button class="mini del">X</button></td>`;
       spellBody.appendChild(tr);
       const tsel = tr.querySelector('.sp-t'); 
       ["Físico","Fogo","Gelo","Vento","Raio","Nuclear","PSY","Luz","Trevas","Suporte","Controle"].forEach(t=>{ 
