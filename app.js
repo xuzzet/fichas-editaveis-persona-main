@@ -201,6 +201,54 @@ const FEITOS_LIST = [
   { id: 'ritual_herege_trevas', name: 'Ritual do Herege das Trevas', desc: 'Ao derrotar Sombra com magia do Tipo Trevas, cause dano adicional de Trevas a alvos vistos. Requer Tipo Trevas.', reqPersonaType:'Trevas' },
   { id: 'vanguarda_onipotente', name: 'Vanguarda Onipotente', desc: 'Ao acertar Crítico com magia Onipotente, ignore testes de esquiva de todos os alvos.', unique:true }
 ];
+// ===== Lista de Condições (status negativos/temporários) =====
+const CONDITIONS_LIST = [
+  {
+    id: 'charme',
+    name: 'Charme',
+    desc: 'Põe o personagem sob o controle do Narrador, ou faz um inimigo atacar os próprios aliados e conjurar magias benéficas para os jogadores.\nNo final do turno, chance de recuperação: 33%.'
+  },
+  {
+    id: 'panico',
+    name: 'Pânico',
+    desc: 'Previne o uso da Persona ou o uso de habilidades especiais do inimigo.\nNo final do turno, chance de recuperação: 33%.'
+  },
+  {
+    id: 'medo',
+    name: 'Medo',
+    desc: 'Role 2 dados e pegue o pior nas esquivas.\nNo final do turno, chance de recuperação: 33%.\nSe não se recuperar, perde um uso de magia aleatória ou 1 PM.'
+  },
+  {
+    id: 'furia',
+    name: 'Fúria',
+    desc: 'Aumenta o dano físico causado e recebido em 50%.\nRole 2 dados e pegue o pior no ataque.\nNo final do turno, chance de recuperação: 33%.\nVocê pode optar por recusar o teste de recuperação.'
+  },
+  {
+    id: 'atordoado',
+    name: 'Atordoado',
+    desc: 'Role 2 dados e pegue o pior na esquiva.\nNão pode usar ações Livres, Rápidas ou de Interromper.\nNo final do turno, chance de recuperação: 33%.'
+  },
+  {
+    id: 'choque',
+    name: 'Choque',
+    desc: 'Todos os ataques recebidos têm sucesso automático.\nAtaques contra o alvo rolam 2 dados e pegam o melhor para críticos.\nNo final do turno, o alvo se recupera automaticamente.'
+  },
+  {
+    id: 'lento',
+    name: 'Lento',
+    desc: 'Movimento reduzido pela metade.\nRole 2 dados e pegue o pior no ataque.\nNo final do turno, chance de recuperação: 33%.'
+  },
+  {
+    id: 'veneno',
+    name: 'Veneno',
+    desc: 'Causa 20% do seu PV máximo como dano por turno.\nNo final do turno, chance de recuperação: 33%.'
+  },
+  {
+    id: 'derrubado',
+    name: 'Derrubado',
+    desc: 'Você joga 3 dados de esquiva e pega o pior.\nNo final do turno do personagem o mesmo se recupera.\nUm aliado pode usar ação de movimento para recuperar um personagem instantaneamente.'
+  }
+];
 function initArcanaSelects() {
   const arcSel1 = document.getElementById("CharArcana");
   const arcSel2 = document.getElementById("PerArcana");
@@ -249,6 +297,7 @@ function initApp() {
   initArcanaSelects();
   buildAffinityTable();
   buildFeitosUI();
+  buildConditionsUI();
   buildSocialUI();
   // ...existing code...
 }
@@ -316,6 +365,52 @@ function buildFeitosUI(){
   window.getFeitos = getFeitos;
 
   if(btn) btn.addEventListener('click', ()=> addFeito());
+}
+
+// ===== CONDIÇÕES UI & Lógica =====
+function buildConditionsUI(){
+  const body = document.querySelector('#tbl-conditions tbody');
+  if(!body) return;
+  const btn = document.getElementById('add-condition');
+
+  function addCondition(data={id:'', ativa:true, descricao:''}){
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><select class="cond-id"><option value="">-- escolha --</option></select></td>
+                    <td><textarea class="cond-desc" readonly></textarea></td>
+                    <td style="text-align:center"><input type="checkbox" class="cond-active" ${data.ativa ? 'checked' : ''}/></td>
+                    <td class="row-actions"><button class="mini del">Remover</button></td>`;
+    body.appendChild(tr);
+
+    const idSel = tr.querySelector('.cond-id');
+    const desc = tr.querySelector('.cond-desc');
+    const active = tr.querySelector('.cond-active');
+
+    CONDITIONS_LIST.forEach(c=>{ const o=document.createElement('option'); o.value=c.id; o.textContent=c.name; idSel.appendChild(o); });
+    if(data.id) idSel.value = data.id;
+
+    const meta = CONDITIONS_LIST.find(c=>c.id===idSel.value);
+    desc.value = data.descricao || (meta? meta.desc : '');
+
+    idSel.addEventListener('change', ()=>{
+      const m = CONDITIONS_LIST.find(c=>c.id===idSel.value);
+      desc.value = m ? m.desc : '';
+    });
+
+    tr.querySelector('.del').addEventListener('click', ()=>{ tr.remove(); });
+    active.addEventListener('change', ()=>{});
+  }
+
+  // expose addCondition so applySnapshot can restore entries
+  window.addCondition = function(d){ addCondition(d); };
+  window.getConditions = function(){
+    return body ? Array.from(body.querySelectorAll('tr')).map(tr=>({
+      id: tr.querySelector('.cond-id').value,
+      ativa: !!tr.querySelector('.cond-active').checked,
+      descricao: tr.querySelector('.cond-desc').value
+    })) : [];
+  };
+
+  if(btn) btn.addEventListener('click', ()=> addCondition());
 }
 
 // ===== Habilidades Sociais: UI e lógica de tiers =====
@@ -685,7 +780,8 @@ function buildSocialUI(){
       links: getLinks(),
       notes: { diary: ids.NotesDiary?.value||"", goals: ids.NotesGoals?.value||"", clues: getClues(), contacts: getCtts() },
       portrait: { src: portraitSrc },
-      background: background
+      background: background,
+      conditions: (window.getConditions ? window.getConditions() : [])
     };
   }
   function applySnapshot(data){
@@ -746,6 +842,17 @@ function buildSocialUI(){
           return; // pular este feito se requisito não atender
         }
         window.addFeito(f);
+      });
+    }
+  }catch(e){}
+
+  // Condições - sempre limpar antes de restaurar para evitar duplicação
+  try{
+    const cbody = document.querySelector('#tbl-conditions tbody');
+    if(cbody){ cbody.innerHTML = ''; }
+    if(cbody && window.addCondition){
+      (data.conditions||[]).forEach(c=>{
+        window.addCondition(c);
       });
     }
   }catch(e){}
