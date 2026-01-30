@@ -42,7 +42,8 @@ body.theme-roxo,
 body.theme-claro,
 body.theme-dourado,
 body.theme-vermelho,
-body.theme-degrade {
+body.theme-degrade,
+body.theme-corinthians {
   background: var(--bg);
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -120,6 +121,42 @@ body.theme-degrade {
   --bg-3: #2a6a42;
   --stroke: #4a9a5a;
 }
+body.theme-corinthians {
+  /* Paleta Corinthians — Preto Absoluto, Branco e Vermelho Forte */
+  /* Fundo principal: preto absoluto */
+  --bg: #050505;
+  /* Cards e painéis: cinza muito escuro mas claramente diferente */
+  --bg-2: #1a1a1a;
+  /* Hover, focus, overlay: cinza mais claro para contraste */
+  --bg-3: #2d2d2d;
+  /* Texto principal: branco puro para máximo contraste */
+  --ink: #ffffff;
+  /* Texto secundário: cinza claro */
+  --ink-dim: #c0c0c0;
+  /* Accent principal: vermelho Corinthians vibrante e saturado */
+  --accent: #d62828;
+  /* Accent secundário: vermelho mais claro para hover e feedback */
+  --accent-2: #ff3333;
+  /* Borda/stroke: vermelho escuro discreto */
+  --stroke: #8b2323;
+  /* Danger: vermelho extra para alertas */
+  --danger: #e63946;
+  /* Tooltip border: vermelho em vez de azul */
+  --tooltip-border: #d62828;
+}
+
+/* Placeholders específicos para tema Corinthians */
+body.theme-corinthians input::placeholder,
+body.theme-corinthians textarea::placeholder {
+  color: #808080;
+  opacity: 1;
+}
+
+body.theme-corinthians input:focus::placeholder,
+body.theme-corinthians textarea:focus::placeholder {
+  color: #a6a6a6;
+  opacity: 0.9;
+}
 /* Persona 3 Reload — Skin */
 :root {
   --ink: #eaf6ff;
@@ -132,6 +169,7 @@ body.theme-degrade {
   --accent-2: #88dfff;
   --danger: #ff4b6e;
   --ok: #60f5a1;
+  --tooltip-border: #2ea4ff;
   --radius: 12px;
   --mobile-padding: 10px;
   --mobile-radius: 12px;
@@ -692,7 +730,7 @@ select {
   color: #5ef7d4;
 }
 .value.en {
-  color: #2ea4ff;
+  color: var(--accent-2, #88dfff);
 }
 table {
   width: 100%;

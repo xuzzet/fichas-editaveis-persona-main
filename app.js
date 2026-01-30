@@ -79,7 +79,8 @@ const EL_IDS = {
     claro: 'theme-claro',
     dourado: 'theme-dourado',
     vermelho: 'theme-vermelho',
-    degrade: 'theme-degrade'
+    degrade: 'theme-degrade',
+    corinthians: 'theme-corinthians'
   };
   function applyTheme(theme) {
     Object.values(themeMap).forEach(cls => document.body.classList.remove(cls));
