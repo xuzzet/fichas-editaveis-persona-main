@@ -87,6 +87,19 @@ body.theme-dourado {
   /* Borda/stroke: dourado médio, sutil mas visível */
   --stroke: #d4c07a;
 }
+
+/* Placeholders específicos para tema dourado — contraste aprimorado */
+body.theme-dourado input::placeholder,
+body.theme-dourado textarea::placeholder {
+  color: #a0804a;
+  opacity: 1;
+}
+
+body.theme-dourado input:focus::placeholder,
+body.theme-dourado textarea:focus::placeholder {
+  color: #8a6a38;
+  opacity: 0.85;
+}
 body.theme-vermelho {
   --accent: #ff4757;
   --accent-2: #ff5f6d;
