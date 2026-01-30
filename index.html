@@ -90,23 +90,19 @@
 
         <section class="card">
           <div class="section-title"><div class="bar"></div><h2>Habilidades Sociais</h2></div>
-          <div class="hint" style="margin-bottom:8px;">Distribua pontos entre as suas Habilidades Sociais. Total inicial: <strong id="social-pool-display">7</strong> (máx 25).</div>
-            <div class="row" style="align-items:center;gap:8px;margin-top:6px;">
-              <div style="flex:1"><label>Pontos Sociais (total)</label><input id="socialPoolInput" type="number" min="1" max="25" value="7" style="width:120px;padding:8px;"/></div>
-              <div style="font-size:13px;color:var(--ink-dim);margin-left:8px;">Ajuste o total disponível para distribuir. (Padrão: 7)</div>
-            </div>
+          <div class="hint" style="margin-bottom:8px;">Na criação do personagem, distribua <strong>7 pontos iniciais</strong> entre as Habilidades Sociais.<br>Após isso, as habilidades podem crescer sem limite máximo.</div>
           <div class="row row3">
-            <div><label>Conhecimento</label><input id="KNOPts" type="number" min="0" max="10" value="0"/></div>
-            <div><label>Disciplina</label><input id="DISPts" type="number" min="0" max="10" value="0"/></div>
-            <div><label>Empatia</label><input id="EMPpts" type="number" min="0" max="10" value="0"/></div>
+            <div><label>Conhecimento</label><input id="KNOPts" type="number" min="0" value="0"/></div>
+            <div><label>Disciplina</label><input id="DISPts" type="number" min="0" value="0"/></div>
+            <div><label>Empatia</label><input id="EMPpts" type="number" min="0" value="0"/></div>
           </div>
           <div class="row row3">
-            <div><label>Expressão</label><input id="EXPPts" type="number" min="0" max="10" value="0"/></div>
-            <div><label>Coragem</label><input id="COUPts" type="number" min="0" max="10" value="0"/></div>
-            <div><label>Charme</label><input id="CHAPts" type="number" min="0" max="10" value="0"/></div>
+            <div><label>Expressão</label><input id="EXPPts" type="number" min="0" value="0"/></div>
+            <div><label>Coragem</label><input id="COUPts" type="number" min="0" value="0"/></div>
+            <div><label>Charme</label><input id="CHAPts" type="number" min="0" value="0"/></div>
           </div>
           <div class="row" style="margin-top:10px;align-items:center;">
-            <div><strong>Pontos Restantes: <span id="social-remaining">7</span></strong></div>
+            <div style="font-size:13px;color:var(--ink-dim);">Pontos iniciais restantes: <span id="social-remaining" style="font-weight:700;">7</span> (apenas informativo - não limita progressão)</div>
             <div style="margin-left:12px;color:var(--ink-dim);font-size:13px;" id="social-msg"></div>
           </div>
           <div id="social-tier-list" style="margin-top:12px;">

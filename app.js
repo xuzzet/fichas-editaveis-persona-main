@@ -320,12 +320,9 @@ function buildFeitosUI(){
 
 // ===== Habilidades Sociais: UI e lógica de tiers =====
 function buildSocialUI(){
-  // Inicialmente o jogador recebe 7 pontos para distribuir.
-  // O limite total possível (5 pontos × 5 tiers) é 25.
+  // Na criação do personagem, o jogador recebe 7 pontos iniciais para distribuir.
+  // Após a criação, as habilidades podem crescer livremente sem limite máximo.
   const INITIAL_SOCIAL_POINTS = 7;
-  const MAX_POINTS = 25;
-  // socialPool é o total atualmente disponível para distribuir. Pode ser aumentado por feitos/efeitos.
-  let socialPool = INITIAL_SOCIAL_POINTS;
   const idsList = ['KNOPts','DISPts','EMPpts','EXPPts','COUPts','CHAPts'];
   const skillMeta = {
     KNOPts: {name:'Conhecimento', titles:['Preguiçoso','Ciente','Sabido','Estudado','Enciclopédico','Erudito'], desc:[
@@ -394,52 +391,46 @@ function buildSocialUI(){
     container.appendChild(wrapper);
   });
 
-  // store previous values to allow clamping
-  const prev = {};
-  idsList.forEach(id=> prev[id] = Number(document.getElementById(id)?.value||0));
-
   function updateAll(){
-    // allow 0..MAX_POINTS per input
-    const values = idsList.map(id=> clampInt(Number(document.getElementById(id).value||0),0,MAX_POINTS));
-    const sum = values.reduce((a,b)=>a+b,0);
-    if(sum > socialPool){
-      msgEl.textContent = `Você só tem ${socialPool} pontos para distribuir (máx ${MAX_POINTS}). Ajustando automaticamente.`;
-      setTimeout(()=>{ if(msgEl) msgEl.textContent=''; }, 3500);
-    }
-    // enforce per-input allowed = socialPool - sumOther
-    idsList.forEach((id, idx)=>{
+    // Cada habilidade funciona de forma independente, sem limites
+    idsList.forEach((id)=>{
       const el = document.getElementById(id);
       if(!el) return;
-      const otherSum = sum - Number(el.value||0);
-      const allowed = Math.max(0, socialPool - otherSum);
-      if(Number(el.value) > allowed){ el.value = allowed; }
-      prev[id] = Number(el.value||0);
+      // Garantir que o valor seja >= 0
+      let val = Number(el.value||0);
+      if(val < 0){ el.value = 0; val = 0; }
+      
       // update tier display
-      const points = Math.max(0, Number(el.value)||0);
+      const points = Math.max(0, val);
       const tier = Math.min(5, Math.floor(points / 5));
       const meta = skillMeta[id];
       const tierEl = document.getElementById(id+'-tier');
       const shortEl = document.getElementById(id+'-short');
       const descEl = document.getElementById(id+'-desc');
-      if(tierEl) tierEl.textContent = `Tier ${tier} — ${meta.titles[tier] || meta.titles[meta.titles.length-1]} (${points} pts)`;
-  // shortEl should be a brief title/summary to avoid duplicating the full description
-  if(shortEl) shortEl.textContent = meta.titles[tier] || '';
-  if(descEl) descEl.textContent = meta.desc[tier] || '';
+      
+      // Se ultrapassar tier 5, manter o último tier conhecido
+      const displayTier = tier;
+      const displayTitle = meta.titles[displayTier] || meta.titles[meta.titles.length-1];
+      const displayDesc = meta.desc[displayTier] || meta.desc[meta.desc.length-1];
+      
+      if(tierEl) tierEl.textContent = `Tier ${displayTier} — ${displayTitle} (${points} pts)`;
+      if(shortEl) shortEl.textContent = displayTitle || '';
+      if(descEl) descEl.textContent = displayDesc || '';
     });
+    
+    // Calcular soma total apenas para informação
     const newSum = idsList.reduce((s,id)=> s + Number(document.getElementById(id).value||0), 0);
-    remainingEl.textContent = Math.max(0, socialPool - newSum);
+    remainingEl.textContent = Math.max(0, INITIAL_SOCIAL_POINTS - newSum);
   }
 
-  // attach listeners
+  // attach listeners - inputs livres, apenas validando >= 0
   idsList.forEach(id=>{
     const el = document.getElementById(id);
     if(!el) return;
-    el.addEventListener('focus', ()=> prev[id] = Number(el.value||0));
     el.addEventListener('input', ()=>{
-      const otherSum = idsList.reduce((s,i)=> s + (i===id?0:Number(document.getElementById(i).value||0)), 0);
-      const allowed = Math.max(0, socialPool - otherSum);
-      let val = clampInt(Number(el.value||0), 0, MAX_POINTS); // allow up to MAX_POINTS per field
-      if(val > allowed){ el.value = allowed; }
+      // Validar apenas que não seja negativo
+      let val = Number(el.value||0);
+      if(val < 0){ el.value = 0; }
       updateAll();
     });
   });
@@ -447,22 +438,15 @@ function buildSocialUI(){
   // initial render
   updateAll();
 
-  // expose helper to change the current social pool (e.g., quando um Feito ou efeito aumentar o total)
-  window.setSocialPool = function(n){ socialPool = clampInt(Number(n)||0, 0, MAX_POINTS); if(poolInput) poolInput.value = socialPool; if(poolDisplay) poolDisplay.textContent = socialPool; updateAll(); return socialPool; };
-  window.getSocialPool = function(){ return socialPool; };
-
-  // wire optional UI control to change total social pool
-  if(poolInput){
-    // ensure initial value
-    poolInput.value = socialPool;
-    if(poolDisplay) poolDisplay.textContent = socialPool;
-    poolInput.addEventListener('input', ()=>{
-      const v = clampInt(Number(poolInput.value||0), 0, MAX_POINTS);
-      window.setSocialPool(v);
-      if(poolInput) poolInput.value = v;
-      if(poolDisplay) poolDisplay.textContent = v;
-    });
-  }
+  // Manter funções para compatibilidade com snapshots antigos, mas sem funcionalidade
+  window.setSocialPool = function(n){ 
+    // Função mantida apenas para compatibilidade, não faz nada
+    return INITIAL_SOCIAL_POINTS; 
+  };
+  window.getSocialPool = function(){ 
+    // Retorna o valor inicial apenas para compatibilidade
+    return INITIAL_SOCIAL_POINTS; 
+  };
 }
 
 (function(){
@@ -701,8 +685,7 @@ function buildSocialUI(){
       links: getLinks(),
       notes: { diary: ids.NotesDiary?.value||"", goals: ids.NotesGoals?.value||"", clues: getClues(), contacts: getCtts() },
       portrait: { src: portraitSrc },
-      background: background,
-      socialPool: (window.getSocialPool ? window.getSocialPool() : 7) // persist current social pool (initial 7, max 25)
+      background: background
     };
   }
   function applySnapshot(data){
@@ -781,12 +764,7 @@ function buildSocialUI(){
     Object.entries(data.background).forEach(([id,val])=>{ const el = document.getElementById(id); if(el) el.value = val; });
   }
 
-  // restore social pool if present
-  try{
-    if(typeof window.setSocialPool === 'function' && data.socialPool != null){
-      window.setSocialPool(Number(data.socialPool));
-    }
-  }catch(e){}
+  // socialPool não é mais usado, mas mantemos compatibilidade silenciosa com snapshots antigos
   const hasSavedMax = (g.MaxHP != null && g.MaxHP !== "") || (g.pvMax != null && g.pvMax !== "") || (g.EnergyMax != null && g.EnergyMax !== "") || (g.pmMax != null && g.pmMax !== "");
   recalc({ keepMaxValues: hasSavedMax });
   if(ids.CurrentHP && !hasCurrentHP) ids.CurrentHP.value = ids.MaxHP?.value || 0;
