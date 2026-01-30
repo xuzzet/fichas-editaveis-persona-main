@@ -7,17 +7,17 @@
   box-shadow: 0 0 0 2px var(--danger);
 }
 body.theme-padrao {
-  --ink: #eaf6ff;
-  --ink-dim: #b9c9e8;
-  --bg: #030712;
-  --bg-2: #070e21;
-  --bg-3: #0a1430;
-  --stroke: #1a2f57;
+  --ink: #e8f4ff;
+  --ink-dim: #a8c5e0;
+  --bg: #020510;
+  --bg-2: #0a1428;
+  --bg-3: #0f1f3a;
+  --stroke: #1d3a5a;
   /* Persona 3 style blue */
-  --accent: #2ea4ff; /* primary blue */
-  --accent-2: #88dfff; /* lighter cyan for accents */
-  --danger: #ff4b6e;
-  --ok: #60f5a1;
+  --accent: #3aadff; /* primary blue - menos saturado */
+  --accent-2: #7ec9ff; /* lighter cyan - mais suave */
+  --danger: #ff5577;
+  --ok: #5ee08c;
 }
 
 body.theme-padrao {
@@ -49,54 +49,54 @@ body.theme-degrade {
   background-size: cover;
 }
 body.theme-roxo {
-  --accent: #a259ff;
-  --accent-2: #6a00ff;
-  --ink: #f3eaff;
-  --ink-dim: #c7b9e8;
-  --bg: linear-gradient(120deg, #2d1847 0%, #4b2a7b 100%);
-  --bg-2: #3a2060;
-  --bg-3: #4b2a7b;
-  --stroke: #6a00ff;
+  --accent: #9d5cdb;
+  --accent-2: #7840a8;
+  --ink: #f0e8ff;
+  --ink-dim: #bfb0db;
+  --bg: linear-gradient(135deg, #2a1a45 0%, #45275f 100%);
+  --bg-2: #342050;
+  --bg-3: #4a3070;
+  --stroke: #6b4a88;
 }
 body.theme-claro {
-  --accent: #00caff;
-  --accent-2: #5ef7d4;
-  --ink: #222;
-  --ink-dim: #555;
-  --bg: linear-gradient(120deg, #f7faff 0%, #dbefff 100%);
-  --bg-2: #eaf6ff;
-  --bg-3: #dbefff;
-  --stroke: #b9c9e8;
+  --accent: #0fa8d4;
+  --accent-2: #4dd9ba;
+  --ink: #1a1a2e;
+  --ink-dim: #666d7a;
+  --bg: linear-gradient(135deg, #f0f5ff 0%, #e0eff8 100%);
+  --bg-2: #e5f2ff;
+  --bg-3: #d8ecff;
+  --stroke: #a8b8d8;
 }
 body.theme-amarelo {
-  --accent: #feef01;
-  --accent-2: #ffd700;
-  --ink: #2d2a00;
-  --ink-dim: #a89c3a;
-  --bg: linear-gradient(120deg, #fffbe6 0%, #fff3a6 100%);
-  --bg-2: #fff9c4;
-  --bg-3: #fff3a6;
-  --stroke: #feef01;
+  --accent: #d4af37;
+  --accent-2: #e8c854;
+  --ink: #f5e6d3;
+  --ink-dim: #c9b87a;
+  --bg: linear-gradient(135deg, #2a1f0a 0%, #3d2d10 100%);
+  --bg-2: #332410;
+  --bg-3: #453020;
+  --stroke: #6b5a2a;
 }
 body.theme-vermelho {
-  --accent: #ff4b6e;
-  --accent-2: #ff7b7b;
-  --ink: #fff0f3;
-  --ink-dim: #ffc2c7;
-  --bg: linear-gradient(120deg, #2a0a18 0%, #4b1a2a 100%);
-  --bg-2: #3a1420;
-  --bg-3: #4b1a2a;
-  --stroke: #ff4b6e;
+  --accent: #d95577;
+  --accent-2: #e87a93;
+  --ink: #f5e8eb;
+  --ink-dim: #c9a8b5;
+  --bg: linear-gradient(135deg, #2c0f1f 0%, #461a2a 100%);
+  --bg-2: #341520;
+  --bg-3: #4b2035;
+  --stroke: #b05570;
 }
 body.theme-degrade {
-  --accent: #72b779;
-  --accent-2: #584f79;
-  --ink: #eaf6ff;
-  --ink-dim: #b9c9e8;
-  --bg: linear-gradient(120deg, #72b779 0%, #584f79 100%);
-  --bg-2: #72b779;
-  --bg-3: #584f79;
-  --stroke: #72b779;
+  --accent: #5d9e6e;
+  --accent-2: #6bb379;
+  --ink: #e8f4f1;
+  --ink-dim: #a8bfb8;
+  --bg: linear-gradient(135deg, #1a3d2a 0%, #2a2540 50%, #1f2a3a 100%);
+  --bg-2: #1f3228;
+  --bg-3: #263040;
+  --stroke: #4a7a5a;
 }
 /* Persona 3 Reload — Skin */
 :root {
