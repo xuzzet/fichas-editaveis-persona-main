@@ -502,14 +502,15 @@ function buildSocialUI(){
   const observer = new MutationObserver(()=> initAutoResizeTextareas());
   observer.observe(document.body, { childList: true, subtree: true });
 
-  function recalc(){
+  function recalc(options = {}){
+    const keepMaxValues = !!options.keepMaxValues;
     const lvl = clampInt(ids.CharLvl?.value||1,1,99);
   const vit = clampInt(ids.CharVIT?.value||1,1,12);
-    if(ids.MaxHP) ids.MaxHP.value = 25 + ((5 + vit) * lvl);
+    if(ids.MaxHP && !keepMaxValues) ids.MaxHP.value = 25 + ((5 + vit) * lvl);
   const mag = clampInt(ids.CharMAG?.value||1,1,99);
     const pmBase = 15 + ((mag + 5) * 2);
     const pmMax = pmBase + ((lvl - 1) * 5);
-    if(ids.EnergyMax) ids.EnergyMax.value = Math.trunc(pmMax);
+    if(ids.EnergyMax && !keepMaxValues) ids.EnergyMax.value = Math.trunc(pmMax);
     ["STR","MAG","TEC","AGI","VIT","LCK"].forEach(k=>{
       const el = document.getElementById("b"+k);
       if(el && ids["Char"+k]) el.textContent = ids["Char"+k].value;
@@ -517,14 +518,18 @@ function buildSocialUI(){
     validateCurrentValues();
   }
   function validateCurrentValues(){
-    const maxHP = clampInt(ids.MaxHP?.value||1,0,9999);
+    const maxHP = clampInt(ids.MaxHP?.value||0,0,9999);
+    if(ids.MaxHP) ids.MaxHP.value = maxHP;
     const currentHP = clampInt(ids.CurrentHP?.value||0,0,9999);
-    if(currentHP > maxHP && ids.CurrentHP) ids.CurrentHP.value = maxHP;
-    const maxPM = clampInt(ids.EnergyMax?.value||1,0,9999);
+    if(ids.CurrentHP) ids.CurrentHP.value = Math.min(currentHP, maxHP);
+    const maxPM = clampInt(ids.EnergyMax?.value||0,0,9999);
+    if(ids.EnergyMax) ids.EnergyMax.value = maxPM;
     const currentPM = clampInt(ids.CurrentPM?.value||0,0,9999);
-    if(currentPM > maxPM && ids.CurrentPM) ids.CurrentPM.value = maxPM;
+    if(ids.CurrentPM) ids.CurrentPM.value = Math.min(currentPM, maxPM);
   }
   [ids.CharLvl, ids.CharVIT, ids.CharAGI, ids.CharSTR, ids.CharMAG, ids.CharTEC, ids.CharLCK].forEach(el=>{ if(el) el.addEventListener("input", recalc); });
+  if(ids.MaxHP) ids.MaxHP.addEventListener("input", validateCurrentValues);
+  if(ids.EnergyMax) ids.EnergyMax.addEventListener("input", validateCurrentValues);
   if(ids.CurrentHP) ids.CurrentHP.addEventListener("input", validateCurrentValues);
   if(ids.CurrentPM) ids.CurrentPM.addEventListener("input", validateCurrentValues);
   recalc();
@@ -667,6 +672,7 @@ function buildSocialUI(){
         CharClass: ids.CharClass?.value||"", CharLvl: ids.CharLvl?.value||"", CharArcana: ids.CharArcana?.value||"", CharPlayer: ids.CharPlayer?.value||"",
         CharSTR: ids.CharSTR?.value||"", CharMAG: ids.CharMAG?.value||"", CharTEC: ids.CharTEC?.value||"", CharAGI: ids.CharAGI?.value||"", CharVIT: ids.CharVIT?.value||"", CharLCK: ids.CharLCK?.value||"",
         MaxHP: ids.MaxHP?.value||"", CurrentHP: ids.CurrentHP?.value||"", EnergyMax: ids.EnergyMax?.value||"", CurrentPM: ids.CurrentPM?.value||"", DmgRed: ids.DmgRed?.value||"",
+        pvMax: ids.MaxHP?.value||"", pvAtual: ids.CurrentHP?.value||"", pmMax: ids.EnergyMax?.value||"", pmAtual: ids.CurrentPM?.value||"",
         KNOPts: ids.KNOPts?.value||"", DISPts: ids.DISPts?.value||"", EMPpts: ids.EMPpts?.value||"", EXPPts: ids.EXPPts?.value||"", COUPts: ids.COUPts?.value||"", CHAPts: ids.CHAPts?.value||"",
         Aspectos: ids.Aspectos?.value||"", AspectPoints: ids.AspectPoints?.value||"", Buffs: ids.Buffs?.value||"",
         PerName: ids.PerName?.value||"", PerArcana: ids.PerArcana?.value||"", PerLvl: ids.PerLvl?.value||"", PerNotes: ids.PerNotes?.value||"", PerSP: ids.PerSP?.value||"", PerTypes: ids.PerTypes?.value||"",
@@ -691,6 +697,12 @@ function buildSocialUI(){
     if(!data) return;
   const g = data.acessoRapido||{};
   Object.keys(g).forEach(k=>{ if(ids[k]){ if(ids[k].tagName==="DIV") ids[k].textContent=g[k]; else ids[k].value=g[k]; } });
+  if(ids.MaxHP && g.pvMax != null && g.pvMax !== "") ids.MaxHP.value = g.pvMax;
+  if(ids.CurrentHP && g.pvAtual != null && g.pvAtual !== "") ids.CurrentHP.value = g.pvAtual;
+  if(ids.EnergyMax && g.pmMax != null && g.pmMax !== "") ids.EnergyMax.value = g.pmMax;
+  if(ids.CurrentPM && g.pmAtual != null && g.pmAtual !== "") ids.CurrentPM.value = g.pmAtual;
+  const hasCurrentHP = (g.CurrentHP != null && g.CurrentHP !== "") || (g.pvAtual != null && g.pvAtual !== "");
+  const hasCurrentPM = (g.CurrentPM != null && g.CurrentPM !== "") || (g.pmAtual != null && g.pmAtual !== "");
 
   // persona
   if (data.persona) {
@@ -763,7 +775,11 @@ function buildSocialUI(){
       window.setSocialPool(Number(data.socialPool));
     }
   }catch(e){}
-  recalc();
+  const hasSavedMax = (g.MaxHP != null && g.MaxHP !== "") || (g.pvMax != null && g.pvMax !== "") || (g.EnergyMax != null && g.EnergyMax !== "") || (g.pmMax != null && g.pmMax !== "");
+  recalc({ keepMaxValues: hasSavedMax });
+  if(ids.CurrentHP && !hasCurrentHP) ids.CurrentHP.value = ids.MaxHP?.value || 0;
+  if(ids.CurrentPM && !hasCurrentPM) ids.CurrentPM.value = ids.EnergyMax?.value || 0;
+  validateCurrentValues();
   }
 
   const saveBtn = document.getElementById("save");
