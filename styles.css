@@ -476,7 +476,7 @@ body {
 }
 .grid {
   display: grid;
-  gap: 18px;
+  gap: 20px;
 }
 
 @media (max-width: 600px) {
@@ -504,7 +504,7 @@ body {
   );
   border: 1px solid var(--stroke, #1a2f5a);
   border-radius: var(--radius);
-  padding: 18px;
+  padding: 20px;
   position: relative;
   box-shadow:
     0 16px 60px rgba(0, 0, 0, 0.55),
@@ -528,7 +528,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 0 0 12px;
+  margin: 0 0 14px;
 }
 .section-title h2 {
   margin: 0;
@@ -556,7 +556,7 @@ body {
 }
 label {
   display: block;
-  margin: 10px 0 6px;
+  margin: 8px 0 6px;
   font-weight: 900;
   letter-spacing: 0.14em;
   font-size: 12px;
@@ -608,6 +608,9 @@ textarea {
   min-height: 112px;
   resize: none;
 }
+textarea[rows="1"] {
+  min-height: 44px;
+}
 /* Enhanced number input spinners */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
@@ -629,8 +632,12 @@ select {
 }
 .row {
   display: grid;
-  gap: 12px;
+  gap: 14px;
   min-width: 0;
+}
+
+.row + .row {
+  margin-top: 6px;
 }
 @media (min-width: 640px) {
   .row2 {
@@ -735,7 +742,7 @@ select {
 table {
   width: 100%;
   border-collapse: separate;
-  border-spacing: 0 8px;
+  border-spacing: 0 10px;
   min-width: 0;
 }
 th,
@@ -745,6 +752,7 @@ td {
   background: var(--bg-2, #0a1432);
   border: 1px solid var(--stroke, #1a2f5a);
   min-width: 0;
+  vertical-align: top;
 }
 
 #tbl-spell .sp-t {
@@ -862,7 +870,7 @@ th:last-child {
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
   margin-top: 12px;
   min-width: 0;
 }
@@ -899,6 +907,7 @@ button:active {
   color: var(--ink-dim);
   font-size: 12px;
   margin-top: 6px;
+  line-height: 1.45;
 }
 .view {
   display: none;
@@ -910,14 +919,14 @@ button:active {
 }
 /* Uniformizar espaçamento entre cards em todas as views como Acesso Rápido */
 .view .card {
-  margin-bottom: 18px; /* mesmo passo usado na grid principal */
+  margin-bottom: 20px; /* mesmo passo usado na grid principal */
 }
 .view .card:last-child {
   margin-bottom: 0;
 }
 @media (max-width: 600px) {
   .view .card {
-    margin-bottom: 12px;
+    margin-bottom: 14px;
   }
 }
 
