@@ -147,7 +147,7 @@ const EL_IDS = {
     const testsOut = document.getElementById('tests-out');
     if (testsOut) testsOut.textContent = 'Clique em Testes para rodar as verificações.';
     // Remove dados do localStorage (mesma chave usada para salvar)
-    localStorage.removeItem('ficha-yby-p3r-skin');
+    localStorage.removeItem(STORAGE_KEY);
   }
 
   // Adiciona evento ao botão de reset
@@ -271,6 +271,38 @@ const ids = {
   Resistances: $("#Resistances"),
   NotesDiary: $("#NotesDiary"), NotesGoals: $("#NotesGoals")
 };
+const STORAGE_KEY = "ficha-yby-p3r-skin";
+const LEGACY_STORAGE_KEYS = ["ficha-yby-p3r-skin", "ficha-save", "persona-ficha-save"];
+
+function collectGenericFields(){
+  const fields = {};
+  const nodes = Array.from(document.querySelectorAll('input[id], select[id], textarea[id]'));
+  nodes.forEach((el)=>{
+    if(!el || !el.id) return;
+    const type = (el.type || '').toLowerCase();
+    if(type === 'file' || type === 'button' || type === 'submit') return;
+    if(type === 'checkbox' || type === 'radio') {
+      fields[el.id] = { type, checked: !!el.checked };
+      return;
+    }
+    fields[el.id] = { type: el.tagName.toLowerCase(), value: el.value ?? '' };
+  });
+  return fields;
+}
+
+function applyGenericFields(savedFields){
+  if(!savedFields || typeof savedFields !== 'object') return;
+  Object.entries(savedFields).forEach(([id, data])=>{
+    const el = document.getElementById(id);
+    if(!el || !data) return;
+    const type = (data.type || '').toLowerCase();
+    if(type === 'checkbox' || type === 'radio') {
+      el.checked = !!data.checked;
+      return;
+    }
+    if('value' in data) el.value = data.value ?? '';
+  });
+}
 
 // ===== Afinidades Persona =====
 // ELEMENTS e EL_IDS já declarados acima
@@ -298,6 +330,8 @@ function initApp() {
   initTabs();
   initArcanaSelects();
   buildAffinityTable();
+  buildModificadoresUI();
+  buildCondicoesUI();
   buildFeitosUI();
   buildConditionsUI();
   buildSocialUI();
@@ -413,6 +447,82 @@ function buildConditionsUI(){
   };
 
   if(btn) btn.addEventListener('click', ()=> addCondition());
+}
+
+// ===== MODIFICADORES GLOBAIS =====
+function buildModificadoresUI(){
+  const body = document.querySelector('#tbl-mod-global tbody');
+  if(!body) return;
+  const btn = document.getElementById('add-mod-global');
+
+  function addModificador(data={nome:'', tipo:'Outro', valor:'', desc:'', ativo:true}){
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><input class="modg-nome" placeholder="Ex: Bônus de Ataque"/></td>
+                    <td><select class="modg-tipo"><option>Combate</option><option>Social</option><option>Defesa</option><option>Dano</option><option>Outro</option></select></td>
+                    <td><input class="modg-valor" placeholder="+2 / -1 / 50%"/></td>
+                    <td><textarea class="modg-desc" rows="1" placeholder="Descrição"></textarea></td>
+                    <td style="text-align:center"><input type="checkbox" class="modg-ativo"/></td>
+                    <td class="row-actions"><button class="mini del">X</button></td>`;
+    body.appendChild(tr);
+    tr.querySelector('.modg-nome').value = data.nome || '';
+    tr.querySelector('.modg-tipo').value = data.tipo || 'Outro';
+    tr.querySelector('.modg-valor').value = data.valor ?? '';
+    tr.querySelector('.modg-desc').value = data.desc || '';
+    tr.querySelector('.modg-ativo').checked = data.ativo !== false;
+    tr.querySelector('.del').addEventListener('click', ()=> tr.remove());
+  }
+
+  window.addModificadorGlobal = function(d){ addModificador(d); };
+  window.getModificadores = function(){
+    return Array.from(body.querySelectorAll('tr')).map((tr)=>({
+      nome: tr.querySelector('.modg-nome')?.value || '',
+      tipo: tr.querySelector('.modg-tipo')?.value || 'Outro',
+      valor: tr.querySelector('.modg-valor')?.value || '',
+      desc: tr.querySelector('.modg-desc')?.value || '',
+      ativo: !!tr.querySelector('.modg-ativo')?.checked
+    }));
+  };
+
+  if(btn) btn.addEventListener('click', ()=> addModificador());
+}
+
+// ===== CONDIÇÕES GLOBAIS =====
+function buildCondicoesUI(){
+  const body = document.querySelector('#tbl-condicoes-globais tbody');
+  if(!body) return;
+  const conditionOrder = ['charme','panico','medo','furia','atordoado','choque','lento'];
+  body.innerHTML = '';
+
+  conditionOrder.forEach((id)=>{
+    const meta = CONDITIONS_LIST.find(c=>c.id === id);
+    if(!meta) return;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${meta.name}</td>
+                    <td style="text-align:center"><input type="checkbox" class="condg-ativo" data-cond-id="${id}"/></td>
+                    <td><textarea class="condg-desc" readonly rows="2"></textarea></td>
+                    <td><textarea class="condg-notas" rows="1" placeholder="Notas opcionais"></textarea></td>`;
+    tr.querySelector('.condg-desc').value = meta.desc || '';
+    body.appendChild(tr);
+  });
+
+  window.getCondicoes = function(){
+    const states = {};
+    Array.from(body.querySelectorAll('.condg-ativo')).forEach((chk)=>{
+      states[chk.dataset.condId] = !!chk.checked;
+    });
+    return states;
+  };
+
+  window.applyCondicoes = function(states = {}, notes = {}){
+    Array.from(body.querySelectorAll('tr')).forEach((tr)=>{
+      const chk = tr.querySelector('.condg-ativo');
+      const note = tr.querySelector('.condg-notas');
+      if(!chk) return;
+      const key = chk.dataset.condId;
+      chk.checked = !!states[key];
+      if(note) note.value = notes[key] || '';
+    });
+  };
 }
 
 // ===== Habilidades Sociais: UI e lógica de tiers =====
@@ -760,7 +870,9 @@ function buildSocialUI(){
     bgEls.forEach(el=> background[el.id] = el.value||'');
 
     return {
-      id:"ficha-yby-p3r-skin",
+      id:STORAGE_KEY,
+      version: 2,
+      savedAt: new Date().toISOString(),
       acessoRapido:{
         CharClass: ids.CharClass?.value||"", CharLvl: ids.CharLvl?.value||"", CharArcana: ids.CharArcana?.value||"", CharPlayer: ids.CharPlayer?.value||"",
         CharSTR: ids.CharSTR?.value||"", CharMAG: ids.CharMAG?.value||"", CharTEC: ids.CharTEC?.value||"", CharAGI: ids.CharAGI?.value||"", CharVIT: ids.CharVIT?.value||"", CharLCK: ids.CharLCK?.value||"",
@@ -778,9 +890,24 @@ function buildSocialUI(){
       affinities: affin,
       spells: getSpells(),
       feitos: (window.getFeitos? window.getFeitos() : []),
+      modificadoresGlobais: (window.getModificadores ? window.getModificadores() : []),
       equip: getEquip(),
       links: getLinks(),
+      condicoes: (window.getCondicoes ? window.getCondicoes() : {}),
+      condicoesNotas: (()=> {
+        const notes = {};
+        Array.from(document.querySelectorAll('#tbl-condicoes-globais .condg-notas')).forEach((el)=>{
+          const row = el.closest('tr');
+          const key = row?.querySelector('.condg-ativo')?.dataset?.condId;
+          if(key) notes[key] = el.value || '';
+        });
+        return notes;
+      })(),
       notes: { diary: ids.NotesDiary?.value||"", goals: ids.NotesGoals?.value||"", clues: getClues(), contacts: getCtts() },
+      ui: {
+        theme: localStorage.getItem('ficha-theme') || 'padrao'
+      },
+      fields: collectGenericFields(),
       portrait: { src: portraitSrc },
       background: background,
       conditions: (window.getConditions ? window.getConditions() : [])
@@ -788,6 +915,7 @@ function buildSocialUI(){
   }
   function applySnapshot(data){
     if(!data) return;
+  applyGenericFields(data.fields);
   const g = data.acessoRapido||{};
   Object.keys(g).forEach(k=>{ if(ids[k]){ if(ids[k].tagName==="DIV") ids[k].textContent=g[k]; else ids[k].value=g[k]; } });
   if(ids.MaxHP && g.pvMax != null && g.pvMax !== "") ids.MaxHP.value = g.pvMax;
@@ -823,6 +951,15 @@ function buildSocialUI(){
   spellBody.innerHTML = '';
   (data.spells||[]).forEach(addSpell);
 
+  // Modificadores globais
+  try{
+    const mbody = document.querySelector('#tbl-mod-global tbody');
+    if(mbody) mbody.innerHTML = '';
+    if(mbody && window.addModificadorGlobal){
+      (data.modificadoresGlobais || []).forEach(m=> window.addModificadorGlobal(m));
+    }
+  }catch(e){}
+
   linkBody.innerHTML = '';
   (data.links||[]).forEach(addLink);
 
@@ -848,6 +985,11 @@ function buildSocialUI(){
     }
   }catch(e){}
 
+  // Condições globais (checkbox + notas)
+  if(typeof window.applyCondicoes === 'function'){
+    window.applyCondicoes(data.condicoes || {}, data.condicoesNotas || {});
+  }
+
   // Condições - sempre limpar antes de restaurar para evitar duplicação
   try{
     const cbody = document.querySelector('#tbl-conditions tbody');
@@ -868,6 +1010,13 @@ function buildSocialUI(){
     const prev = document.getElementById('portraitPreview'); if (prev) prev.innerHTML = `<img src='${data.portrait.src}' alt='Retrato' style='max-width:180px;max-height:220px;border-radius:12px;border:2px solid var(--accent);'/>`;
   }
 
+  // UI preferences
+  if (data.ui && data.ui.theme) {
+    localStorage.setItem('ficha-theme', data.ui.theme);
+    if (typeof applyTheme === 'function') applyTheme(data.ui.theme);
+    if (themeSelect) themeSelect.value = data.ui.theme;
+  }
+
   // Background
   if (data.background) {
     Object.entries(data.background).forEach(([id,val])=>{ const el = document.getElementById(id); if(el) el.value = val; });
@@ -883,6 +1032,15 @@ function buildSocialUI(){
   }
 
   const saveBtn = document.getElementById("save");
+  let autoSaveTimer = null;
+  function persistSnapshot(showFeedback = false){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot()));
+    if(showFeedback) showToast("✓ Ficha salva com sucesso", 'success');
+  }
+  function scheduleAutoSave(){
+    if(autoSaveTimer) clearTimeout(autoSaveTimer);
+    autoSaveTimer = setTimeout(()=> persistSnapshot(false), 600);
+  }
   if(saveBtn) saveBtn.addEventListener("click", ()=>{
     // Validação de campos obrigatórios
     const obrigatorios = [ids.CharClass, ids.CharPlayer, ids.PerName];
@@ -897,12 +1055,11 @@ function buildSocialUI(){
       setTimeout(() => faltando.forEach(f => f.classList.remove('input-error')), 2000);
       return;
     }
-    localStorage.setItem("ficha-yby-p3r-skin", JSON.stringify(snapshot()));
-    showToast("✓ Ficha salva com sucesso", 'success');
+    persistSnapshot(true);
   });
   const loadBtn = document.getElementById("load");
   if(loadBtn) loadBtn.addEventListener("click", ()=>{ 
-    const raw=localStorage.getItem("ficha-yby-p3r-skin"); 
+    const raw = LEGACY_STORAGE_KEYS.map(k=> localStorage.getItem(k)).find(Boolean);
     if(!raw) return showToast("Nenhuma ficha salva", 'info'); 
     try{ applySnapshot(JSON.parse(raw)); showToast("✓ Ficha carregada", 'success'); }catch(e){ showToast("Erro ao carregar ficha", 'error'); } 
   });
@@ -910,6 +1067,18 @@ function buildSocialUI(){
   if(exportBtn) exportBtn.addEventListener("click", ()=>{ const blob = new Blob([JSON.stringify(snapshot(),null,2)], {type:"application/json"}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=((ids.CharPlayer?.value||'ficha')+".json"); a.click(); URL.revokeObjectURL(a.href); showToast("✓ Ficha exportada", 'success'); });
   const importBtn = document.getElementById("import");
   if(importBtn) importBtn.addEventListener("click", ()=>{ const i=document.createElement('input'); i.type='file'; i.accept='application/json'; i.onchange=()=>{ const f=i.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ try{ applySnapshot(JSON.parse(r.result)); showToast("✓ Ficha importada", 'success'); }catch(e){ showToast("Erro ao importar ficha", 'error'); } }; r.readAsText(f); }; i.click(); });
+
+  // Auto-save: input/change + lifecycle events
+  const watchNodes = Array.from(document.querySelectorAll('input, select, textarea'));
+  watchNodes.forEach((el)=>{
+    el.addEventListener('input', scheduleAutoSave);
+    el.addEventListener('change', scheduleAutoSave);
+  });
+  window.addEventListener('beforeunload', ()=> persistSnapshot(false));
+  window.addEventListener('pagehide', ()=> persistSnapshot(false));
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.visibilityState === 'hidden') persistSnapshot(false);
+  });
 
   // ====== PDF ======
   const fillBtn = document.getElementById("fill");
