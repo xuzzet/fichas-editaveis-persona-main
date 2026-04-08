@@ -87,10 +87,10 @@ const EL_IDS = {
     document.body.classList.add(themeMap[theme] || themeMap.padrao);
   }
   function saveTheme(theme) {
-    localStorage.setItem('ficha-theme', theme);
+    try { localStorage.setItem('ficha-theme', theme); } catch(e) {}
   }
   function loadTheme() {
-    return localStorage.getItem('ficha-theme') || 'padrao';
+    try { return localStorage.getItem('ficha-theme') || 'padrao'; } catch(e) { return 'padrao'; }
   }
   if (themeSelect) {
     themeSelect.value = loadTheme();
@@ -120,8 +120,10 @@ const EL_IDS = {
 
   // Função para resetar todos os campos da ficha
   function resetFicha() {
+    if(typeof window.confirm === 'function' && !window.confirm('Tem certeza que deseja resetar a ficha?')) return;
     // Seleciona todos os inputs, selects e textareas dentro do .wrap
     const root = document.querySelector('.wrap');
+    if(!root) return;
     const fields = root.querySelectorAll('input, select, textarea');
     fields.forEach(field => {
       if (field.type === 'number' || field.type === 'range') {
@@ -147,6 +149,7 @@ const EL_IDS = {
     const testsOut = document.getElementById('tests-out');
     if (testsOut) testsOut.textContent = 'Clique em Testes para rodar as verificações.';
     // Remove dados do localStorage (mesma chave usada para salvar)
+    safeStorageRemove(STORAGE_KEY);
     localStorage.removeItem(STORAGE_KEY);
   }
 
@@ -273,6 +276,26 @@ const ids = {
 };
 const STORAGE_KEY = "ficha-yby-p3r-skin";
 const LEGACY_STORAGE_KEYS = ["ficha-yby-p3r-skin", "ficha-save", "persona-ficha-save"];
+function safeStorageGet(key, fallback = null){
+  try{
+    const v = localStorage.getItem(key);
+    return v == null ? fallback : v;
+  }catch(e){
+    return fallback;
+  }
+}
+function safeStorageSet(key, value){
+  try{ localStorage.setItem(key, value); return true; }catch(e){ return false; }
+}
+function safeStorageRemove(key){
+  try{ localStorage.removeItem(key); return true; }catch(e){ return false; }
+}
+function safeJSONStringify(value, fallback = "{}"){
+  try{ return JSON.stringify(value); }catch(e){ return fallback; }
+}
+function safeJSONParse(raw, fallback = null){
+  try{ return JSON.parse(raw); }catch(e){ return fallback; }
+}
 
 function collectGenericFields(){
   const fields = {};
@@ -987,6 +1010,7 @@ function buildSocialUI(){
       })(),
       notes: { diary: ids.NotesDiary?.value||"", goals: ids.NotesGoals?.value||"", clues: getClues(), contacts: getCtts() },
       ui: {
+        theme: safeStorageGet('ficha-theme', 'padrao') || 'padrao'
         theme: localStorage.getItem('ficha-theme') || 'padrao'
       },
       fields: collectGenericFields(),
@@ -1094,6 +1118,7 @@ function buildSocialUI(){
 
   // UI preferences
   if (data.ui && data.ui.theme) {
+    safeStorageSet('ficha-theme', data.ui.theme);
     localStorage.setItem('ficha-theme', data.ui.theme);
     if (typeof applyTheme === 'function') applyTheme(data.ui.theme);
     if (themeSelect) themeSelect.value = data.ui.theme;
@@ -1116,6 +1141,7 @@ function buildSocialUI(){
   const saveBtn = document.getElementById("save");
   let autoSaveTimer = null;
   function persistSnapshot(showFeedback = false){
+    safeStorageSet(STORAGE_KEY, safeJSONStringify(snapshot()));
     localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot()));
     if(showFeedback) showToast("✓ Ficha salva com sucesso", 'success');
   }
@@ -1125,12 +1151,12 @@ function buildSocialUI(){
   }
   if(saveBtn) saveBtn.addEventListener("click", ()=>{
     // Validação de campos obrigatórios
-    const obrigatorios = [ids.CharClass, ids.CharPlayer, ids.PerName];
-    let faltando = obrigatorios.filter(f => !f.value.trim());
+    const obrigatorios = [ids.CharClass, ids.CharPlayer, ids.PerName].filter(Boolean);
+    let faltando = obrigatorios.filter(f => !(f.value||'').trim());
     if (faltando.length > 0) {
       faltando.forEach(f => { f.classList.add('input-error'); f.focus(); });
       const camposNomes = faltando.map(f => {
-        const label = f.closest('div').querySelector('label').textContent.trim();
+        const label = f.closest('div')?.querySelector('label')?.textContent?.trim() || f.id || 'Campo obrigatório';
         return label.split('*')[0].trim();
       }).join(', ');
       showToast(`Preencha: ${camposNomes}`, 'error', 3500);
@@ -1141,14 +1167,41 @@ function buildSocialUI(){
   });
   const loadBtn = document.getElementById("load");
   if(loadBtn) loadBtn.addEventListener("click", ()=>{ 
+    const raw = LEGACY_STORAGE_KEYS.map(k=> safeStorageGet(k)).find(Boolean);
     const raw = LEGACY_STORAGE_KEYS.map(k=> localStorage.getItem(k)).find(Boolean);
     if(!raw) return showToast("Nenhuma ficha salva", 'info'); 
-    try{ applySnapshot(JSON.parse(raw)); showToast("✓ Ficha carregada", 'success'); }catch(e){ showToast("Erro ao carregar ficha", 'error'); } 
+    const parsed = safeJSONParse(raw, null);
+    if(!parsed) return showToast("Erro ao carregar ficha", 'error');
+    try{ applySnapshot(parsed); showToast("✓ Ficha carregada", 'success'); }catch(e){ showToast("Erro ao carregar ficha", 'error'); } 
   });
   const exportBtn = document.getElementById("export");
-  if(exportBtn) exportBtn.addEventListener("click", ()=>{ const blob = new Blob([JSON.stringify(snapshot(),null,2)], {type:"application/json"}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=((ids.CharPlayer?.value||'ficha')+".json"); a.click(); URL.revokeObjectURL(a.href); showToast("✓ Ficha exportada", 'success'); });
+  if(exportBtn) exportBtn.addEventListener("click", ()=>{ const blob = new Blob([safeJSONStringify(snapshot(), "{}")], {type:"application/json"}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=((ids.CharPlayer?.value||'ficha')+".json"); a.click(); URL.revokeObjectURL(a.href); showToast("✓ Ficha exportada", 'success'); });
   const importBtn = document.getElementById("import");
-  if(importBtn) importBtn.addEventListener("click", ()=>{ const i=document.createElement('input'); i.type='file'; i.accept='application/json'; i.onchange=()=>{ const f=i.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ try{ applySnapshot(JSON.parse(r.result)); showToast("✓ Ficha importada", 'success'); }catch(e){ showToast("Erro ao importar ficha", 'error'); } }; r.readAsText(f); }; i.click(); });
+  if(importBtn) importBtn.addEventListener("click", ()=>{ const i=document.createElement('input'); i.type='file'; i.accept='application/json'; i.onchange=()=>{ const f=i.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ const parsed = safeJSONParse(r.result, null); if(!parsed) return showToast("Erro ao importar ficha", 'error'); try{ applySnapshot(parsed); showToast("✓ Ficha importada", 'success'); }catch(e){ showToast("Erro ao importar ficha", 'error'); } }; r.readAsText(f); }; i.click(); });
+
+  // Auto-save: input/change + lifecycle events
+  const watchNodes = Array.from(document.querySelectorAll('input, select, textarea'));
+  watchNodes.forEach((el)=>{
+    el.addEventListener('input', scheduleAutoSave);
+    el.addEventListener('change', scheduleAutoSave);
+  });
+  window.addEventListener('beforeunload', ()=> persistSnapshot(false));
+  window.addEventListener('pagehide', ()=> persistSnapshot(false));
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.visibilityState === 'hidden') persistSnapshot(false);
+  });
+
+  // Auto-save: input/change + lifecycle events
+  const watchNodes = Array.from(document.querySelectorAll('input, select, textarea'));
+  watchNodes.forEach((el)=>{
+    el.addEventListener('input', scheduleAutoSave);
+    el.addEventListener('change', scheduleAutoSave);
+  });
+  window.addEventListener('beforeunload', ()=> persistSnapshot(false));
+  window.addEventListener('pagehide', ()=> persistSnapshot(false));
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.visibilityState === 'hidden') persistSnapshot(false);
+  });
 
   // Auto-save: input/change + lifecycle events
   const watchNodes = Array.from(document.querySelectorAll('input, select, textarea'));
