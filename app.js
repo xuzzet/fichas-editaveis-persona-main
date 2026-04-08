@@ -1203,6 +1203,18 @@ function buildSocialUI(){
     if(document.visibilityState === 'hidden') persistSnapshot(false);
   });
 
+  // Auto-save: input/change + lifecycle events
+  const watchNodes = Array.from(document.querySelectorAll('input, select, textarea'));
+  watchNodes.forEach((el)=>{
+    el.addEventListener('input', scheduleAutoSave);
+    el.addEventListener('change', scheduleAutoSave);
+  });
+  window.addEventListener('beforeunload', ()=> persistSnapshot(false));
+  window.addEventListener('pagehide', ()=> persistSnapshot(false));
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.visibilityState === 'hidden') persistSnapshot(false);
+  });
+
   // ====== PDF ======
   const fillBtn = document.getElementById("fill");
   if(fillBtn) fillBtn.addEventListener("click", ()=> {
