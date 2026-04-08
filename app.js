@@ -135,7 +135,7 @@ const EL_IDS = {
       }
     });
     // Limpa tabelas dinâmicas se existirem
-    ['tbl-eq','tbl-spell','tbl-link','tbl-clue','tbl-ctt','tbl-feitos','tbl-conditions'].forEach(id => {
+    ['tbl-eq','tbl-spell','tbl-link','tbl-clue','tbl-ctt','tbl-feitos','tbl-conditions','tbl-mod'].forEach(id => {
       const tbody = document.querySelector(`#${id} tbody`);
       if (tbody) tbody.innerHTML = '';
     });
@@ -301,6 +301,7 @@ function initApp() {
   buildFeitosUI();
   buildConditionsUI();
   buildSocialUI();
+  buildModifiersUI();
   // ...existing code...
 }
 
@@ -546,6 +547,94 @@ function buildSocialUI(){
   };
 }
 
+// ===== MODIFICADORES GLOBAIS UI & Lógica =====
+const MOD_TARGETS = ['STR','MAG','TEC','AGI','VIT','LCK','HP','PM'];
+
+function buildModifiersUI(){
+  const body = document.querySelector('#tbl-mod tbody');
+  if(!body) return;
+  const btn = document.getElementById('add-mod');
+  const summary = document.getElementById('mod-summary');
+
+  function addMod(data={nome:'', tipo:'flat', valor:0, alvo:'STR', ativo:true}){
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><input class="mod-nome" placeholder="Nome do modificador"/></td>
+                    <td><select class="mod-tipo"><option value="flat">Flat (+/-)</option><option value="percentual">Percentual (%)</option></select></td>
+                    <td><input class="mod-valor" type="number" value="0" style="width:80px;"/></td>
+                    <td><select class="mod-alvo"></select></td>
+                    <td style="text-align:center"><input type="checkbox" class="mod-ativo" checked/></td>
+                    <td class="row-actions"><button class="mini del">Remover</button></td>`;
+    body.appendChild(tr);
+    const alvoSel = tr.querySelector('.mod-alvo');
+    MOD_TARGETS.forEach(t=>{ const o=document.createElement('option'); o.value=t; o.textContent=t; alvoSel.appendChild(o); });
+    tr.querySelector('.mod-nome').value = data.nome||'';
+    tr.querySelector('.mod-tipo').value = data.tipo||'flat';
+    tr.querySelector('.mod-valor').value = data.valor||0;
+    alvoSel.value = data.alvo||'STR';
+    tr.querySelector('.mod-ativo').checked = data.ativo !== false;
+
+    function onChange(){ updateModSummary(); if(typeof window._recalcWithMods === 'function') window._recalcWithMods(); }
+    tr.querySelector('.mod-nome').addEventListener('input', onChange);
+    tr.querySelector('.mod-tipo').addEventListener('change', onChange);
+    tr.querySelector('.mod-valor').addEventListener('input', onChange);
+    alvoSel.addEventListener('change', onChange);
+    tr.querySelector('.mod-ativo').addEventListener('change', onChange);
+    tr.querySelector('.del').addEventListener('click', ()=>{ tr.remove(); onChange(); });
+  }
+
+  function getMods(){
+    return body ? Array.from(body.querySelectorAll('tr')).map(tr=>({
+      nome: tr.querySelector('.mod-nome').value,
+      tipo: tr.querySelector('.mod-tipo').value,
+      valor: Number(tr.querySelector('.mod-valor').value)||0,
+      alvo: tr.querySelector('.mod-alvo').value,
+      ativo: !!tr.querySelector('.mod-ativo').checked
+    })) : [];
+  }
+
+  function getActiveMods(){
+    return getMods().filter(m=> m.ativo && m.valor !== 0);
+  }
+
+  function applyModifiers(baseValues){
+    const result = {};
+    MOD_TARGETS.forEach(t=> result[t] = baseValues[t] || 0);
+    const actives = getActiveMods();
+    // Apply flat first, then percentual
+    actives.filter(m=> m.tipo === 'flat').forEach(m=>{
+      if(result[m.alvo] !== undefined) result[m.alvo] += m.valor;
+    });
+    actives.filter(m=> m.tipo === 'percentual').forEach(m=>{
+      if(result[m.alvo] !== undefined) result[m.alvo] = Math.round(result[m.alvo] * (1 + m.valor / 100));
+    });
+    // Clamp to 0 minimum
+    MOD_TARGETS.forEach(t=>{ if(result[t] < 0) result[t] = 0; });
+    return result;
+  }
+
+  function updateModSummary(){
+    if(!summary) return;
+    const actives = getActiveMods();
+    if(actives.length === 0){ summary.style.display = 'none'; return; }
+    summary.style.display = 'block';
+    const parts = actives.map(m=>{
+      const sign = m.valor >= 0 ? '+' : '';
+      const suffix = m.tipo === 'percentual' ? '%' : '';
+      return `<b>${m.alvo}</b> ${sign}${m.valor}${suffix} (${m.nome||'sem nome'})`;
+    });
+    summary.innerHTML = '⚡ Ativos: ' + parts.join(' · ');
+  }
+
+  // expose globally
+  window.addMod = addMod;
+  window.getMods = getMods;
+  window.getActiveMods = getActiveMods;
+  window.applyModifiers = applyModifiers;
+
+  if(btn) btn.addEventListener('click', ()=> addMod());
+  updateModSummary();
+}
+
 (function(){
   initApp();
   // ...existing code...
@@ -604,12 +693,35 @@ function buildSocialUI(){
     const pmBase = 15 + ((mag + 5) * 2);
     const pmMax = pmBase + ((lvl - 1) * 5);
     if(ids.EnergyMax && !keepMaxValues) ids.EnergyMax.value = Math.trunc(pmMax);
-    ["STR","MAG","TEC","AGI","VIT","LCK"].forEach(k=>{
-      const el = document.getElementById("b"+k);
-      if(el && ids["Char"+k]) el.textContent = ids["Char"+k].value;
-    });
+
+    // Aplicar modificadores globais nos badges e valores calculados
+    if(typeof window.applyModifiers === 'function'){
+      const baseVals = {
+        STR: clampInt(ids.CharSTR?.value||1,1,12),
+        MAG: clampInt(ids.CharMAG?.value||1,1,12),
+        TEC: clampInt(ids.CharTEC?.value||1,1,12),
+        AGI: clampInt(ids.CharAGI?.value||1,1,12),
+        VIT: clampInt(ids.CharVIT?.value||1,1,12),
+        LCK: clampInt(ids.CharLCK?.value||1,1,12),
+        HP: Number(ids.MaxHP?.value||0),
+        PM: Number(ids.EnergyMax?.value||0)
+      };
+      const modded = window.applyModifiers(baseVals);
+      ["STR","MAG","TEC","AGI","VIT","LCK"].forEach(k=>{
+        const el = document.getElementById("b"+k);
+        if(el) el.textContent = modded[k] !== baseVals[k] ? `${modded[k]} (${baseVals[k]})` : baseVals[k];
+      });
+      if(ids.MaxHP && !keepMaxValues && modded.HP !== baseVals.HP) ids.MaxHP.value = modded.HP;
+      if(ids.EnergyMax && !keepMaxValues && modded.PM !== baseVals.PM) ids.EnergyMax.value = modded.PM;
+    } else {
+      ["STR","MAG","TEC","AGI","VIT","LCK"].forEach(k=>{
+        const el = document.getElementById("b"+k);
+        if(el && ids["Char"+k]) el.textContent = ids["Char"+k].value;
+      });
+    }
     validateCurrentValues();
   }
+  window._recalcWithMods = recalc;
   function validateCurrentValues(){
     const maxHP = clampInt(ids.MaxHP?.value||0,0,9999);
     if(ids.MaxHP) ids.MaxHP.value = maxHP;
@@ -785,7 +897,8 @@ function buildSocialUI(){
       notes: { diary: ids.NotesDiary?.value||"", goals: ids.NotesGoals?.value||"", clues: getClues(), contacts: getCtts() },
       portrait: { src: portraitSrc },
       background: background,
-      conditions: (window.getConditions ? window.getConditions() : [])
+      conditions: (window.getConditions ? window.getConditions() : []),
+      modifiers: (window.getMods ? window.getMods() : [])
     };
   }
   function applySnapshot(data){
@@ -857,6 +970,17 @@ function buildSocialUI(){
     if(cbody && window.addCondition){
       (data.conditions||[]).forEach(c=>{
         window.addCondition(c);
+      });
+    }
+  }catch(e){}
+
+  // Modificadores Globais - limpar e restaurar
+  try{
+    const mbody = document.querySelector('#tbl-mod tbody');
+    if(mbody){ mbody.innerHTML = ''; }
+    if(mbody && window.addMod){
+      (data.modifiers||[]).forEach(m=>{
+        window.addMod(m);
       });
     }
   }catch(e){}
@@ -1065,7 +1189,7 @@ function buildSocialUI(){
   document.addEventListener('change', debouncedAutoSave);
 
   // MutationObserver para linhas adicionadas/removidas em tabelas dinâmicas
-  const autoSaveTableIds = ['tbl-eq','tbl-spell','tbl-link','tbl-clue','tbl-ctt','tbl-feitos','tbl-conditions'];
+  const autoSaveTableIds = ['tbl-eq','tbl-spell','tbl-link','tbl-clue','tbl-ctt','tbl-feitos','tbl-conditions','tbl-mod'];
   const tableObserver = new MutationObserver(() => {
     setTimeout(debouncedAutoSave, 100);
   });

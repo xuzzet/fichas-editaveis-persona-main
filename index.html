@@ -45,6 +45,7 @@
   <button class="tab" data-view="equip">Equipamentos</button>
   <button class="tab" data-view="vinculos">Vínculos</button>
   <button class="tab" data-view="notes">Anotações</button>
+  <button class="tab" data-view="modificadores">Modificadores</button>
   <button class="tab" data-view="background">Lore</button>
     </nav>
 
@@ -383,6 +384,22 @@
         <div class="actions"><button class="mini" id="add-ctt">+ Adicionar Contato/Local</button></div>
         <table id="tbl-ctt">
           <thead><tr><th>Nome</th><th>Tipo</th><th>Observações</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </section>
+    </div>
+
+    <!-- VIEW: MODIFICADORES GLOBAIS -->
+    <div class="view" id="modificadores">
+      <section class="card">
+        <div class="section-title"><div class="bar"></div><h2>Modificadores Globais</h2></div>
+        <div class="actions"><button class="mini" id="add-mod">+ Modificador</button></div>
+        <div class="hint">Adicione buffs ou debuffs que afetam os atributos do personagem. Flat soma direto; Percentual aplica % sobre o valor base. Ative/desative conforme necessário.</div>
+        <div id="mod-summary" class="hint" style="margin-top:8px;display:none;"></div>
+        <table id="tbl-mod">
+          <thead>
+            <tr><th>Nome</th><th>Tipo</th><th>Valor</th><th>Alvo</th><th>Ativo</th><th></th></tr>
+          </thead>
           <tbody></tbody>
         </table>
       </section>
