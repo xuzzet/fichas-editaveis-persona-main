@@ -150,6 +150,7 @@ const EL_IDS = {
     if (testsOut) testsOut.textContent = 'Clique em Testes para rodar as verificações.';
     // Remove dados do localStorage (mesma chave usada para salvar)
     safeStorageRemove(STORAGE_KEY);
+    localStorage.removeItem(STORAGE_KEY);
   }
 
   // Adiciona evento ao botão de reset
@@ -1010,6 +1011,7 @@ function buildSocialUI(){
       notes: { diary: ids.NotesDiary?.value||"", goals: ids.NotesGoals?.value||"", clues: getClues(), contacts: getCtts() },
       ui: {
         theme: safeStorageGet('ficha-theme', 'padrao') || 'padrao'
+        theme: localStorage.getItem('ficha-theme') || 'padrao'
       },
       fields: collectGenericFields(),
       portrait: { src: portraitSrc },
@@ -1117,6 +1119,7 @@ function buildSocialUI(){
   // UI preferences
   if (data.ui && data.ui.theme) {
     safeStorageSet('ficha-theme', data.ui.theme);
+    localStorage.setItem('ficha-theme', data.ui.theme);
     if (typeof applyTheme === 'function') applyTheme(data.ui.theme);
     if (themeSelect) themeSelect.value = data.ui.theme;
   }
@@ -1139,6 +1142,7 @@ function buildSocialUI(){
   let autoSaveTimer = null;
   function persistSnapshot(showFeedback = false){
     safeStorageSet(STORAGE_KEY, safeJSONStringify(snapshot()));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot()));
     if(showFeedback) showToast("✓ Ficha salva com sucesso", 'success');
   }
   function scheduleAutoSave(){
@@ -1164,6 +1168,7 @@ function buildSocialUI(){
   const loadBtn = document.getElementById("load");
   if(loadBtn) loadBtn.addEventListener("click", ()=>{ 
     const raw = LEGACY_STORAGE_KEYS.map(k=> safeStorageGet(k)).find(Boolean);
+    const raw = LEGACY_STORAGE_KEYS.map(k=> localStorage.getItem(k)).find(Boolean);
     if(!raw) return showToast("Nenhuma ficha salva", 'info'); 
     const parsed = safeJSONParse(raw, null);
     if(!parsed) return showToast("Erro ao carregar ficha", 'error');
@@ -1173,6 +1178,18 @@ function buildSocialUI(){
   if(exportBtn) exportBtn.addEventListener("click", ()=>{ const blob = new Blob([safeJSONStringify(snapshot(), "{}")], {type:"application/json"}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=((ids.CharPlayer?.value||'ficha')+".json"); a.click(); URL.revokeObjectURL(a.href); showToast("✓ Ficha exportada", 'success'); });
   const importBtn = document.getElementById("import");
   if(importBtn) importBtn.addEventListener("click", ()=>{ const i=document.createElement('input'); i.type='file'; i.accept='application/json'; i.onchange=()=>{ const f=i.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ const parsed = safeJSONParse(r.result, null); if(!parsed) return showToast("Erro ao importar ficha", 'error'); try{ applySnapshot(parsed); showToast("✓ Ficha importada", 'success'); }catch(e){ showToast("Erro ao importar ficha", 'error'); } }; r.readAsText(f); }; i.click(); });
+
+  // Auto-save: input/change + lifecycle events
+  const watchNodes = Array.from(document.querySelectorAll('input, select, textarea'));
+  watchNodes.forEach((el)=>{
+    el.addEventListener('input', scheduleAutoSave);
+    el.addEventListener('change', scheduleAutoSave);
+  });
+  window.addEventListener('beforeunload', ()=> persistSnapshot(false));
+  window.addEventListener('pagehide', ()=> persistSnapshot(false));
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.visibilityState === 'hidden') persistSnapshot(false);
+  });
 
   // Auto-save: input/change + lifecycle events
   const watchNodes = Array.from(document.querySelectorAll('input, select, textarea'));
