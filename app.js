@@ -87,10 +87,10 @@ const EL_IDS = {
     document.body.classList.add(themeMap[theme] || themeMap.padrao);
   }
   function saveTheme(theme) {
-    try { localStorage.setItem('ficha-theme', theme); } catch(e) {}
+    localStorage.setItem('ficha-theme', theme);
   }
   function loadTheme() {
-    try { return localStorage.getItem('ficha-theme') || 'padrao'; } catch(e) { return 'padrao'; }
+    return localStorage.getItem('ficha-theme') || 'padrao';
   }
   if (themeSelect) {
     themeSelect.value = loadTheme();
@@ -120,10 +120,8 @@ const EL_IDS = {
 
   // Função para resetar todos os campos da ficha
   function resetFicha() {
-    if(typeof window.confirm === 'function' && !window.confirm('Tem certeza que deseja resetar a ficha?')) return;
     // Seleciona todos os inputs, selects e textareas dentro do .wrap
     const root = document.querySelector('.wrap');
-    if(!root) return;
     const fields = root.querySelectorAll('input, select, textarea');
     fields.forEach(field => {
       if (field.type === 'number' || field.type === 'range') {
@@ -149,8 +147,7 @@ const EL_IDS = {
     const testsOut = document.getElementById('tests-out');
     if (testsOut) testsOut.textContent = 'Clique em Testes para rodar as verificações.';
     // Remove dados do localStorage (mesma chave usada para salvar)
-    safeStorageRemove(STORAGE_KEY);
-    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem('ficha-yby-p3r-skin');
   }
 
   // Adiciona evento ao botão de reset
@@ -274,85 +271,6 @@ const ids = {
   Resistances: $("#Resistances"),
   NotesDiary: $("#NotesDiary"), NotesGoals: $("#NotesGoals")
 };
-const STORAGE_KEY = "ficha-yby-p3r-skin";
-const LEGACY_STORAGE_KEYS = ["ficha-yby-p3r-skin", "ficha-save", "persona-ficha-save"];
-function safeStorageGet(key, fallback = null){
-  try{
-    const v = localStorage.getItem(key);
-    return v == null ? fallback : v;
-  }catch(e){
-    return fallback;
-  }
-}
-function safeStorageSet(key, value){
-  try{ localStorage.setItem(key, value); return true; }catch(e){ return false; }
-}
-function safeStorageRemove(key){
-  try{ localStorage.removeItem(key); return true; }catch(e){ return false; }
-}
-function safeJSONStringify(value, fallback = "{}"){
-  try{ return JSON.stringify(value); }catch(e){ return fallback; }
-}
-function safeJSONParse(raw, fallback = null){
-  try{ return JSON.parse(raw); }catch(e){ return fallback; }
-}
-
-function collectGenericFields(){
-  const fields = {};
-  const nodes = Array.from(document.querySelectorAll('input[id], select[id], textarea[id]'));
-  nodes.forEach((el)=>{
-    if(!el || !el.id) return;
-    const type = (el.type || '').toLowerCase();
-    if(type === 'file' || type === 'button' || type === 'submit') return;
-    if(type === 'checkbox' || type === 'radio') {
-      fields[el.id] = { type, checked: !!el.checked };
-      return;
-    }
-    fields[el.id] = { type: el.tagName.toLowerCase(), value: el.value ?? '' };
-  });
-  return fields;
-}
-
-function applyGenericFields(savedFields){
-  if(!savedFields || typeof savedFields !== 'object') return;
-  Object.entries(savedFields).forEach(([id, data])=>{
-    const el = document.getElementById(id);
-    if(!el || !data) return;
-    const type = (data.type || '').toLowerCase();
-    if(type === 'checkbox' || type === 'radio') {
-      el.checked = !!data.checked;
-      return;
-    }
-    if('value' in data) el.value = data.value ?? '';
-  });
-}
-
-const MODIFIER_TARGET_OPTIONS = [
-  { value: 'STR', label: 'STR' }, { value: 'MAG', label: 'MAG' }, { value: 'TEC', label: 'TEC' }, { value: 'AGI', label: 'AGI' }, { value: 'VIT', label: 'VIT' }, { value: 'LCK', label: 'LCK' },
-  { value: 'KNOPts', label: 'Conhecimento' }, { value: 'DISPts', label: 'Disciplina' }, { value: 'EMPpts', label: 'Empatia' }, { value: 'EXPPts', label: 'Expressão' }, { value: 'COUPts', label: 'Coragem' }, { value: 'CHAPts', label: 'Charme' },
-  { value: 'MaxHP', label: 'Vida Máxima (HP)' }, { value: 'CurrentHP', label: 'Vida Atual (HP)' }, { value: 'EnergyMax', label: 'Mana Máxima (PM)' }, { value: 'CurrentPM', label: 'Mana Atual (PM)' }
-];
-
-function parseModifierValue(raw){
-  const n = Number(String(raw ?? '').replace(',', '.').trim());
-  return Number.isFinite(n) ? n : 0;
-}
-
-function applyGlobalModifiers(){
-  const base = {
-    STR:0, MAG:0, TEC:0, AGI:0, VIT:0, LCK:0,
-    KNOPts:0, DISPts:0, EMPpts:0, EXPPts:0, COUPts:0, CHAPts:0,
-    MaxHP:0, CurrentHP:0, EnergyMax:0, CurrentPM:0
-  };
-  const mods = (typeof window.getModificadores === 'function') ? window.getModificadores() : [];
-  mods.forEach((m)=>{
-    if(!m || !m.ativo) return;
-    const target = m.alvo;
-    if(!target || !(target in base)) return;
-    base[target] += parseModifierValue(m.valor);
-  });
-  return base;
-}
 
 // ===== Afinidades Persona =====
 // ELEMENTS e EL_IDS já declarados acima
@@ -380,8 +298,6 @@ function initApp() {
   initTabs();
   initArcanaSelects();
   buildAffinityTable();
-  buildModificadoresUI();
-  buildCondicoesUI();
   buildFeitosUI();
   buildConditionsUI();
   buildSocialUI();
@@ -499,95 +415,6 @@ function buildConditionsUI(){
   if(btn) btn.addEventListener('click', ()=> addCondition());
 }
 
-// ===== MODIFICADORES GLOBAIS =====
-function buildModificadoresUI(){
-  const body = document.querySelector('#tbl-mod-global tbody');
-  if(!body) return;
-  const btn = document.getElementById('add-mod-global');
-
-  function addModificador(data={nome:'', tipo:'Outro', alvo:'STR', valor:'', desc:'', ativo:true}){
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td><input class="modg-nome" placeholder="Ex: Bônus de Ataque"/></td>
-                    <td><div style="display:grid;gap:6px;"><select class="modg-tipo"><option>Combate</option><option>Social</option><option>Defesa</option><option>Dano</option><option>Outro</option></select><select class="modg-alvo"></select></div></td>
-                    <td><input class="modg-valor" placeholder="+2 / -1 / 50%"/></td>
-                    <td><textarea class="modg-desc" rows="1" placeholder="Descrição"></textarea></td>
-                    <td style="text-align:center"><input type="checkbox" class="modg-ativo"/></td>
-                    <td class="row-actions"><button class="mini del">X</button></td>`;
-    body.appendChild(tr);
-    const alvoSel = tr.querySelector('.modg-alvo');
-    MODIFIER_TARGET_OPTIONS.forEach((opt)=>{
-      const o = document.createElement('option');
-      o.value = opt.value;
-      o.textContent = opt.label;
-      alvoSel.appendChild(o);
-    });
-    tr.querySelector('.modg-nome').value = data.nome || '';
-    tr.querySelector('.modg-tipo').value = data.tipo || 'Outro';
-    alvoSel.value = data.alvo || 'STR';
-    tr.querySelector('.modg-valor').value = data.valor ?? '';
-    tr.querySelector('.modg-desc').value = data.desc || '';
-    tr.querySelector('.modg-ativo').checked = data.ativo !== false;
-    tr.querySelector('.del').addEventListener('click', ()=>{ tr.remove(); if(typeof window.recalcNow === 'function') window.recalcNow(); });
-    tr.querySelectorAll('input,select,textarea').forEach((el)=>{
-      el.addEventListener('input', ()=>{ if(typeof window.recalcNow === 'function') window.recalcNow(); });
-      el.addEventListener('change', ()=>{ if(typeof window.recalcNow === 'function') window.recalcNow(); });
-    });
-  }
-
-  window.addModificadorGlobal = function(d){ addModificador(d); };
-  window.getModificadores = function(){
-    return Array.from(body.querySelectorAll('tr')).map((tr)=>({
-      nome: tr.querySelector('.modg-nome')?.value || '',
-      tipo: tr.querySelector('.modg-tipo')?.value || 'Outro',
-      alvo: tr.querySelector('.modg-alvo')?.value || 'STR',
-      valor: tr.querySelector('.modg-valor')?.value || '',
-      desc: tr.querySelector('.modg-desc')?.value || '',
-      ativo: !!tr.querySelector('.modg-ativo')?.checked
-    }));
-  };
-
-  if(btn) btn.addEventListener('click', ()=> addModificador());
-}
-
-// ===== CONDIÇÕES GLOBAIS =====
-function buildCondicoesUI(){
-  const body = document.querySelector('#tbl-condicoes-globais tbody');
-  if(!body) return;
-  const conditionOrder = ['charme','panico','medo','furia','atordoado','choque','lento'];
-  body.innerHTML = '';
-
-  conditionOrder.forEach((id)=>{
-    const meta = CONDITIONS_LIST.find(c=>c.id === id);
-    if(!meta) return;
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${meta.name}</td>
-                    <td style="text-align:center"><input type="checkbox" class="condg-ativo" data-cond-id="${id}"/></td>
-                    <td><textarea class="condg-desc" readonly rows="2"></textarea></td>
-                    <td><textarea class="condg-notas" rows="1" placeholder="Notas opcionais"></textarea></td>`;
-    tr.querySelector('.condg-desc').value = meta.desc || '';
-    body.appendChild(tr);
-  });
-
-  window.getCondicoes = function(){
-    const states = {};
-    Array.from(body.querySelectorAll('.condg-ativo')).forEach((chk)=>{
-      states[chk.dataset.condId] = !!chk.checked;
-    });
-    return states;
-  };
-
-  window.applyCondicoes = function(states = {}, notes = {}){
-    Array.from(body.querySelectorAll('tr')).forEach((tr)=>{
-      const chk = tr.querySelector('.condg-ativo');
-      const note = tr.querySelector('.condg-notas');
-      if(!chk) return;
-      const key = chk.dataset.condId;
-      chk.checked = !!states[key];
-      if(note) note.value = notes[key] || '';
-    });
-  };
-}
-
 // ===== Habilidades Sociais: UI e lógica de tiers =====
 function buildSocialUI(){
   // Na criação do personagem, o jogador recebe 7 pontos iniciais para distribuir.
@@ -662,7 +489,6 @@ function buildSocialUI(){
   });
 
   function updateAll(){
-    const mods = applyGlobalModifiers();
     // Cada habilidade funciona de forma independente, sem limites
     idsList.forEach((id)=>{
       const el = document.getElementById(id);
@@ -672,7 +498,7 @@ function buildSocialUI(){
       if(val < 0){ el.value = 0; val = 0; }
       
       // update tier display
-      const points = Math.max(0, val + (mods[id] || 0));
+      const points = Math.max(0, val);
       const tier = Math.min(5, Math.floor(points / 5));
       const meta = skillMeta[id];
       const tierEl = document.getElementById(id+'-tier');
@@ -708,7 +534,6 @@ function buildSocialUI(){
 
   // initial render
   updateAll();
-  window.refreshSocialUI = updateAll;
 
   // Manter funções para compatibilidade com snapshots antigos, mas sem funcionalidade
   window.setSocialPool = function(n){ 
@@ -773,56 +598,17 @@ function buildSocialUI(){
   function recalc(options = {}){
     const keepMaxValues = !!options.keepMaxValues;
     const lvl = clampInt(ids.CharLvl?.value||1,1,99);
-    const mods = applyGlobalModifiers();
-    const statFinal = {};
-    ["STR","MAG","TEC","AGI","VIT","LCK"].forEach((k)=>{
-      const baseVal = clampInt(ids["Char"+k]?.value||1,1,99);
-      statFinal[k] = Math.max(0, baseVal + (mods[k] || 0));
-    });
-    const vit = statFinal.VIT;
-    const calcMaxHP = 25 + ((5 + vit) * lvl);
-    const mag = statFinal.MAG;
+  const vit = clampInt(ids.CharVIT?.value||1,1,12);
+    if(ids.MaxHP && !keepMaxValues) ids.MaxHP.value = 25 + ((5 + vit) * lvl);
+  const mag = clampInt(ids.CharMAG?.value||1,1,99);
     const pmBase = 15 + ((mag + 5) * 2);
-    const calcMaxPM = Math.trunc(pmBase + ((lvl - 1) * 5));
+    const pmMax = pmBase + ((lvl - 1) * 5);
+    if(ids.EnergyMax && !keepMaxValues) ids.EnergyMax.value = Math.trunc(pmMax);
     ["STR","MAG","TEC","AGI","VIT","LCK"].forEach(k=>{
       const el = document.getElementById("b"+k);
-      if(el && ids["Char"+k]) el.textContent = statFinal[k];
+      if(el && ids["Char"+k]) el.textContent = ids["Char"+k].value;
     });
-    const baseMaxHP = ids.MaxHP ? (()=> {
-      if(!keepMaxValues){
-        ids.MaxHP.dataset.baseValue = String(calcMaxHP);
-        return calcMaxHP;
-      }
-      const fromDataset = Number(ids.MaxHP.dataset.baseValue);
-      if(Number.isFinite(fromDataset)) return clampInt(fromDataset,0,9999);
-      return Math.max(0, clampInt(ids.MaxHP.value||0,0,9999) - (mods.MaxHP || 0));
-    })() : 0;
-    const baseMaxPM = ids.EnergyMax ? (()=> {
-      if(!keepMaxValues){
-        ids.EnergyMax.dataset.baseValue = String(calcMaxPM);
-        return calcMaxPM;
-      }
-      const fromDataset = Number(ids.EnergyMax.dataset.baseValue);
-      if(Number.isFinite(fromDataset)) return clampInt(fromDataset,0,9999);
-      return Math.max(0, clampInt(ids.EnergyMax.value||0,0,9999) - (mods.EnergyMax || 0));
-    })() : 0;
-    const baseCurrentHP = ids.CurrentHP ? (()=> {
-      const fromDataset = Number(ids.CurrentHP.dataset.baseValue);
-      if(Number.isFinite(fromDataset)) return clampInt(fromDataset,0,9999);
-      return Math.max(0, clampInt(ids.CurrentHP.value||0,0,9999) - (mods.CurrentHP || 0));
-    })() : 0;
-    const baseCurrentPM = ids.CurrentPM ? (()=> {
-      const fromDataset = Number(ids.CurrentPM.dataset.baseValue);
-      if(Number.isFinite(fromDataset)) return clampInt(fromDataset,0,9999);
-      return Math.max(0, clampInt(ids.CurrentPM.value||0,0,9999) - (mods.CurrentPM || 0));
-    })() : 0;
-
-    if(ids.MaxHP) ids.MaxHP.value = Math.max(0, baseMaxHP + (mods.MaxHP || 0));
-    if(ids.EnergyMax) ids.EnergyMax.value = Math.max(0, baseMaxPM + (mods.EnergyMax || 0));
-    if(ids.CurrentHP) ids.CurrentHP.value = Math.max(0, baseCurrentHP + (mods.CurrentHP || 0));
-    if(ids.CurrentPM) ids.CurrentPM.value = Math.max(0, baseCurrentPM + (mods.CurrentPM || 0));
     validateCurrentValues();
-    if(typeof window.refreshSocialUI === 'function') window.refreshSocialUI();
   }
   function validateCurrentValues(){
     const maxHP = clampInt(ids.MaxHP?.value||0,0,9999);
@@ -835,11 +621,10 @@ function buildSocialUI(){
     if(ids.CurrentPM) ids.CurrentPM.value = Math.min(currentPM, maxPM);
   }
   [ids.CharLvl, ids.CharVIT, ids.CharAGI, ids.CharSTR, ids.CharMAG, ids.CharTEC, ids.CharLCK].forEach(el=>{ if(el) el.addEventListener("input", recalc); });
-  if(ids.MaxHP) ids.MaxHP.addEventListener("input", ()=>{ const mods = applyGlobalModifiers(); ids.MaxHP.dataset.baseValue = String(Math.max(0, clampInt(ids.MaxHP.value||0,0,9999) - (mods.MaxHP||0))); validateCurrentValues(); });
-  if(ids.EnergyMax) ids.EnergyMax.addEventListener("input", ()=>{ const mods = applyGlobalModifiers(); ids.EnergyMax.dataset.baseValue = String(Math.max(0, clampInt(ids.EnergyMax.value||0,0,9999) - (mods.EnergyMax||0))); validateCurrentValues(); });
-  if(ids.CurrentHP) ids.CurrentHP.addEventListener("input", ()=>{ const mods = applyGlobalModifiers(); ids.CurrentHP.dataset.baseValue = String(Math.max(0, clampInt(ids.CurrentHP.value||0,0,9999) - (mods.CurrentHP||0))); validateCurrentValues(); });
-  if(ids.CurrentPM) ids.CurrentPM.addEventListener("input", ()=>{ const mods = applyGlobalModifiers(); ids.CurrentPM.dataset.baseValue = String(Math.max(0, clampInt(ids.CurrentPM.value||0,0,9999) - (mods.CurrentPM||0))); validateCurrentValues(); });
-  window.recalcNow = recalc;
+  if(ids.MaxHP) ids.MaxHP.addEventListener("input", validateCurrentValues);
+  if(ids.EnergyMax) ids.EnergyMax.addEventListener("input", validateCurrentValues);
+  if(ids.CurrentHP) ids.CurrentHP.addEventListener("input", validateCurrentValues);
+  if(ids.CurrentPM) ids.CurrentPM.addEventListener("input", validateCurrentValues);
   recalc();
 
   // ====== Equipamentos ======
@@ -975,9 +760,7 @@ function buildSocialUI(){
     bgEls.forEach(el=> background[el.id] = el.value||'');
 
     return {
-      id:STORAGE_KEY,
-      version: 2,
-      savedAt: new Date().toISOString(),
+      id:"ficha-yby-p3r-skin",
       acessoRapido:{
         CharClass: ids.CharClass?.value||"", CharLvl: ids.CharLvl?.value||"", CharArcana: ids.CharArcana?.value||"", CharPlayer: ids.CharPlayer?.value||"",
         CharSTR: ids.CharSTR?.value||"", CharMAG: ids.CharMAG?.value||"", CharTEC: ids.CharTEC?.value||"", CharAGI: ids.CharAGI?.value||"", CharVIT: ids.CharVIT?.value||"", CharLCK: ids.CharLCK?.value||"",
@@ -995,25 +778,9 @@ function buildSocialUI(){
       affinities: affin,
       spells: getSpells(),
       feitos: (window.getFeitos? window.getFeitos() : []),
-      modificadoresGlobais: (window.getModificadores ? window.getModificadores() : []),
       equip: getEquip(),
       links: getLinks(),
-      condicoes: (window.getCondicoes ? window.getCondicoes() : {}),
-      condicoesNotas: (()=> {
-        const notes = {};
-        Array.from(document.querySelectorAll('#tbl-condicoes-globais .condg-notas')).forEach((el)=>{
-          const row = el.closest('tr');
-          const key = row?.querySelector('.condg-ativo')?.dataset?.condId;
-          if(key) notes[key] = el.value || '';
-        });
-        return notes;
-      })(),
       notes: { diary: ids.NotesDiary?.value||"", goals: ids.NotesGoals?.value||"", clues: getClues(), contacts: getCtts() },
-      ui: {
-        theme: safeStorageGet('ficha-theme', 'padrao') || 'padrao'
-        theme: localStorage.getItem('ficha-theme') || 'padrao'
-      },
-      fields: collectGenericFields(),
       portrait: { src: portraitSrc },
       background: background,
       conditions: (window.getConditions ? window.getConditions() : [])
@@ -1021,7 +788,6 @@ function buildSocialUI(){
   }
   function applySnapshot(data){
     if(!data) return;
-  applyGenericFields(data.fields);
   const g = data.acessoRapido||{};
   Object.keys(g).forEach(k=>{ if(ids[k]){ if(ids[k].tagName==="DIV") ids[k].textContent=g[k]; else ids[k].value=g[k]; } });
   if(ids.MaxHP && g.pvMax != null && g.pvMax !== "") ids.MaxHP.value = g.pvMax;
@@ -1057,15 +823,6 @@ function buildSocialUI(){
   spellBody.innerHTML = '';
   (data.spells||[]).forEach(addSpell);
 
-  // Modificadores globais
-  try{
-    const mbody = document.querySelector('#tbl-mod-global tbody');
-    if(mbody) mbody.innerHTML = '';
-    if(mbody && window.addModificadorGlobal){
-      (data.modificadoresGlobais || []).forEach(m=> window.addModificadorGlobal(m));
-    }
-  }catch(e){}
-
   linkBody.innerHTML = '';
   (data.links||[]).forEach(addLink);
 
@@ -1091,11 +848,6 @@ function buildSocialUI(){
     }
   }catch(e){}
 
-  // Condições globais (checkbox + notas)
-  if(typeof window.applyCondicoes === 'function'){
-    window.applyCondicoes(data.condicoes || {}, data.condicoesNotas || {});
-  }
-
   // Condições - sempre limpar antes de restaurar para evitar duplicação
   try{
     const cbody = document.querySelector('#tbl-conditions tbody');
@@ -1116,14 +868,6 @@ function buildSocialUI(){
     const prev = document.getElementById('portraitPreview'); if (prev) prev.innerHTML = `<img src='${data.portrait.src}' alt='Retrato' style='max-width:180px;max-height:220px;border-radius:12px;border:2px solid var(--accent);'/>`;
   }
 
-  // UI preferences
-  if (data.ui && data.ui.theme) {
-    safeStorageSet('ficha-theme', data.ui.theme);
-    localStorage.setItem('ficha-theme', data.ui.theme);
-    if (typeof applyTheme === 'function') applyTheme(data.ui.theme);
-    if (themeSelect) themeSelect.value = data.ui.theme;
-  }
-
   // Background
   if (data.background) {
     Object.entries(data.background).forEach(([id,val])=>{ const el = document.getElementById(id); if(el) el.value = val; });
@@ -1139,81 +883,33 @@ function buildSocialUI(){
   }
 
   const saveBtn = document.getElementById("save");
-  let autoSaveTimer = null;
-  function persistSnapshot(showFeedback = false){
-    safeStorageSet(STORAGE_KEY, safeJSONStringify(snapshot()));
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot()));
-    if(showFeedback) showToast("✓ Ficha salva com sucesso", 'success');
-  }
-  function scheduleAutoSave(){
-    if(autoSaveTimer) clearTimeout(autoSaveTimer);
-    autoSaveTimer = setTimeout(()=> persistSnapshot(false), 600);
-  }
   if(saveBtn) saveBtn.addEventListener("click", ()=>{
     // Validação de campos obrigatórios
-    const obrigatorios = [ids.CharClass, ids.CharPlayer, ids.PerName].filter(Boolean);
-    let faltando = obrigatorios.filter(f => !(f.value||'').trim());
+    const obrigatorios = [ids.CharClass, ids.CharPlayer, ids.PerName];
+    let faltando = obrigatorios.filter(f => !f.value.trim());
     if (faltando.length > 0) {
       faltando.forEach(f => { f.classList.add('input-error'); f.focus(); });
       const camposNomes = faltando.map(f => {
-        const label = f.closest('div')?.querySelector('label')?.textContent?.trim() || f.id || 'Campo obrigatório';
+        const label = f.closest('div').querySelector('label').textContent.trim();
         return label.split('*')[0].trim();
       }).join(', ');
       showToast(`Preencha: ${camposNomes}`, 'error', 3500);
       setTimeout(() => faltando.forEach(f => f.classList.remove('input-error')), 2000);
       return;
     }
-    persistSnapshot(true);
+    localStorage.setItem("ficha-yby-p3r-skin", JSON.stringify(snapshot()));
+    showToast("✓ Ficha salva com sucesso", 'success');
   });
   const loadBtn = document.getElementById("load");
   if(loadBtn) loadBtn.addEventListener("click", ()=>{ 
-    const raw = LEGACY_STORAGE_KEYS.map(k=> safeStorageGet(k)).find(Boolean);
-    const raw = LEGACY_STORAGE_KEYS.map(k=> localStorage.getItem(k)).find(Boolean);
+    const raw=localStorage.getItem("ficha-yby-p3r-skin"); 
     if(!raw) return showToast("Nenhuma ficha salva", 'info'); 
-    const parsed = safeJSONParse(raw, null);
-    if(!parsed) return showToast("Erro ao carregar ficha", 'error');
-    try{ applySnapshot(parsed); showToast("✓ Ficha carregada", 'success'); }catch(e){ showToast("Erro ao carregar ficha", 'error'); } 
+    try{ applySnapshot(JSON.parse(raw)); showToast("✓ Ficha carregada", 'success'); }catch(e){ showToast("Erro ao carregar ficha", 'error'); } 
   });
   const exportBtn = document.getElementById("export");
-  if(exportBtn) exportBtn.addEventListener("click", ()=>{ const blob = new Blob([safeJSONStringify(snapshot(), "{}")], {type:"application/json"}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=((ids.CharPlayer?.value||'ficha')+".json"); a.click(); URL.revokeObjectURL(a.href); showToast("✓ Ficha exportada", 'success'); });
+  if(exportBtn) exportBtn.addEventListener("click", ()=>{ const blob = new Blob([JSON.stringify(snapshot(),null,2)], {type:"application/json"}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=((ids.CharPlayer?.value||'ficha')+".json"); a.click(); URL.revokeObjectURL(a.href); showToast("✓ Ficha exportada", 'success'); });
   const importBtn = document.getElementById("import");
-  if(importBtn) importBtn.addEventListener("click", ()=>{ const i=document.createElement('input'); i.type='file'; i.accept='application/json'; i.onchange=()=>{ const f=i.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ const parsed = safeJSONParse(r.result, null); if(!parsed) return showToast("Erro ao importar ficha", 'error'); try{ applySnapshot(parsed); showToast("✓ Ficha importada", 'success'); }catch(e){ showToast("Erro ao importar ficha", 'error'); } }; r.readAsText(f); }; i.click(); });
-
-  // Auto-save: input/change + lifecycle events
-  const watchNodes = Array.from(document.querySelectorAll('input, select, textarea'));
-  watchNodes.forEach((el)=>{
-    el.addEventListener('input', scheduleAutoSave);
-    el.addEventListener('change', scheduleAutoSave);
-  });
-  window.addEventListener('beforeunload', ()=> persistSnapshot(false));
-  window.addEventListener('pagehide', ()=> persistSnapshot(false));
-  document.addEventListener('visibilitychange', ()=>{
-    if(document.visibilityState === 'hidden') persistSnapshot(false);
-  });
-
-  // Auto-save: input/change + lifecycle events
-  const watchNodes = Array.from(document.querySelectorAll('input, select, textarea'));
-  watchNodes.forEach((el)=>{
-    el.addEventListener('input', scheduleAutoSave);
-    el.addEventListener('change', scheduleAutoSave);
-  });
-  window.addEventListener('beforeunload', ()=> persistSnapshot(false));
-  window.addEventListener('pagehide', ()=> persistSnapshot(false));
-  document.addEventListener('visibilitychange', ()=>{
-    if(document.visibilityState === 'hidden') persistSnapshot(false);
-  });
-
-  // Auto-save: input/change + lifecycle events
-  const watchNodes = Array.from(document.querySelectorAll('input, select, textarea'));
-  watchNodes.forEach((el)=>{
-    el.addEventListener('input', scheduleAutoSave);
-    el.addEventListener('change', scheduleAutoSave);
-  });
-  window.addEventListener('beforeunload', ()=> persistSnapshot(false));
-  window.addEventListener('pagehide', ()=> persistSnapshot(false));
-  document.addEventListener('visibilitychange', ()=>{
-    if(document.visibilityState === 'hidden') persistSnapshot(false);
-  });
+  if(importBtn) importBtn.addEventListener("click", ()=>{ const i=document.createElement('input'); i.type='file'; i.accept='application/json'; i.onchange=()=>{ const f=i.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ try{ applySnapshot(JSON.parse(r.result)); showToast("✓ Ficha importada", 'success'); }catch(e){ showToast("Erro ao importar ficha", 'error'); } }; r.readAsText(f); }; i.click(); });
 
   // ====== PDF ======
   const fillBtn = document.getElementById("fill");
