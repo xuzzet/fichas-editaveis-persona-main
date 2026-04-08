@@ -41,7 +41,7 @@
     <nav class="tabs" id="tabs">
   <button class="tab active" data-view="acessorapido">Acesso Rápido</button>
   <button class="tab" data-view="persona">Persona</button>
-    <button class="tab" data-view="feitos">Feitos</button>
+    <button class="tab" data-view="feitos">Modificadores Globais</button>
   <button class="tab" data-view="equip">Equipamentos</button>
   <button class="tab" data-view="vinculos">Vínculos</button>
   <button class="tab" data-view="notes">Anotações</button>
@@ -197,6 +197,29 @@
 
     <!-- VIEW: FEITOS -->
   <div class="view" id="feitos">
+    <section class="card">
+      <div class="section-title"><div class="bar"></div><h2>Modificadores Globais</h2></div>
+      <div class="actions"><button class="mini" id="add-mod-global">+ Adicionar Modificador</button></div>
+      <div class="hint">Aplique aqui buffs/debuffs gerais do personagem.</div>
+      <table id="tbl-mod-global">
+        <thead>
+          <tr><th>Nome do modificador</th><th>Tipo</th><th>Valor</th><th>Descrição</th><th>Ativo</th><th></th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <div class="section-title"><div class="bar"></div><h2>Condições</h2></div>
+      <div class="hint">Marque as condições ativas. A descrição é preenchida automaticamente.</div>
+      <table id="tbl-condicoes-globais">
+        <thead>
+          <tr><th>Condição</th><th>Ativo</th><th>Descrição</th><th>Notas</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
     <section class="card">
       <div class="section-title"><div class="bar"></div><h2>Feitos</h2></div>
       <div class="actions"><button class="mini" id="add-feito">+ Adicionar Feito</button></div>
