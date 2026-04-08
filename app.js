@@ -683,11 +683,13 @@ function buildSocialUI(){
       tsel.value = data.tipo||"Físico"; 
       tr.querySelector('.sp-c').value = data.custo||""; 
       tr.querySelector('.sp-e').value = data.efeito||""; 
+      if(data.tier != null) tr.querySelector('.sp-tier').value = data.tier;
+      if(data.uses != null) tr.querySelector('.sp-uses').value = data.uses;
       tr.querySelector('.del').addEventListener('click', ()=> tr.remove());
       tr.querySelector('.up').addEventListener('click', ()=> moveSpellRow(tr, 'up'));
       tr.querySelector('.down').addEventListener('click', ()=> moveSpellRow(tr, 'down'));
   }
-  function getSpells(){ return spellBody? Array.from(spellBody.querySelectorAll('tr')).map(tr=>({ nome: (tr.querySelector('.sp-n')?.value||''), tipo: tr.querySelector('.sp-t').value, custo: tr.querySelector('.sp-c').value, efeito: (tr.querySelector('.sp-e')?.value||'') })) : []; }
+  function getSpells(){ return spellBody? Array.from(spellBody.querySelectorAll('tr')).map(tr=>({ nome: (tr.querySelector('.sp-n')?.value||''), tipo: tr.querySelector('.sp-t').value, custo: tr.querySelector('.sp-c').value, efeito: (tr.querySelector('.sp-e')?.value||''), tier: (tr.querySelector('.sp-tier')?.value||''), uses: (tr.querySelector('.sp-uses')?.value||'') })) : []; }
 
   // ====== Vínculos ======
   const linkBody = $("#tbl-link tbody");
@@ -1002,4 +1004,84 @@ function buildSocialUI(){
     if(btnCtt) btnCtt.click();
   }
   seed();
+
+  // ===== Auto-Load: restaurar dados do localStorage ao abrir =====
+  try {
+    const raw = localStorage.getItem("ficha-yby-p3r-skin");
+    if (raw) {
+      const data = JSON.parse(raw);
+      if (data && typeof data === 'object' && data.id === "ficha-yby-p3r-skin") {
+        applySnapshot(data);
+      } else {
+        console.warn("Auto-load: dados inválidos no localStorage, ignorando.");
+      }
+    }
+  } catch (e) {
+    console.warn("Erro ao carregar auto-save:", e);
+  }
+
+  // ===== Auto-Save System =====
+  function debounce(fn, delay) {
+    let timer;
+    return function(...args) {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn.apply(this, args), delay);
+    };
+  }
+
+  // Indicador visual de salvamento
+  const saveIndicator = document.createElement('div');
+  saveIndicator.id = 'auto-save-indicator';
+  saveIndicator.style.cssText = 'position:fixed;bottom:16px;right:16px;padding:6px 16px;border-radius:8px;font-size:13px;font-weight:700;color:#fff;background:rgba(30,30,30,0.85);opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:9999;backdrop-filter:blur(6px);';
+  document.body.appendChild(saveIndicator);
+  let saveIndicatorTimer = null;
+
+  function showSaveStatus(text, duration) {
+    saveIndicator.textContent = text;
+    saveIndicator.style.opacity = '1';
+    if (saveIndicatorTimer) clearTimeout(saveIndicatorTimer);
+    if (duration) {
+      saveIndicatorTimer = setTimeout(() => { saveIndicator.style.opacity = '0'; }, duration);
+    }
+  }
+
+  // Função central de auto-save
+  function autoSave() {
+    try {
+      showSaveStatus('Salvando...');
+      const data = snapshot();
+      localStorage.setItem("ficha-yby-p3r-skin", JSON.stringify(data));
+      showSaveStatus('Salvo \u2714', 2000);
+    } catch (e) {
+      console.warn("Erro ao salvar automaticamente:", e);
+      showSaveStatus('Erro ao salvar', 3000);
+    }
+  }
+
+  const debouncedAutoSave = debounce(autoSave, 500);
+
+  // Listeners globais: qualquer input ou change dispara auto-save
+  document.addEventListener('input', debouncedAutoSave);
+  document.addEventListener('change', debouncedAutoSave);
+
+  // MutationObserver para linhas adicionadas/removidas em tabelas dinâmicas
+  const autoSaveTableIds = ['tbl-eq','tbl-spell','tbl-link','tbl-clue','tbl-ctt','tbl-feitos','tbl-conditions'];
+  const tableObserver = new MutationObserver(() => {
+    setTimeout(debouncedAutoSave, 100);
+  });
+  autoSaveTableIds.forEach(id => {
+    const tbody = document.querySelector('#' + id + ' tbody');
+    if (tbody) tableObserver.observe(tbody, { childList: true, subtree: true });
+  });
+
+  // Salvar antes de fechar a página (safety net)
+  window.addEventListener('beforeunload', () => {
+    try {
+      localStorage.setItem("ficha-yby-p3r-skin", JSON.stringify(snapshot()));
+    } catch (e) {}
+  });
+
+  // Expor para uso externo se necessário
+  window.autoSave = autoSave;
+  window.debouncedAutoSave = debouncedAutoSave;
 })();
