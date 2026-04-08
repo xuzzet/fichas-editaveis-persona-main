@@ -304,6 +304,33 @@ function applyGenericFields(savedFields){
   });
 }
 
+const MODIFIER_TARGET_OPTIONS = [
+  { value: 'STR', label: 'STR' }, { value: 'MAG', label: 'MAG' }, { value: 'TEC', label: 'TEC' }, { value: 'AGI', label: 'AGI' }, { value: 'VIT', label: 'VIT' }, { value: 'LCK', label: 'LCK' },
+  { value: 'KNOPts', label: 'Conhecimento' }, { value: 'DISPts', label: 'Disciplina' }, { value: 'EMPpts', label: 'Empatia' }, { value: 'EXPPts', label: 'Expressão' }, { value: 'COUPts', label: 'Coragem' }, { value: 'CHAPts', label: 'Charme' },
+  { value: 'MaxHP', label: 'Vida Máxima (HP)' }, { value: 'CurrentHP', label: 'Vida Atual (HP)' }, { value: 'EnergyMax', label: 'Mana Máxima (PM)' }, { value: 'CurrentPM', label: 'Mana Atual (PM)' }
+];
+
+function parseModifierValue(raw){
+  const n = Number(String(raw ?? '').replace(',', '.').trim());
+  return Number.isFinite(n) ? n : 0;
+}
+
+function applyGlobalModifiers(){
+  const base = {
+    STR:0, MAG:0, TEC:0, AGI:0, VIT:0, LCK:0,
+    KNOPts:0, DISPts:0, EMPpts:0, EXPPts:0, COUPts:0, CHAPts:0,
+    MaxHP:0, CurrentHP:0, EnergyMax:0, CurrentPM:0
+  };
+  const mods = (typeof window.getModificadores === 'function') ? window.getModificadores() : [];
+  mods.forEach((m)=>{
+    if(!m || !m.ativo) return;
+    const target = m.alvo;
+    if(!target || !(target in base)) return;
+    base[target] += parseModifierValue(m.valor);
+  });
+  return base;
+}
+
 // ===== Afinidades Persona =====
 // ELEMENTS e EL_IDS já declarados acima
 const RELS = ["Normal","Fraco","Resiste","Anula","Reflete","Absorve"];
@@ -455,21 +482,33 @@ function buildModificadoresUI(){
   if(!body) return;
   const btn = document.getElementById('add-mod-global');
 
-  function addModificador(data={nome:'', tipo:'Outro', valor:'', desc:'', ativo:true}){
+  function addModificador(data={nome:'', tipo:'Outro', alvo:'STR', valor:'', desc:'', ativo:true}){
     const tr = document.createElement('tr');
     tr.innerHTML = `<td><input class="modg-nome" placeholder="Ex: Bônus de Ataque"/></td>
-                    <td><select class="modg-tipo"><option>Combate</option><option>Social</option><option>Defesa</option><option>Dano</option><option>Outro</option></select></td>
+                    <td><div style="display:grid;gap:6px;"><select class="modg-tipo"><option>Combate</option><option>Social</option><option>Defesa</option><option>Dano</option><option>Outro</option></select><select class="modg-alvo"></select></div></td>
                     <td><input class="modg-valor" placeholder="+2 / -1 / 50%"/></td>
                     <td><textarea class="modg-desc" rows="1" placeholder="Descrição"></textarea></td>
                     <td style="text-align:center"><input type="checkbox" class="modg-ativo"/></td>
                     <td class="row-actions"><button class="mini del">X</button></td>`;
     body.appendChild(tr);
+    const alvoSel = tr.querySelector('.modg-alvo');
+    MODIFIER_TARGET_OPTIONS.forEach((opt)=>{
+      const o = document.createElement('option');
+      o.value = opt.value;
+      o.textContent = opt.label;
+      alvoSel.appendChild(o);
+    });
     tr.querySelector('.modg-nome').value = data.nome || '';
     tr.querySelector('.modg-tipo').value = data.tipo || 'Outro';
+    alvoSel.value = data.alvo || 'STR';
     tr.querySelector('.modg-valor').value = data.valor ?? '';
     tr.querySelector('.modg-desc').value = data.desc || '';
     tr.querySelector('.modg-ativo').checked = data.ativo !== false;
-    tr.querySelector('.del').addEventListener('click', ()=> tr.remove());
+    tr.querySelector('.del').addEventListener('click', ()=>{ tr.remove(); if(typeof window.recalcNow === 'function') window.recalcNow(); });
+    tr.querySelectorAll('input,select,textarea').forEach((el)=>{
+      el.addEventListener('input', ()=>{ if(typeof window.recalcNow === 'function') window.recalcNow(); });
+      el.addEventListener('change', ()=>{ if(typeof window.recalcNow === 'function') window.recalcNow(); });
+    });
   }
 
   window.addModificadorGlobal = function(d){ addModificador(d); };
@@ -477,6 +516,7 @@ function buildModificadoresUI(){
     return Array.from(body.querySelectorAll('tr')).map((tr)=>({
       nome: tr.querySelector('.modg-nome')?.value || '',
       tipo: tr.querySelector('.modg-tipo')?.value || 'Outro',
+      alvo: tr.querySelector('.modg-alvo')?.value || 'STR',
       valor: tr.querySelector('.modg-valor')?.value || '',
       desc: tr.querySelector('.modg-desc')?.value || '',
       ativo: !!tr.querySelector('.modg-ativo')?.checked
@@ -599,6 +639,7 @@ function buildSocialUI(){
   });
 
   function updateAll(){
+    const mods = applyGlobalModifiers();
     // Cada habilidade funciona de forma independente, sem limites
     idsList.forEach((id)=>{
       const el = document.getElementById(id);
@@ -608,7 +649,7 @@ function buildSocialUI(){
       if(val < 0){ el.value = 0; val = 0; }
       
       // update tier display
-      const points = Math.max(0, val);
+      const points = Math.max(0, val + (mods[id] || 0));
       const tier = Math.min(5, Math.floor(points / 5));
       const meta = skillMeta[id];
       const tierEl = document.getElementById(id+'-tier');
@@ -644,6 +685,7 @@ function buildSocialUI(){
 
   // initial render
   updateAll();
+  window.refreshSocialUI = updateAll;
 
   // Manter funções para compatibilidade com snapshots antigos, mas sem funcionalidade
   window.setSocialPool = function(n){ 
@@ -708,17 +750,56 @@ function buildSocialUI(){
   function recalc(options = {}){
     const keepMaxValues = !!options.keepMaxValues;
     const lvl = clampInt(ids.CharLvl?.value||1,1,99);
-  const vit = clampInt(ids.CharVIT?.value||1,1,12);
-    if(ids.MaxHP && !keepMaxValues) ids.MaxHP.value = 25 + ((5 + vit) * lvl);
-  const mag = clampInt(ids.CharMAG?.value||1,1,99);
+    const mods = applyGlobalModifiers();
+    const statFinal = {};
+    ["STR","MAG","TEC","AGI","VIT","LCK"].forEach((k)=>{
+      const baseVal = clampInt(ids["Char"+k]?.value||1,1,99);
+      statFinal[k] = Math.max(0, baseVal + (mods[k] || 0));
+    });
+    const vit = statFinal.VIT;
+    const calcMaxHP = 25 + ((5 + vit) * lvl);
+    const mag = statFinal.MAG;
     const pmBase = 15 + ((mag + 5) * 2);
-    const pmMax = pmBase + ((lvl - 1) * 5);
-    if(ids.EnergyMax && !keepMaxValues) ids.EnergyMax.value = Math.trunc(pmMax);
+    const calcMaxPM = Math.trunc(pmBase + ((lvl - 1) * 5));
     ["STR","MAG","TEC","AGI","VIT","LCK"].forEach(k=>{
       const el = document.getElementById("b"+k);
-      if(el && ids["Char"+k]) el.textContent = ids["Char"+k].value;
+      if(el && ids["Char"+k]) el.textContent = statFinal[k];
     });
+    const baseMaxHP = ids.MaxHP ? (()=> {
+      if(!keepMaxValues){
+        ids.MaxHP.dataset.baseValue = String(calcMaxHP);
+        return calcMaxHP;
+      }
+      const fromDataset = Number(ids.MaxHP.dataset.baseValue);
+      if(Number.isFinite(fromDataset)) return clampInt(fromDataset,0,9999);
+      return Math.max(0, clampInt(ids.MaxHP.value||0,0,9999) - (mods.MaxHP || 0));
+    })() : 0;
+    const baseMaxPM = ids.EnergyMax ? (()=> {
+      if(!keepMaxValues){
+        ids.EnergyMax.dataset.baseValue = String(calcMaxPM);
+        return calcMaxPM;
+      }
+      const fromDataset = Number(ids.EnergyMax.dataset.baseValue);
+      if(Number.isFinite(fromDataset)) return clampInt(fromDataset,0,9999);
+      return Math.max(0, clampInt(ids.EnergyMax.value||0,0,9999) - (mods.EnergyMax || 0));
+    })() : 0;
+    const baseCurrentHP = ids.CurrentHP ? (()=> {
+      const fromDataset = Number(ids.CurrentHP.dataset.baseValue);
+      if(Number.isFinite(fromDataset)) return clampInt(fromDataset,0,9999);
+      return Math.max(0, clampInt(ids.CurrentHP.value||0,0,9999) - (mods.CurrentHP || 0));
+    })() : 0;
+    const baseCurrentPM = ids.CurrentPM ? (()=> {
+      const fromDataset = Number(ids.CurrentPM.dataset.baseValue);
+      if(Number.isFinite(fromDataset)) return clampInt(fromDataset,0,9999);
+      return Math.max(0, clampInt(ids.CurrentPM.value||0,0,9999) - (mods.CurrentPM || 0));
+    })() : 0;
+
+    if(ids.MaxHP) ids.MaxHP.value = Math.max(0, baseMaxHP + (mods.MaxHP || 0));
+    if(ids.EnergyMax) ids.EnergyMax.value = Math.max(0, baseMaxPM + (mods.EnergyMax || 0));
+    if(ids.CurrentHP) ids.CurrentHP.value = Math.max(0, baseCurrentHP + (mods.CurrentHP || 0));
+    if(ids.CurrentPM) ids.CurrentPM.value = Math.max(0, baseCurrentPM + (mods.CurrentPM || 0));
     validateCurrentValues();
+    if(typeof window.refreshSocialUI === 'function') window.refreshSocialUI();
   }
   function validateCurrentValues(){
     const maxHP = clampInt(ids.MaxHP?.value||0,0,9999);
@@ -731,10 +812,11 @@ function buildSocialUI(){
     if(ids.CurrentPM) ids.CurrentPM.value = Math.min(currentPM, maxPM);
   }
   [ids.CharLvl, ids.CharVIT, ids.CharAGI, ids.CharSTR, ids.CharMAG, ids.CharTEC, ids.CharLCK].forEach(el=>{ if(el) el.addEventListener("input", recalc); });
-  if(ids.MaxHP) ids.MaxHP.addEventListener("input", validateCurrentValues);
-  if(ids.EnergyMax) ids.EnergyMax.addEventListener("input", validateCurrentValues);
-  if(ids.CurrentHP) ids.CurrentHP.addEventListener("input", validateCurrentValues);
-  if(ids.CurrentPM) ids.CurrentPM.addEventListener("input", validateCurrentValues);
+  if(ids.MaxHP) ids.MaxHP.addEventListener("input", ()=>{ const mods = applyGlobalModifiers(); ids.MaxHP.dataset.baseValue = String(Math.max(0, clampInt(ids.MaxHP.value||0,0,9999) - (mods.MaxHP||0))); validateCurrentValues(); });
+  if(ids.EnergyMax) ids.EnergyMax.addEventListener("input", ()=>{ const mods = applyGlobalModifiers(); ids.EnergyMax.dataset.baseValue = String(Math.max(0, clampInt(ids.EnergyMax.value||0,0,9999) - (mods.EnergyMax||0))); validateCurrentValues(); });
+  if(ids.CurrentHP) ids.CurrentHP.addEventListener("input", ()=>{ const mods = applyGlobalModifiers(); ids.CurrentHP.dataset.baseValue = String(Math.max(0, clampInt(ids.CurrentHP.value||0,0,9999) - (mods.CurrentHP||0))); validateCurrentValues(); });
+  if(ids.CurrentPM) ids.CurrentPM.addEventListener("input", ()=>{ const mods = applyGlobalModifiers(); ids.CurrentPM.dataset.baseValue = String(Math.max(0, clampInt(ids.CurrentPM.value||0,0,9999) - (mods.CurrentPM||0))); validateCurrentValues(); });
+  window.recalcNow = recalc;
   recalc();
 
   // ====== Equipamentos ======
