@@ -120,20 +120,12 @@
           </div>
           <div class="row row2">
             <div style="position:relative">
-              <label style="display:flex;align-items:center;gap:8px;">Buffs/Condições
+              <label style="display:flex;align-items:center;gap:8px;">Buffs
                 <button type="button" class="mini expand-btn" data-target="Buffs">⤡</button>
               </label>
-              <textarea id="Buffs" class="expandable" placeholder="Buffs ou condições"></textarea>
+              <textarea id="Buffs" class="expandable" placeholder="Buffs ativos"></textarea>
             </div>
           </div>
-          <div class="actions" style="margin-top:8px;"><button class="mini" id="add-condition">+ Adicionar Condição</button></div>
-          <div class="hint">Condições são status negativos/temporários. Marque como ativa quando estiver em vigor.</div>
-          <table id="tbl-conditions">
-            <thead>
-              <tr><th>Condição</th><th>Descrição</th><th>Ativa</th><th></th></tr>
-            </thead>
-            <tbody></tbody>
-          </table>
         </section>
 
         <section class="card">
@@ -200,15 +192,8 @@
   <div class="view" id="feitos">
     <section class="card">
       <div class="section-title"><div class="bar"></div><h2>Feitos</h2></div>
-      <div class="actions"><button class="mini" id="add-feito">+ Adicionar Feito</button></div>
-      <div id="feitos-msg" class="feitos-msg" style="display:none;margin-top:8px;"></div>
-      <div class="hint">Feitos são habilidades especiais; níveis pares apenas (2–20). Alguns possuem requisitos.</div>
-      <table id="tbl-feitos">
-        <thead>
-          <tr><th>Feito</th><th>Rank</th><th>Nível</th><th>Descrição</th><th>Selecionado</th><th></th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="hint">Marque os Feitos que seu personagem possui. Feitos são habilidades especiais adquiridas ao subir de nível.</div>
+      <div id="feitos-list"></div>
     </section>
   </div>
 
@@ -402,6 +387,12 @@
           </thead>
           <tbody></tbody>
         </table>
+      </section>
+
+      <section class="card">
+        <div class="section-title"><div class="bar"></div><h2>Condições</h2></div>
+        <div class="hint">Condições são status negativos/temporários. Marque como ativa quando estiver em vigor.</div>
+        <div id="conditions-list"></div>
       </section>
     </div>
 

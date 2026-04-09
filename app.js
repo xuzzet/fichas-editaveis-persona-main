@@ -135,10 +135,13 @@ const EL_IDS = {
       }
     });
     // Limpa tabelas dinâmicas se existirem
-    ['tbl-eq','tbl-spell','tbl-link','tbl-clue','tbl-ctt','tbl-feitos','tbl-conditions','tbl-mod'].forEach(id => {
+    ['tbl-eq','tbl-spell','tbl-link','tbl-clue','tbl-ctt','tbl-mod'].forEach(id => {
       const tbody = document.querySelector(`#${id} tbody`);
       if (tbody) tbody.innerHTML = '';
     });
+    // Limpa estados visuais de listas fixas (feitos/condições)
+    document.querySelectorAll('.feat-item').forEach(el => el.classList.remove('feat-active'));
+    document.querySelectorAll('.cond-item').forEach(el => el.classList.remove('cond-active'));
     // Limpa afinidades
     const afBody = document.getElementById('af-body');
     if (afBody) afBody.innerHTML = '';
@@ -171,37 +174,64 @@ function initTabs() {
 
 // ===== Inicialização de Arcana =====
 const ARCANAS = ["", "0 - Louco","I - Mago","II - Sacerdotisa","III - Imperatriz","IV - Imperador","V - Hierofante","VI - Enamorados","VII - Carruagem","VIII - Força","IX - Eremita","X - Roda da Fortuna","XI - Justiça","XII - Enforcado","XIII - Morte","XIV - Temperança","XV - Diabo","XVI - Torre","XVII - Estrela","XVIII - Lua","XIX - Sol","XX - Julgamento","XXI - Mundo"];
-// ===== Lista de Feitos (baseada no trecho do livro fornecido) =====
-const FEITOS_PER_MILESTONE = 1; // por padrão 1 feito a cada 2 níveis (configurável multiplicador)
+// ===== Lista de Feitos (versão reformulada completa — 45 feitos) =====
 const FEITOS_LIST = [
-  { id: 'mente_aberta', name: 'Mente Aberta', desc: 'Ganhe um uso extra de uma magia à sua escolha, de Tier III ou abaixo, da lista de qualquer uma de suas Personae.' },
-  { id: 'longe_do_fim', name: 'Longe do Fim', desc: 'Cada rank aumenta seu Limite de Energia em 2.' },
-  { id: 'habil', name: 'Hábil', desc: 'Concede +1 para uma Habilidade de Combate ou +3 para uma Habilidade Social.' },
-  { id: 'reflexao', name: 'Reflexão', desc: 'Você pode alterar um dos Aspectos Livres do seu personagem.' },
-  { id: 'emergencial', name: 'Emergencial', desc: 'Uma vez por semana, pague 1 Ponto de Aspecto para ganhar 1 Ponto de Recurso extra que expira no fim da sessão. Ranks aumentam a quantidade em 0.5 por rank.' },
-  { id: 'furioso', name: 'Furioso', desc: 'Como ação Rápida, receba os efeitos de Fúria (não pode ser curado até o fim do próximo turno).', unique:true },
-  { id: 'auxilio_altruista', name: 'Auxílio Altruísta', desc: 'Como ação padrão, sacrifique até 50% do seu PV atual para aumentar o PV de um alvo adjacente. Cada rank aumenta em 10%.' },
-  { id: 'espirito', name: 'Espírito', desc: 'Uma vez por rodada, troque de Persona como ação livre ao atingir Fraqueza de Sombra ou Golpe Crítico.', unique:true },
-  { id: 'aspecto_poderoso', name: 'Aspecto Poderoso', desc: 'Cada rank aumenta o número de Pontos de Aspecto que você recebe no começo de cada sessão em 1.', unique:true },
-  { id: 'explorador', name: 'Explorador', desc: 'Considere seu Tier de Disciplina como +2 para procurar no Metaverso; rerole um teste de procura por teste.', unique:true },
-  { id: 'espadas', name: 'Especialização em Espadas', desc: 'Com uma espada equipada, você ganha DDC +1 contra magias Físicas declaradas contra você.', unique:true },
-  { id: 'manoplas', name: 'Especialização em Manoplas', desc: 'Usando manoplas, você ganha Fortificar Todos TEC/2.', unique:true },
-  { id: 'lancas', name: 'Especialização em Lanças', desc: 'Com lança equipada, quando inimigo entra no alcance, você pode desferir um ataque básico como Interromper.', unique:true },
-  { id: 'chicotes', name: 'Especialização em Chicotes', desc: 'Com chicote, 25% de chance de causar Pânico por 1 turno ao acertar com ataque básico.', unique:true },
-  { id: 'arcos', name: 'Especialização em Arcos', desc: 'Trate alcance de arcos como o dobro; role 1d6 para possível dano extra.', unique:true },
-  { id: 'armas_fogo', name: 'Especialização em Armas de Fogo', desc: 'Acertar com arma de fogo na distância máxima concede +1 DDC contra o alvo até o seu próximo turno.', unique:true },
-  { id: 'escudos_placas', name: 'Especialização em Escudos e Placas', desc: 'Com escudo/placa equipado, ação completa para postura defensiva e ganhar Resistir Todos até seu próximo turno.', unique:true },
-  { id: 'adagas', name: 'Especialização em Adagas', desc: 'Ataques com adagas têm +1 de alcance e causam +AGI dano do mesmo tipo do dano original.', unique:true },
-  { id: 'gladiador', name: 'Físico do Gladiador', desc: 'Ao declarar uma magia Física que aplica Status, reduza chance de Status para 0% para aumentar FOR em 2 para cálculo de dano.', unique:true },
-  { id: 'transe_monge_fogo', name: 'Transe do Monge de Fogo', desc: 'Ao causar dano com magia de Fogo, você pode incendiar o espaço por 2 rodadas. Só se sua Persona for do Tipo Fogo.', reqPersonaType:'Fogo', unique:true },
-  { id: 'toque_rainha_gelo', name: 'Toque da Rainha de Gelo', desc: 'Ao derrotar com magia de Gelo, aumente duração de 1 Buff ativo em 2 rodadas. Requer Tipo Gelo.', reqPersonaType:'Gelo' },
-  { id: 'investida_ventos', name: 'Investida da Cavalaria dos Ventos', desc: 'Após acertar com magia de Vento, você pode usar valor anotado como rolagem de acerto para declarar outra magia de Vento. Requer Tipo Vento.', reqPersonaType:'Vento' },
-  { id: 'maos_lorde_raio', name: 'Mãos do Lorde do Raio', desc: 'Gaste 1 Energia ao declarar magia de Raio para rolar chance de Choque antes do acerto. Requer Tipo Raio.', reqPersonaType:'Raio' },
-  { id: 'sombra_assassino_nuclear', name: 'Sombra do Assassino Nuclear', desc: 'Aumente limite de Acúmulo em 2 e pode gastar Contadores para ativar efeitos sem removê-los. Requer Tipo Nuclear.', reqPersonaType:'Nuclear' },
-  { id: 'caos_psicocinetico', name: 'Caos do Vidente Psicocinético', desc: 'Ao Ampliarem efeito de Status, role 1d10 para tabela de Efeitos Ampliados. Requer Tipo PSY.', reqPersonaType:'PSY' },
-  { id: 'voto_clerigo_luz', name: 'Voto do Clérigo da Luz', desc: 'Ao causar dano com magia de Luz, gaste 1 Energia para ganhar PV temporários (MAG ou TEC). Requer Tipo Luz.', reqPersonaType:'Luz' },
-  { id: 'ritual_herege_trevas', name: 'Ritual do Herege das Trevas', desc: 'Ao derrotar Sombra com magia do Tipo Trevas, cause dano adicional de Trevas a alvos vistos. Requer Tipo Trevas.', reqPersonaType:'Trevas' },
-  { id: 'vanguarda_onipotente', name: 'Vanguarda Onipotente', desc: 'Ao acertar Crítico com magia Onipotente, ignore testes de esquiva de todos os alvos.', unique:true }
+  // ── Geral ──
+  { id: 'mente_aberta', name: 'Mente Aberta', cat: 'Geral', desc: 'Durante uma cena de Interlúdio, pode selecionar uma Magia de seu Deck como principal de Mente Aberta. Em combate pode utilizá-la por apenas 1 PM. Pode ser utilizado igual à sua MAG (Limitado a 3 Usos).' },
+  { id: 'longe_do_fim', name: 'Longe do Fim', cat: 'Geral', desc: 'Recebe +5 de PM Máximo extra para cada Novo Nível (Afeta Níveis posteriores).' },
+  { id: 'habil', name: 'Hábil', cat: 'Geral', desc: 'Concede +1 para uma Habilidade de Combate ou +3 para uma Habilidade Social. (Pode ser adquirido várias vezes)' },
+
+  // ── Social ──
+  { id: 'furioso', name: 'Furioso', cat: 'Social', desc: 'Você pode, como uma Ação Rápida, receber os efeitos de Fúria. Você não pode ser curado desse Status ou se recuperar naturalmente dele até o final do seu próximo turno e não recebe mais a Penalidade de Acerto enquanto enfurecido.', prereq: 'Tier I em Coragem' },
+  { id: 'auxilio_altruista', name: 'Auxílio Altruísta', cat: 'Social', desc: 'Como uma Ação Padrão, você pode sacrificar até 50% do seu PV atual para aumentar o PV Máximo de um alvo adjacente igual à quantidade sacrificada. Alvos dessa habilidade que estiverem com 0 PV só recebem o sacrifício como Cura.', prereq: 'Tier I em Empatia' },
+  { id: 'um_em_espirito', name: 'Um em Espírito', cat: 'Social', desc: 'Quando você atingir uma Fraqueza pela primeira vez em uma Sombra ou atingir um Golpe Crítico, você pode Atacar novamente com uma Ação Livre. (O Ataque Extra causado por atingir uma Fraqueza só é ativado uma única vez por combate, mas Golpes Críticos continuam aplicando os Ataques Extras.)', prereq: 'Tier I em Conhecimento ou Disciplina' },
+  { id: 'explorador', name: 'Explorador', cat: 'Social', desc: 'Qualquer teste de Disciplina relacionado à ação de Procurar e Investigar no Metaverso; o Narrador tratará seu personagem como permanentemente procurando. Você pode re-rolar qualquer teste relacionado à procura de itens ou aparatos, uma vez por teste.', prereq: 'Tier I em Disciplina' },
+
+  // ── Combate — Armas ──
+  { id: 'esp_espadas', name: 'Especialização em Espadas', cat: 'Combate', desc: 'Enquanto Empunhar uma Espada, selecione 2 Tipos de Magia para receber Vantagem. Caso seja bem sucedido contra a magia, pode se mover Metade do Movimento com uma Ação Livre. (Não pode ser alocado na sua Fraqueza Elemental)', prereq: 'Tier I em Disciplina' },
+  { id: 'esp_corpo_a_corpo', name: 'Especialização em Corpo a Corpo', cat: 'Combate', desc: 'Enquanto estiver Desarmado ou Empunhar qualquer tipo de Manoplas, você ganha +2 Dados em testes de Acerto e aumenta em 1 Passo o seu dado de dano. (Não afeta Magias)', prereq: 'Tier I em Coragem' },
+  { id: 'esp_lanca', name: 'Especialização em Lança', cat: 'Combate', desc: 'Com uma Lança Equipada e um Inimigo entra ou sai do alcance da sua lança, você pode desferir um ataque básico como Ação Livre e caso seja bem sucedido, Interrompe o alvo e causa perda de sua Ação Padrão.', prereq: '5 de Agilidade' },
+  { id: 'esp_chicotes', name: 'Especialização em Chicotes', cat: 'Combate', desc: 'Enquanto estiver com um Chicote Equipado, sempre que você atingir um inimigo com um Ataque Básico, aumenta a dificuldade de Penalidades em 15% de chance, limitado a 30% de Chance.', prereq: 'Tier I de Charme e 4 de Agilidade' },
+  { id: 'esp_arcos', name: 'Especialização em Arcos', cat: 'Combate', desc: 'Trate o Alcance de qualquer Arco que você empunhar como o Dobro de seu Alcance. Ao Declarar um Ataque com um Arco, ignore Penalidade por Cobertura Parcial ou por Camuflagem e cause MAG ou AGI como pontos de Dano Extra. Esse dano é aplicado até mesmo se o ataque errar como Dano Onipotente.', prereq: 'Tier I de Disciplina e 4 de Agilidade ou Magia' },
+  { id: 'esp_armas_fogo', name: 'Especialização em Armas de Fogo', cat: 'Combate', desc: 'Se você acertar um Ataque Básico com uma Arma de Fogo em sua distância máxima, você ganha Vantagem e se estiver em alcance corpo a corpo recebe Desvantagem em acerto, mas causa Dano Máximo.', prereq: 'Tier I de Disciplina e 4 de Agilidade ou Magia' },
+  { id: 'esp_escudos_placas', name: 'Especialização em Escudos e Placas', cat: 'Combate', desc: 'Com um Escudo ou Armadura Pesada equipado, como uma Ação Completa, você pode optar por adotar uma postura defensiva e ganhar Resistência a todos os tipos de dano e Soma Novamente seu Vigor como RD até seu próximo turno.', prereq: '6 de Vigor' },
+  { id: 'esp_adagas', name: 'Especialização em Adagas', cat: 'Combate', desc: 'Seus ataques com Adagas têm +1 de Alcance, podem ser arremessadas sem Desvantagem e podem ser recuperadas sem necessidade de testes. E soma sua Agilidade como Dano Extra. (Aplica em Ataque Básico e Magias)', prereq: '6 de Agilidade' },
+  { id: 'fisico_gladiador', name: 'Físico do Gladiador', cat: 'Combate', desc: 'Uma Vez por Combate — Quando você declarar uma Magia Física que pode aplicar um efeito de Status, você causa Automaticamente o efeito, funcionando tanto em Benéficos & Maligno. E adiciona sua Força como Dados de Dano Extra.', prereq: '4 de Força' },
+
+  // ── Persona ──
+  { id: 'transe_monge_fogo', name: 'Transe do Monge de Fogo', cat: 'Persona', desc: 'Quando você causa dano com uma Magia de Fogo, você pode Incendiar o espaço ocupado pelo(s) alvo(s) pelas próximas Duas rodadas. Espaços incendiados causam Magia como dano de Fogo contra qualquer Sombra que terminar seu turno nesse espaço ou passar por ele durante seu movimento; caso o alvo estiver Queimando, recebe o Dobro de Dano. (Cada Sombra só pode tomar dano de cada espaço incendiado uma vez por rodada.)', prereq: 'Persona possuir Tipo Fogo' },
+  { id: 'toque_rainha_gelo', name: 'Toque da Rainha de Gelo', cat: 'Persona', desc: 'Quando você Derrotar um inimigo usando uma Magia de Gelo, cause Congelado em um alvo adjacente Automaticamente e caso possua Buffs ativos, aumente sua duração em +2 Rodadas.\nCongelado: Alvos Congelados tem metade de seu movimento e recebem Dobro de Dano do próximo Dano Físico ou Raio utilizado contra ele.', prereq: 'Persona possuir Tipo Gelo' },
+  { id: 'investida_ventos', name: 'Investida da Cavalaria dos Ventos', cat: 'Persona', desc: 'Depois de acertar um alvo com uma Magia de Vento, você Reduz da próxima Rolagem de Reação do alvo igual a sua Magia.\nCusto: 10 PM — Cria um Tornado de 6 Metros de Raio ao redor do alvo atingido; enquanto inimigos estiverem dentro do Tornado devem fazer um teste de Agilidade contra DT = 10 + Magia, caso falhe se tornam Caídos até sua próxima rodada.', prereq: 'Persona possuir Tipo Vento' },
+  { id: 'maos_lorde_raio', name: 'Mãos do Lorde do Raio', cat: 'Persona', desc: 'Ao atingir um alvo com uma Magia de Raio você pode gastar 8 de PM para tornar Magias de Alvo único em efeito de Área mantendo seu Dado de Dano; caso a Magia de Raio já seja em área, aumenta a chance de todos os alvos receberem Choque em 30%.\nChoque: Alvos que sofrerem de Choque ficam atordoados por 1 Rodada.', prereq: 'Persona possuir Tipo Raio' },
+  { id: 'sombra_assassino_nuclear', name: 'Sombra do Assassino Nuclear', cat: 'Persona', desc: 'Aumente seu limite de Acúmulo em +2. Você ganha a capacidade de "Transferir" os acúmulos de Radiação para um Alvo Inimigo, igual à sua Vitalidade por rodada. Alvos inimigos que passarem seu limite ativam o mesmo efeito que ocorreria se você excedesse seu limite de contadores. (O Usuário deve fazer um teste de Magia vs Vitalidade do Alvo)', prereq: 'Persona possuir Tipo Nuclear' },
+  { id: 'caos_psicocinetico', name: 'Caos do Vidente Psicocinético', cat: 'Persona', desc: 'Efeitos de Status são Ampliados e recebem as seguintes adições:\n• Chance de Efeito: Todo efeito de Status com 50% de Chance ou menor se torna 80%. (NÃO AFETA EFEITOS DE EXECUTAR)\n• Recuperação de Efeito: Todo efeito de 33% de Recuperação se torna 25% e se já for 25% se torna 18%.\n• Redução de Habilidade de Combate: Todo Status de -3 se torna -4.', prereq: 'Persona possuir Tipo Psíquico' },
+  { id: 'voto_clerigo_luz', name: 'Voto do Clérigo da Luz', cat: 'Persona', desc: 'Quando você causa dano com uma Magia de Luz, você pode gastar 6 de PM para ganhar Vitalidade + Magia como Pontos de Vida temporários. Enquanto você tiver PV temporário, você não pode ativar esse Feito novamente. (PV temporário é somado ao seu PV máximo, é gasto antes do seu PV normal e não pode ser recuperado)', prereq: 'Persona possuir Tipo Luz' },
+  { id: 'ritual_herege_trevas', name: 'Ritual do Herege das Trevas', cat: 'Persona', desc: 'Quando você Derrotar uma Sombra usando uma magia do Tipo Trevas, você pode escolher entre: Reciclar o Custo da Magia utilizada de volta como PM ou causar Metade do Dano utilizado no alvo derrotado anteriormente em até 1d4 alvos que você pode ver (Automaticamente).', prereq: 'Persona possuir Tipo Trevas' },
+  { id: 'vanguarda_onipotente', name: 'Vanguarda Onipotente', cat: 'Persona', desc: 'Quando você Acertar um Crítico com uma Magia Onipotente, ignore qualquer teste de esquiva de todos os alvos afetados e rouba seus PM igual sua MAG.', prereq: 'Persona possuir Tipo Onipotente' },
+  { id: 'sacerdotisa_milagre', name: 'Sacerdotisa do Milagre Divino', cat: 'Persona', desc: 'Reduz MAG no custo de PM em Magias de Cura & Reviver e quando usar uma magia de Alvo Único pode escolher até MAG = Alvos Extras para receber metade da cura do alvo principal. E sempre que for bem sucedido em Curar um Aliado que estiver acima da Metade da Vida Máxima, retira 1 Efeito de Status maligno.', prereq: 'Persona possuir Tipo Cura' },
+  { id: 'olho_onipotente', name: '"O Olho Onipotente que tudo Vê"', cat: 'Persona', desc: 'No início do combate recebe MAG = Contadores para utilizar suas habilidades de Intel. Todo início de rodada a primeira Magia de Intel não consome nenhum tipo de Ação independente do custo. E recebe +5 em Testes contra qualquer Efeito mental.', prereq: 'Persona possuir Tipo Intel' },
+
+  // ── Atributos ──
+  { id: 'mente_afiada', name: 'Mente Afiada', cat: 'Atributos', desc: 'Você sempre sabe onde está localizado em relação a outros pontos que já conhece; sempre tem uma estimativa precisa das horas; e recebe Crítico Automático para lembrar-se de qualquer evento que tenha presenciado nos últimos sete dias.', prereq: '10 de Conhecimento' },
+  { id: 'impiedoso', name: 'Impiedoso', cat: 'Atributos', desc: 'Pode Re-rolar o acerto de um ataque que você declarou nesse turno com +5 de Acerto. (2 Usos por Combate e recebe +1 Uso nos níveis 6, 12 e 18)', prereq: '5 de Técnica' },
+  { id: 'atleta', name: 'Atleta', cat: 'Atributos', desc: 'Calcule seu movimento com FOR ao invés de AGI. Você pode saltar uma distância igual a metade do seu movimento. Você tem sucesso automático em testes de escalada em superfícies até 1m acima da sua altura. (Só pode ser escolhido uma vez)', prereq: '3 de Força' },
+  { id: 'duravel', name: 'Durável', cat: 'Atributos', desc: 'Uma vez por dia, você pode escolher um Tipo que sua Persona não seja Fraca contra. Você ganha 5 Redução de Dano contra aquele Tipo por 3 rodadas. Isso não é um efeito de Buff e acumula com efeitos de Buff. (Só pode ser escolhido uma vez)', prereq: '2 de Vitalidade' },
+  { id: 'duelista_defensivo', name: 'Duelista Defensivo', cat: 'Atributos', desc: 'Quando você tomar dano de um ataque, você pode dobrar sua Redução de Dano para esse ataque, mas reduza sua Redução de Dano para 0 depois do cálculo de dano até o final do seu próximo turno. (Só pode ser escolhido uma vez)', prereq: '3 de Vitalidade' },
+  { id: 'olhos_de_aguia', name: 'Olhos de Águia', cat: 'Atributos', desc: 'Todas as armas que você utilizar ganham a palavra-chave "Tiro Distante 1" enquanto você a tiver equipada. Se a arma já possuir Tiro Distante, aumente o efeito em 1. (Só pode ser escolhido uma vez)', prereq: '3 de Técnica' },
+  { id: 'baforada_gigantesca', name: 'Baforada Gigantesca', cat: 'Atributos', desc: 'Magias com alcance limitado ganham +1 de alcance. Habilidades que atingem alvos adjacentes agora podem afetar alvos a um metro a mais de distância do alvo (+1/rank extra). (Só pode ser escolhido uma vez a cada três níveis)', prereq: '4 de Técnica' },
+  { id: 'viver_para_servir', name: 'Viver para Servir', cat: 'Atributos', desc: 'Você pode pagar 1 Ponto de Aspecto ao conjurar uma magia de Cura para considerar a rolagem como o valor máximo. (Só pode ser escolhido uma vez)', prereq: '3 de Magia' },
+  { id: 'adepto_elemental', name: 'Adepto Elemental', cat: 'Atributos', desc: 'Ao conjurar uma magia do Tipo Fogo, Gelo, Raio, Vento, Nuclear ou PSY, você pode trocar o dano que ela causa pelo dano de qualquer outro Tipo listado acima que a sua Persona possua. (Só pode ser escolhido uma vez. Só pode ser ativado se a sua Persona possui pelo menos dois dos Tipos listados)', prereq: '4 de Magia' },
+  { id: 'volatil', name: 'Volátil', cat: 'Atributos', desc: 'Suas magias que atingem mais de um alvo podem acertar um alvo a mais, por rank. (Só pode ser escolhido uma vez a cada quatro níveis)', prereq: '4 de Magia' },
+  { id: 'milagre', name: 'Milagre', cat: 'Atributos', desc: 'Uma vez por combate, se seu PV estiver acima de 1 e você receber dano que reduza seu PV para 0 ou menos, role SORd8. Se qualquer um dos seus dados resultar em 5 ou mais, você sobrevive com 1 PV. (Só pode ser escolhido uma vez)', prereq: '3 de Sorte' },
+  { id: 'mira_certeira', name: 'Mira Certeira', cat: 'Atributos', desc: 'Você ganha 1 Carga de Sorte a mais no começo de cada combate, por rank. Isso pode exceder seu limite de Cargas. (Só pode ser escolhido quatro vezes)', prereq: '4 de Sorte' },
+
+  // ── Convicção ──
+  { id: 'teu_proprio_ser', name: 'Teu Próprio Ser', cat: 'Convicção', desc: 'Você pode alterar a Convicção da sua Persona inicial. (Só pode ser escolhido uma vez a cada quatro níveis)', prereq: 'CNv. 4' },
+  { id: 'perseveranca', name: 'Perseverança', cat: 'Convicção', desc: 'Cada vez que você escolher esse Feito, escolha uma Persona e uma de suas Fraquezas. A Persona perde a Fraqueza selecionada. (Só pode ser escolhido uma vez a cada cinco níveis)', prereq: 'CNv. 10' },
+  { id: 'feito_de_ferro', name: 'Feito de Ferro', cat: 'Convicção', desc: 'Cada vez que você escolher esse feito, escolha uma Persona e um Tipo ao qual ela não tem nenhuma interação. A Persona ganha Resistir a esse Tipo. (Só pode ser escolhido duas vezes)', prereq: 'CNv. 10' },
+  { id: 'vontade_de_ferro', name: 'Vontade de Ferro', cat: 'Convicção', desc: 'Cada vez que você escolher esse Feito, escolha uma Persona e um Tipo que ela Resista. A Persona ganha Anular contra o Tipo selecionado. (Só pode ser escolhido duas vezes)', prereq: 'CNv. 10' },
+  { id: 'inabalavel', name: 'Inabalável', cat: 'Convicção', desc: 'Cada vez que você escolher esse Feito, escolha uma Persona e um Tipo que ela Anule ou Reflita. Sacrifique o uso de uma magia do seu deck permanentemente para melhorar a interação do Tipo: De Anular para Refletir e Refletir para Drenar. (Só pode ser escolhido uma vez)', prereq: 'CNv. 10' },
+  { id: 'intrinseco', name: 'Intrínseco', cat: 'Convicção', desc: 'Você pode adicionar um novo Aspecto Livre ao seu personagem. (Só pode ser escolhido duas vezes, a segunda escolha só pode ser feita no CNv. 20.)', prereq: 'CNv. 10' }
 ];
 // ===== Lista de Condições (status negativos/temporários) =====
 const CONDITIONS_LIST = [
@@ -307,113 +337,109 @@ function initApp() {
 
 // ===== FEITOS UI & Lógica =====
 function buildFeitosUI(){
-  const body = document.querySelector('#tbl-feitos tbody');
-  if(!body) return;
-  const btn = document.getElementById('add-feito');
-  function setMsg(msg, type='info'){
-    const el = document.getElementById('feitos-msg'); if(!el) return; el.style.display = msg? 'block':'none'; el.textContent = msg; el.className = 'feitos-msg '+(type||'info');
-    setTimeout(()=>{ if(el) el.style.display='none'; }, 4000);
-  }
-  function addFeito(data={id:'', rank:1, level:2, desc:'', selected:false}){
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td><select class="ft-id"><option value="">-- escolha --</option></select></td>
-                    <td><input class="ft-rank" type="number" min="1" max="5" value="${data.rank||1}" style="width:64px;"/></td>
-                    <td><select class="ft-level"></select></td>
-                    <td><textarea class="ft-desc" readonly></textarea></td>
-                    <td style="text-align:center"><input type="checkbox" class="ft-sel" ${data.selected? 'checked':''}/></td>
-                    <td class="row-actions"><button class="mini del">Remover</button></td>`;
-    body.appendChild(tr);
-    const idSel = tr.querySelector('.ft-id'); const rankIn = tr.querySelector('.ft-rank'); const lvlSel = tr.querySelector('.ft-level'); const desc = tr.querySelector('.ft-desc'); const sel = tr.querySelector('.ft-sel');
-    FEITOS_LIST.forEach(f=>{ const o=document.createElement('option'); o.value=f.id; o.textContent=f.name; idSel.appendChild(o); });
-    // level options (even 2..20)
-    for(let L=2;L<=20;L+=2){ const o=document.createElement('option'); o.value=L; o.textContent=L; lvlSel.appendChild(o); }
-    if(data.id) idSel.value = data.id;
-    desc.value = data.desc|| (FEITOS_LIST.find(f=>f.id===idSel.value)?.desc||'');
-    if(data.level) lvlSel.value = data.level;
+  const container = document.getElementById('feitos-list');
+  if(!container) return;
+  container.innerHTML = '';
 
-    function refreshConstraints(){
-      // unique prevention
-      const chosen = Array.from(document.querySelectorAll('.ft-id')).map(s=>s.value).filter(v=>v);
-      const dup = chosen.filter(v=> chosen.filter(x=>x===v).length>1);
-      if(dup.length>0){ setMsg('Este Feito já foi adicionado (único).','warn'); idSel.value=''; desc.value=''; return; }
-      // enforce allowed selected ranks sum
-      const charLvl = clampInt(ids.CharLvl?.value||1,1,99); const allowed = Math.floor(charLvl/2)*FEITOS_PER_MILESTONE;
-      const rows = Array.from(body.querySelectorAll('tr'));
-      let sum=0; const selectedRows=[];
-      rows.forEach(r=>{ const c = r.querySelector('.ft-sel'); const rnk = Number(r.querySelector('.ft-rank').value)||0; const lvl = Number(r.querySelector('.ft-level').value)||0; if(c.checked && lvl<=charLvl){ sum+=rnk; selectedRows.push(r); }});
-      if(sum>allowed){ // unselect last selected rows until within limit
-        setMsg('Limite de ranks de Feitos excedido para seu nível. Desmarcando escolhas recentes.','warn');
-        for(let i=selectedRows.length-1;i>=0 && sum>allowed;i--){ const r=selectedRows[i]; const rnk=Number(r.querySelector('.ft-rank').value)||0; r.querySelector('.ft-sel').checked=false; sum-=rnk; }
-      }
+  // Agrupar por categoria
+  const categories = [];
+  const catMap = {};
+  FEITOS_LIST.forEach(f => {
+    const c = f.cat || 'Outros';
+    if(!catMap[c]){ catMap[c] = []; categories.push(c); }
+    catMap[c].push(f);
+  });
+
+  categories.forEach(cat => {
+    const group = document.createElement('div');
+    group.className = 'feat-group';
+    group.innerHTML = `<h3 class="feat-cat-title">${cat}</h3>`;
+    const grid = document.createElement('div');
+    grid.className = 'feat-grid';
+
+    catMap[cat].forEach(f => {
+      const item = document.createElement('div');
+      item.className = 'feat-item';
+      item.dataset.featId = f.id;
+      const prereqText = f.prereq || '';
+      const prereqHtml = prereqText ? `<div class="feat-prereq">Pré-requisito: ${prereqText}</div>` : '';
+      item.innerHTML = `<label class="feat-label"><input type="checkbox" class="feat-check" data-id="${f.id}"/><span class="feat-name">${f.name}</span></label><div class="feat-desc-text">${f.desc.replace(/\n/g, '<br>')}</div>${prereqHtml}`;
+      grid.appendChild(item);
+    });
+
+    group.appendChild(grid);
+    container.appendChild(group);
+  });
+
+  // No-op para compatibilidade
+  window.addFeito = function(){};
+
+  window.getFeitos = function(){
+    return FEITOS_LIST.map(f => {
+      const cb = container.querySelector(`.feat-check[data-id="${f.id}"]`);
+      return { id: f.id, ativo: cb ? cb.checked : false };
+    }).filter(f => f.ativo);
+  };
+
+  window.applyFeitos = function(list){
+    container.querySelectorAll('.feat-check').forEach(cb => cb.checked = false);
+    container.querySelectorAll('.feat-item').forEach(el => el.classList.remove('feat-active'));
+    if(!list || !Array.isArray(list)) return;
+    list.forEach(saved => {
+      const cb = container.querySelector(`.feat-check[data-id="${saved.id}"]`);
+      // Compatibilidade: formato antigo usa 'selected', novo usa 'ativo'
+      const isActive = saved.ativo !== undefined ? saved.ativo : saved.selected;
+      if(cb && isActive !== false){ cb.checked = true; cb.closest('.feat-item').classList.add('feat-active'); }
+    });
+  };
+
+  // Toggle visual ao marcar/desmarcar
+  container.addEventListener('change', e => {
+    if(e.target.classList.contains('feat-check')){
+      e.target.closest('.feat-item').classList.toggle('feat-active', e.target.checked);
     }
-
-    idSel.addEventListener('change', ()=>{ const meta = FEITOS_LIST.find(f=>f.id===idSel.value); desc.value = meta? meta.desc : ''; if(meta && meta.unique){ // check duplicates
-        const other = Array.from(document.querySelectorAll('.ft-id')).filter(s=>s!==idSel).some(s=>s.value===idSel.value);
-        if(other){ setMsg('Feito único: já existe na lista.','warn'); idSel.value=''; desc.value=''; }
-      }
-    updateAll(); });
-    rankIn.addEventListener('input', ()=>{ updateAll(); }); lvlSel.addEventListener('change', ()=>{ updateAll(); }); sel.addEventListener('change', ()=>{ updateAll(); });
-    tr.querySelector('.del').addEventListener('click', ()=>{ tr.remove(); updateAll(); });
-
-    function updateAll(){ refreshConstraints(); }
-    updateAll();
-  }
-
-  // expose addFeito so applySnapshot can restore entries
-  window.addFeito = function(d){ addFeito(d); };
-
-  function getFeitos(){ return body? Array.from(body.querySelectorAll('tr')).map(tr=>({ id: tr.querySelector('.ft-id').value, rank: Number(tr.querySelector('.ft-rank').value)||1, level: Number(tr.querySelector('.ft-level').value)||2, desc: tr.querySelector('.ft-desc').value, selected: !!tr.querySelector('.ft-sel').checked })) : []; }
-
-  // external hooks
-  window.getFeitos = getFeitos;
-
-  if(btn) btn.addEventListener('click', ()=> addFeito());
+  });
 }
 
 // ===== CONDIÇÕES UI & Lógica =====
 function buildConditionsUI(){
-  const body = document.querySelector('#tbl-conditions tbody');
-  if(!body) return;
-  const btn = document.getElementById('add-condition');
+  const container = document.getElementById('conditions-list');
+  if(!container) return;
+  container.innerHTML = '';
 
-  function addCondition(data={id:'', ativa:true, descricao:''}){
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td><select class="cond-id"><option value="">-- escolha --</option></select></td>
-                    <td><textarea class="cond-desc" readonly></textarea></td>
-                    <td style="text-align:center"><input type="checkbox" class="cond-active" ${data.ativa ? 'checked' : ''}/></td>
-                    <td class="row-actions"><button class="mini del">Remover</button></td>`;
-    body.appendChild(tr);
+  CONDITIONS_LIST.forEach(c => {
+    const item = document.createElement('div');
+    item.className = 'cond-item';
+    item.dataset.condId = c.id;
+    item.innerHTML = `<label class="cond-label"><input type="checkbox" class="cond-check" data-id="${c.id}"/><span class="cond-name">${c.name}</span></label><div class="cond-desc-text">${c.desc.replace(/\n/g, '<br>')}</div>`;
+    container.appendChild(item);
+  });
 
-    const idSel = tr.querySelector('.cond-id');
-    const desc = tr.querySelector('.cond-desc');
-    const active = tr.querySelector('.cond-active');
-
-    CONDITIONS_LIST.forEach(c=>{ const o=document.createElement('option'); o.value=c.id; o.textContent=c.name; idSel.appendChild(o); });
-    if(data.id) idSel.value = data.id;
-
-    const meta = CONDITIONS_LIST.find(c=>c.id===idSel.value);
-    desc.value = data.descricao || (meta? meta.desc : '');
-
-    idSel.addEventListener('change', ()=>{
-      const m = CONDITIONS_LIST.find(c=>c.id===idSel.value);
-      desc.value = m ? m.desc : '';
-    });
-
-    tr.querySelector('.del').addEventListener('click', ()=>{ tr.remove(); });
-    active.addEventListener('change', ()=>{});
-  }
-
-  // expose addCondition so applySnapshot can restore entries
-  window.addCondition = function(d){ addCondition(d); };
+  // Expose for snapshot
+  window.addCondition = function(){}; // no-op, kept for compat
   window.getConditions = function(){
-    return body ? Array.from(body.querySelectorAll('tr')).map(tr=>({
-      id: tr.querySelector('.cond-id').value,
-      ativa: !!tr.querySelector('.cond-active').checked,
-      descricao: tr.querySelector('.cond-desc').value
-    })) : [];
+    return CONDITIONS_LIST.map(c => {
+      const cb = container.querySelector(`.cond-check[data-id="${c.id}"]`);
+      return { id: c.id, ativa: cb ? cb.checked : false };
+    }).filter(c => c.ativa);
+  };
+  window.applyConditions = function(list){
+    // Reset all
+    container.querySelectorAll('.cond-check').forEach(cb => cb.checked = false);
+    container.querySelectorAll('.cond-item').forEach(el => el.classList.remove('cond-active'));
+    if(!list || !Array.isArray(list)) return;
+    list.forEach(saved => {
+      const cb = container.querySelector(`.cond-check[data-id="${saved.id}"]`);
+      if(cb && saved.ativa !== false){ cb.checked = true; cb.closest('.cond-item').classList.add('cond-active'); }
+    });
   };
 
-  if(btn) btn.addEventListener('click', ()=> addCondition());
+  // Toggle visual class on change
+  container.addEventListener('change', e => {
+    if(e.target.classList.contains('cond-check')){
+      e.target.closest('.cond-item').classList.toggle('cond-active', e.target.checked);
+    }
+  });
 }
 
 // ===== Habilidades Sociais: UI e lógica de tiers =====
@@ -947,30 +973,17 @@ function buildModifiersUI(){
   cttBody.innerHTML = '';
   (data.notes?.contacts||[]).forEach(addCtt);
 
-  // Feitos - sempre limpar antes de restaurar para evitar duplicação
+  // Feitos - restaurar checkboxes fixos
   try{
-    const fbody = document.querySelector('#tbl-feitos tbody');
-    if(fbody){ fbody.innerHTML = ''; }
-    if(fbody && window.addFeito){
-      (data.feitos||[]).forEach(f=>{
-        // Validar requisito de tipo de Persona se existir
-        const feat = FEITOS_LIST.find(x=> x.id === f.id);
-        if(feat && feat.reqPersonaType && ids.PerTypes && ids.PerTypes.value && !ids.PerTypes.value.includes(feat.reqPersonaType)) {
-          return; // pular este feito se requisito não atender
-        }
-        window.addFeito(f);
-      });
+    if(window.applyFeitos){
+      window.applyFeitos(data.feitos||[]);
     }
   }catch(e){}
 
-  // Condições - sempre limpar antes de restaurar para evitar duplicação
+  // Condições - restaurar checkboxes fixos
   try{
-    const cbody = document.querySelector('#tbl-conditions tbody');
-    if(cbody){ cbody.innerHTML = ''; }
-    if(cbody && window.addCondition){
-      (data.conditions||[]).forEach(c=>{
-        window.addCondition(c);
-      });
+    if(window.applyConditions){
+      window.applyConditions(data.conditions||[]);
     }
   }catch(e){}
 
@@ -1189,7 +1202,7 @@ function buildModifiersUI(){
   document.addEventListener('change', debouncedAutoSave);
 
   // MutationObserver para linhas adicionadas/removidas em tabelas dinâmicas
-  const autoSaveTableIds = ['tbl-eq','tbl-spell','tbl-link','tbl-clue','tbl-ctt','tbl-feitos','tbl-conditions','tbl-mod'];
+  const autoSaveTableIds = ['tbl-eq','tbl-spell','tbl-link','tbl-clue','tbl-ctt','tbl-mod'];
   const tableObserver = new MutationObserver(() => {
     setTimeout(debouncedAutoSave, 100);
   });

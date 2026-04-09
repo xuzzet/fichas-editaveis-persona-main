@@ -931,111 +931,133 @@ button:active {
     margin-bottom: 0;
   }
 }
-/* Feitos: estilos específicos para tornar a tabela mais legível e responsiva */
-.feitos-msg {
-  display: none;
-  padding: 10px 12px;
-  border-radius: 10px;
-  font-weight: 700;
-  margin-bottom: 8px;
+/* Feitos: lista fixa com checkboxes agrupados por categoria */
+#feitos-list {
+  margin-top: 12px;
 }
-.feitos-msg.info {
+.feat-group {
+  margin-bottom: 20px;
+}
+.feat-cat-title {
+  font-size: 15px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  margin: 0 0 10px 0;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--accent);
+}
+.feat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 10px;
+}
+.feat-item {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  background: var(--bg-2);
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+.feat-item.feat-active {
+  border-color: var(--accent);
   background: rgba(46, 164, 255, 0.08);
+  box-shadow: 0 0 8px rgba(46, 164, 255, 0.15);
+}
+.feat-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+.feat-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.feat-name {
+  color: var(--ink);
+}
+.feat-item.feat-active .feat-name {
+  color: var(--accent);
+}
+.feat-desc-text {
+  font-size: 12px;
+  color: var(--ink-dim);
+  line-height: 1.45;
+}
+.feat-prereq {
+  font-size: 11px;
   color: var(--accent-2);
-  border: 1px solid rgba(46, 164, 255, 0.12);
-}
-.feitos-msg.warn {
-  background: rgba(255, 75, 110, 0.06);
-  color: var(--danger);
-  border: 1px solid rgba(255, 75, 110, 0.12);
+  margin-top: 4px;
+  font-style: italic;
 }
 
-#tbl-feitos {
-  width: 100%;
+/* Condições: lista fixa com checkboxes */
+#conditions-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
   margin-top: 12px;
 }
-#tbl-feitos thead th {
-  background: linear-gradient(180deg, var(--bg-3), var(--bg-2));
-  font-size: 12px;
-  padding: 8px 10px;
-}
-#tbl-feitos tbody tr {
-  /* avoid movement on hover: keep subtle visual feedback only */
-  transition:
-    background-color 0.12s ease,
-    box-shadow 0.12s ease;
-}
-#tbl-feitos tbody tr:hover {
-  transform: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  background-color: rgba(255, 255, 255, 0.02);
-}
-#tbl-feitos td {
-  vertical-align: middle;
-  padding: 8px 10px;
-}
-#tbl-feitos .ft-desc {
-  min-height: 64px;
-  resize: none;
-  padding: 8px 10px;
+.cond-item {
+  padding: 10px 14px;
   border-radius: 10px;
-  font-size: 13px;
-  background: linear-gradient(180deg, var(--bg-2), transparent);
+  border: 1px solid var(--stroke);
+  background: var(--bg-2);
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
-#tbl-feitos .ft-level {
-  width: 88px;
-  max-width: 88px;
+.cond-item.cond-active {
+  border-color: var(--accent);
+  background: rgba(46, 164, 255, 0.08);
+  box-shadow: 0 0 8px rgba(46, 164, 255, 0.15);
 }
-#tbl-feitos .ft-rank {
-  width: 72px;
-  max-width: 72px;
+.cond-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
 }
-#tbl-feitos .ft-id {
-  min-width: 160px;
+.cond-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
 }
-#tbl-feitos .ft-sel {
-  width: 20px;
-  height: 20px;
+.cond-name {
+  color: var(--ink);
+}
+.cond-item.cond-active .cond-name {
+  color: var(--accent);
+}
+.cond-desc-text {
+  font-size: 12px;
+  color: var(--ink-dim);
+  line-height: 1.45;
 }
 
-/* Condições: estilos específicos para tabela de condições */
-#tbl-conditions {
-  width: 100%;
-  margin-top: 12px;
-}
-#tbl-conditions thead th {
-  background: linear-gradient(180deg, var(--bg-3), var(--bg-2));
-  font-size: 12px;
-  padding: 8px 10px;
-}
-#tbl-conditions tbody tr {
-  transition:
-    background-color 0.12s ease,
-    box-shadow 0.12s ease;
-}
-#tbl-conditions tbody tr:hover {
-  transform: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  background-color: rgba(255, 255, 255, 0.02);
-}
-#tbl-conditions td {
-  vertical-align: middle;
-  padding: 8px 10px;
-}
-#tbl-conditions .cond-desc {
-  min-height: 64px;
-  resize: none;
-  padding: 8px 10px;
-  border-radius: 10px;
-  font-size: 13px;
-  background: linear-gradient(180deg, var(--bg-2), transparent);
-}
-#tbl-conditions .cond-id {
-  min-width: 160px;
-}
-#tbl-conditions .cond-active {
-  width: 20px;
-  height: 20px;
+@media (max-width: 600px) {
+  #conditions-list {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Modificadores Globais: estilos */
@@ -1080,36 +1102,8 @@ button:active {
 }
 
 @media (max-width: 720px) {
-  /* mobile: stack each row as card-like block */
-  #tbl-feitos,
-  #tbl-feitos thead,
-  #tbl-feitos tbody,
-  #tbl-feitos th,
-  #tbl-feitos td,
-  #tbl-feitos tr {
-    display: block;
-    width: 100%;
-  }
-  #tbl-feitos thead {
-    display: none;
-  }
-  #tbl-feitos tbody tr {
-    margin-bottom: 12px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
-    border-radius: 12px;
-    padding: 10px;
-  }
-  #tbl-feitos td {
-    padding: 6px 8px;
-    border: none;
-    background: transparent;
-  }
-  #tbl-feitos .row-actions {
-    justify-content: flex-start;
-    margin-top: 8px;
-  }
-  #tbl-feitos .ft-desc {
-    min-height: 56px;
+  .feat-grid {
+    grid-template-columns: 1fr;
   }
 }
 
