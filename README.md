@@ -10,25 +10,29 @@ Ficha de personagem digital e editável para o sistema de RPG **Persona**, const
 
 | Aba | Descrição |
 |---|---|
-| **Acesso Rápido** | Painel principal com os dados mais usados em sessão: atributos, HP/PM, habilidades sociais, aspectos, equipamento e ações de salvar/carregar. |
+| **Acesso Rápido** | Painel principal com os dados mais usados em sessão: atributos de combate, HP/PM, habilidades sociais, aspectos, equipamento rápido e ações de salvar/carregar. |
+| **Modificadores** | Buffs e debuffs globais (flat ou percentual) que afetam atributos em tempo real, e sistema de 9 condições de status. |
 | **Persona** | Identidade da Persona, magias & técnicas e tabela de afinidades elementais. |
-| **Feitos** | Sistema de feitos especiais com seleção por nível e validação de limite de ranks. |
+| **Feitos** | 45 feitos especiais organizados em 6 categorias (Geral, Social, Combate, Persona, Atributos, Convicção) com checkboxes fixos. |
 | **Equipamentos** | Inventário dinâmico de armas, armaduras, acessórios e itens. |
 | **Vínculos** | Registro de vínculos de Arcana (NPCs, rank 1–10 e observações). |
-| **Anotações** | Diário livre e lista de objetivos. |
-| **Lore** | Retrato do personagem, histórico detalhado e características físicas. |
+| **Anotações** | Diário livre, lista de objetivos, pistas/âncoras e contatos/locais. |
+| **Lore** | Retrato do personagem, histórico detalhado (26 campos) e características físicas. |
 
 ### Recursos
 
-- **7 temas visuais** — Padrão, Roxo, Claro, Dourado, Vermelho, Degradê Verde/Roxo e Corinthians (persistem via `localStorage`).
+- **7 temas visuais** — Padrão, Roxo, Claro, Vermelho, Degradê Verde/Roxo, Corinthians e Rosa Pastel (persistem via `localStorage`).
+- **Auto-save inteligente** — Salvamento automático com debounce (500 ms), MutationObserver em tabelas dinâmicas e proteção `beforeunload`. Indicador visual "Salvando…" / "Salvo ✔" no canto inferior.
 - **Salvar / Carregar** — Armazena a ficha completa no `localStorage` do navegador.
 - **Exportar / Importar JSON** — Exporta todos os dados em um arquivo `.json` e importa de volta em qualquer momento.
 - **Resetar Ficha** — Limpa todos os campos e dados salvos.
-- **Tabela de afinidades** — 10 elementos (Físico, Fogo, Gelo, Vento, Raio, Nuclear, PSY, Luz, Trevas, Onipotente) com relações configuráveis por select.
-- **Feitos** — Lista curada de habilidades especiais com validação de unicidade, ranks, nível e limite por personagem.
+- **Modificadores Globais** — Sistema de buffs/debuffs (flat ou %) aplicados sobre STR, MAG, TEC, AGI, VIT, LCK, HP e PM, com toggle de ativo/inativo e resumo visual.
+- **Tabela de afinidades** — 10 elementos (Físico, Fogo, Gelo, Vento, Raio, Nuclear, PSY, Luz, Trevas, Onipotente) com 6 relações configuráveis.
+- **Feitos** — 45 feitos organizados em categorias (Geral, Social, Combate, Persona, Atributos, Convicção) com cards de checkbox e descrição.
 - **Condições** — 9 condições de status pré-definidas (Charme, Pânico, Medo, Fúria, Atordoado, Choque, Lento, Veneno, Derrubado) com flag de ativa/inativa.
 - **Retrato do personagem** — Upload de imagem local com modal de visualização ampliada.
 - **Notificações toast** — Feedback visual leve e não bloqueante para ações do usuário.
+- **UX refinada** — Cards com hover lift, inputs com focus ring temático, tabs em container com glow, scrollbar customizada, micro-interações em checkboxes e botões, botões de ação diferenciados (primário/perigo).
 
 ---
 
@@ -53,10 +57,11 @@ Ou acesse diretamente pelo GitHub Pages, se disponível.
 
 ```
 fichas-editaveis-persona-main/
-├── index.html          # Estrutura completa da ficha (abas, formulários, tabelas)
-├── styles.css          # Estilos globais e todos os temas visuais
-├── theme-amarelo-fix.css  # Correções de estilo para tema amarelo/dourado
-└── app.js              # Toda a lógica de interação, persistência e validação
+├── index.html             # Estrutura completa da ficha (8 abas, formulários, tabelas)
+├── styles.css             # Estilos globais, 7 temas visuais e micro-interações
+├── theme-amarelo-fix.css  # Tema amarelo externo (opcional, não vinculado por padrão)
+├── app.js                 # Lógica de interação, auto-save, modificadores e validação
+└── README.md              # Este arquivo
 ```
 
 ---
@@ -74,9 +79,11 @@ fichas-editaveis-persona-main/
 | VIT | Vitalidade |
 | LCK | Sorte |
 
-### Social (7 pontos iniciais)
+### Social (7 pontos iniciais — sem limite máximo após a criação)
 
 Conhecimento · Disciplina · Empatia · Expressão · Coragem · Charme
+
+Cada habilidade possui sistema de tiers (0–V) com descrições automáticas.
 
 ---
 
@@ -86,12 +93,26 @@ O Louco, O Mago, A Sacerdotisa, A Imperatriz, O Imperador, O Hierofante, Os Enam
 
 ---
 
+## 🎨 Temas
+
+| Tema | Descrição |
+|---|---|
+| Padrão | Azul escuro com destaques em azul claro |
+| Roxo | Roxo profundo saturado com accent lilás |
+| Claro | Fundo claro com texto escuro — modo diurno |
+| Vermelho | Escuro com tons de vermelho intenso |
+| Degradê Verde/Roxo | Fundo esverdeado com accent verde esmeralda |
+| Corinthians | Preto e vermelho — homenagem ao clube |
+| Rosa Pastel | Tons suaves de rosa e lilás — modo pastel |
+
+---
+
 ## 🛠 Tecnologias
 
 - **HTML5 / CSS3 / JavaScript** (vanilla, sem frameworks)
 - [**pdf-lib**](https://pdf-lib.js.org/) `v1.17.1` — geração de PDF
 - [**html2canvas**](https://html2canvas.hertzen.com/) `v1.4.1` — captura visual da página
-- Google Fonts: Barlow Condensed, Inter, Noto Sans JP
+- Google Fonts: Montserrat, Barlow Condensed, Inter, Noto Sans JP
 
 ---
 
