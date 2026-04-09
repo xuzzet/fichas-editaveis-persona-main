@@ -152,12 +152,26 @@ const EL_IDS = {
     // Limpa notas de teste
     const testsOut = document.getElementById('tests-out');
     if (testsOut) testsOut.textContent = 'Clique em Testes para rodar as verificações.';
+    // Limpa retrato
+    const portraitPrev = document.getElementById('portraitPreview');
+    if (portraitPrev) portraitPrev.innerHTML = '';
     // Remove dados do localStorage (mesma chave usada para salvar)
     try {
       localStorage.removeItem('ficha-yby-p3r-skin');
     } catch(e) {
       console.warn("[Reset] Erro ao limpar localStorage:", e);
     }
+    // Recalcular HP/PM com base nos atributos resetados
+    if (typeof window._recalcWithMods === 'function') {
+      window._recalcWithMods();
+    }
+    // Iniciar com HP/PM atual = máximo
+    const mhp = document.getElementById('MaxHP');
+    const chp = document.getElementById('CurrentHP');
+    const mpm = document.getElementById('EnergyMax');
+    const cpm = document.getElementById('CurrentPM');
+    if (mhp && chp) chp.value = mhp.value;
+    if (mpm && cpm) cpm.value = mpm.value;
     showToast("Ficha resetada", 'info');
   }
 
@@ -1045,9 +1059,17 @@ function buildModifiersUI(){
   if(ids.NotesDiary) ids.NotesDiary.value = data.notes?.diary || "";
   if(ids.NotesGoals) ids.NotesGoals.value = data.notes?.goals || "";
 
-  // Portrait
+  // Portrait (DOM API seguro — evita XSS via innerHTML)
   if (data.portrait && data.portrait.src) {
-    const prev = document.getElementById('portraitPreview'); if (prev) prev.innerHTML = `<img src='${data.portrait.src}' alt='Retrato' style='max-width:180px;max-height:220px;border-radius:12px;border:2px solid var(--accent);'/>`;
+    const prev = document.getElementById('portraitPreview');
+    if (prev) {
+      prev.innerHTML = '';
+      const img = document.createElement('img');
+      img.src = data.portrait.src;
+      img.alt = 'Retrato';
+      img.style.cssText = 'max-width:180px;max-height:220px;border-radius:12px;border:2px solid var(--accent);';
+      prev.appendChild(img);
+    }
   }
 
   // Background
