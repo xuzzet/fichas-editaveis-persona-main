@@ -171,6 +171,27 @@ body.theme-rosa textarea:focus::placeholder {
 * {
   box-sizing: border-box;
 }
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--stroke);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
 /* Tooltip */
 .tooltip {
   border-bottom: 1px dotted var(--accent);
@@ -309,13 +330,16 @@ body {
 .btn-feedback {
   transition:
     background 0.2s,
-    box-shadow 0.2s;
+    box-shadow 0.2s,
+    border-color 0.2s,
+    color 0.2s;
 }
 .btn-feedback:hover,
 .btn-feedback:focus {
-  background: var(--accent-2);
+  background: var(--bg-3);
   box-shadow: 0 0 0 2px var(--accent);
-  color: var(--bg);
+  color: var(--accent);
+  border-color: var(--accent);
 }
 .wrap {
   width: min(1180px, 100%);
@@ -401,7 +425,9 @@ body {
   display: flex;
   align-items: center;
   gap: 14px;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid color-mix(in srgb, var(--stroke) 50%, transparent);
 }
 .slash {
   width: 12px;
@@ -421,7 +447,11 @@ body {
   transition:
     background 0.2s,
     color 0.2s,
-    border 0.2s;
+    border 0.2s,
+    box-shadow 0.3s;
+}
+.brand:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
 .brand h1 {
   margin: 0;
@@ -444,40 +474,47 @@ body {
 .tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin: 10px 0 18px;
+  gap: 8px;
+  margin: 10px 0 20px;
+  padding: 4px;
+  background: color-mix(in srgb, var(--bg-2) 80%, transparent);
+  border-radius: 14px;
+  border: 1px solid var(--stroke);
 }
 .tab {
   position: relative;
   cursor: pointer;
-  color: var(--ink);
-  background: var(--bg-2);
-  border: 3px solid var(--stroke);
-  padding: 12px 20px 11px;
+  color: var(--ink-dim);
+  background: transparent;
+  border: 2px solid transparent;
+  padding: 11px 18px 10px;
   font-weight: 900;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   font-family:
     "Montserrat", "Rodin", "New Rodin", "Barlow Condensed", Inter, sans-serif;
   clip-path: none;
   transition:
-    border 0.15s ease,
-    background 0.15s ease,
-    color 0.15s ease;
-  font-size: 13px;
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+  font-size: 12px;
+  border-radius: 10px;
 }
 .tab::after {
   content: none;
 }
 .tab:hover {
-  border-color: var(--accent);
+  border-color: transparent;
   background: var(--bg-3);
-  color: var(--accent);
+  color: var(--ink);
 }
 .tab.active {
   border-color: var(--accent);
   background: var(--accent);
   color: var(--bg);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 35%, transparent);
 }
 .tab.active::after {
   opacity: 0;
@@ -506,12 +543,21 @@ body {
 }
 .card {
   background: var(--bg-2);
-  border: 3px solid var(--stroke);
+  border: 2px solid var(--stroke);
+  border-top: 3px solid var(--accent);
   border-radius: var(--radius);
-  padding: 20px;
+  padding: 24px;
   position: relative;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   min-width: 0;
+  transition:
+    box-shadow 0.25s ease,
+    transform 0.25s ease,
+    border-color 0.25s ease;
+}
+.card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  transform: translateY(-2px);
 }
 .card::before {
   content: none;
@@ -519,8 +565,10 @@ body {
 .section-title {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin: 0 0 14px;
+  gap: 14px;
+  margin: 0 0 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--stroke) 60%, transparent);
 }
 .section-title h2 {
   margin: 0;
@@ -533,19 +581,20 @@ body {
   transition: color 0.2s;
 }
 .bar {
-  height: 12px;
+  height: 14px;
   width: 84px;
   transform: skewX(-18deg);
   border-radius: 2px;
   background: var(--accent);
   box-shadow: none;
+  flex-shrink: 0;
 }
 label {
   display: block;
-  margin: 8px 0 6px;
+  margin: 10px 0 6px;
   font-weight: 900;
   letter-spacing: 0.16em;
-  font-size: 13px;
+  font-size: 12px;
   text-transform: uppercase;
   color: var(--accent);
   font-family: "Barlow Condensed", Inter, sans-serif;
@@ -558,37 +607,39 @@ input,
 select,
 textarea {
   width: 100%;
-  padding: 14px 16px;
+  padding: 12px 14px;
   color: var(--ink);
-  background: var(--bg-2);
+  background: var(--bg);
   border: 2px solid var(--stroke);
   border-radius: 8px;
   outline: none;
   font-size: 15px;
   min-width: 0;
   transition:
-    border-color 0.18s ease,
-    box-shadow 0.18s ease,
-    background 0.18s ease,
-    color 0.18s;
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    color 0.2s;
   font-weight: 600;
 }
 input::placeholder,
 textarea::placeholder {
   color: var(--ink-dim);
-  opacity: 0.6;
+  opacity: 0.5;
 }
 input:focus,
 select:focus,
 textarea:focus {
   border-color: var(--accent);
   background: var(--bg-3);
-  box-shadow: 0 0 0 2px var(--accent);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent),
+    0 2px 8px rgba(0, 0, 0, 0.15);
 }
 input:focus::placeholder,
 textarea:focus::placeholder {
   color: var(--ink-dim);
-  opacity: 0.4;
+  opacity: 0.3;
 }
 textarea {
   min-height: 112px;
@@ -661,29 +712,45 @@ select {
 }
 .stat input[type="range"] {
   appearance: none;
-  height: 10px;
+  height: 8px;
   border-radius: 999px;
   background: var(--bg-3);
   border: 1px solid var(--stroke);
+  transition: background 0.2s ease;
+}
+.stat input[type="range"]:hover {
+  background: color-mix(in srgb, var(--accent) 15%, var(--bg-3));
 }
 .stat input[type="range"]::-webkit-slider-thumb {
   appearance: none;
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: var(--accent);
   border: 2px solid var(--bg);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.stat input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--accent) 40%, transparent);
 }
 .badge {
   text-align: center;
   padding: 6px 10px;
-  border: 1px solid var(--stroke);
+  border: 2px solid var(--stroke);
   border-radius: 10px;
-  background: var(--bg-2);
+  background: var(--bg);
   font-weight: 900;
   font-family: "Barlow Condensed";
   min-width: 0;
+  font-size: 16px;
+  color: var(--accent);
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
 }
 .der {
   display: grid;
@@ -812,11 +879,11 @@ th {
 }
 /* Melhorar legibilidade: zebra striping em tabelas */
 tbody tr:nth-child(even) {
-  background: rgba(255, 255, 255, 0.015);
+  background: color-mix(in srgb, var(--bg-3) 30%, transparent);
 }
 tbody tr:hover {
-  background: rgba(255, 255, 255, 0.025);
-  transition: background 0.15s ease;
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+  transition: background 0.2s ease;
 }
 td:first-child,
 th:first-child {
@@ -843,54 +910,98 @@ th:last-child {
   white-space: nowrap;
 }
 .mini {
-  padding: 6px 10px;
-  border-radius: 10px;
+  padding: 6px 12px;
+  border-radius: 8px;
   border: 1px solid var(--stroke);
   background: var(--bg-2);
   color: var(--ink);
   font-weight: 800;
   cursor: pointer;
   font-family: "Barlow Condensed";
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.mini:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--bg-3);
 }
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 12px;
+  gap: 10px;
+  margin-top: 14px;
   min-width: 0;
+}
+
+/* Primary action button (Save) */
+#save {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+  font-weight: 900;
+}
+#save:hover,
+#save:focus {
+  background: var(--accent-2);
+  border-color: var(--accent-2);
+  color: var(--bg);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+/* Danger action button (Reset) */
+#reset {
+  color: var(--danger);
+  border-color: color-mix(in srgb, var(--danger) 50%, var(--stroke));
+}
+#reset:hover,
+#reset:focus {
+  background: color-mix(in srgb, var(--danger) 12%, var(--bg-2));
+  border-color: var(--danger);
+  color: var(--danger);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--danger) 25%, transparent);
 }
 button {
   cursor: pointer;
-  border: 3px solid var(--stroke);
+  border: 2px solid var(--stroke);
   color: var(--ink);
   background: var(--bg-2);
-  padding: 14px 18px;
+  padding: 12px 18px;
   border-radius: 10px;
   font-weight: 900;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   font-family: "Barlow Condensed";
   min-width: 0;
   font-size: 13px;
   transition:
-    border-color 0.15s ease,
-    background 0.15s ease,
-    transform 0.15s ease,
-    color 0.15s ease;
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.12s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 button:hover {
   border-color: var(--accent);
   background: var(--bg-3);
   color: var(--accent);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 button:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
 .hint {
   color: var(--ink-dim);
   font-size: 12px;
-  margin-top: 6px;
-  line-height: 1.45;
+  margin-top: 8px;
+  line-height: 1.55;
+  padding: 6px 10px;
+  background: color-mix(in srgb, var(--bg-3) 40%, transparent);
+  border-radius: 6px;
+  border-left: 3px solid var(--accent);
 }
 .view {
   display: none;
@@ -902,14 +1013,14 @@ button:active {
 }
 /* Uniformizar espaçamento entre cards em todas as views como Acesso Rápido */
 .view .card {
-  margin-bottom: 20px; /* mesmo passo usado na grid principal */
+  margin-bottom: 24px; /* mesmo passo usado na grid principal */
 }
 .view .card:last-child {
   margin-bottom: 0;
 }
 @media (max-width: 600px) {
   .view .card {
-    margin-bottom: 14px;
+    margin-bottom: 16px;
   }
 }
 
@@ -930,14 +1041,17 @@ button:active {
   margin-bottom: 20px;
 }
 .feat-cat-title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   color: var(--accent);
-  margin: 0 0 10px 0;
-  padding-bottom: 6px;
-  border-bottom: 2px solid var(--accent);
+  margin: 0 0 12px 0;
+  padding: 8px 14px;
+  background: color-mix(in srgb, var(--accent) 8%, var(--bg));
+  border-radius: 8px;
+  border-left: 4px solid var(--accent);
+  font-family: "Barlow Condensed", Inter, sans-serif;
 }
 .feat-grid {
   display: grid;
@@ -945,19 +1059,25 @@ button:active {
   gap: 10px;
 }
 .feat-item {
-  padding: 10px 14px;
+  padding: 12px 16px;
   border-radius: 10px;
   border: 1px solid var(--stroke);
-  background: var(--bg-2);
+  background: var(--bg);
   transition:
-    background 0.2s,
-    border-color 0.2s,
-    box-shadow 0.2s;
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+.feat-item:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--stroke));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
 }
 .feat-item.feat-active {
   border-color: var(--accent);
-  background: rgba(46, 164, 255, 0.08);
-  box-shadow: 0 0 8px rgba(46, 164, 255, 0.15);
+  background: color-mix(in srgb, var(--accent) 8%, var(--bg));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 15%, transparent);
 }
 .feat-label {
   display: flex;
@@ -975,9 +1095,16 @@ button:active {
   height: 18px;
   accent-color: var(--accent);
   cursor: pointer;
+  flex-shrink: 0;
+  border-radius: 4px;
+  transition: transform 0.15s ease;
+}
+.feat-label input[type="checkbox"]:hover {
+  transform: scale(1.1);
 }
 .feat-name {
   color: var(--ink);
+  transition: color 0.2s ease;
 }
 .feat-item.feat-active .feat-name {
   color: var(--accent);
@@ -1002,19 +1129,25 @@ button:active {
   margin-top: 12px;
 }
 .cond-item {
-  padding: 10px 14px;
+  padding: 12px 16px;
   border-radius: 10px;
   border: 1px solid var(--stroke);
-  background: var(--bg-2);
+  background: var(--bg);
   transition:
-    background 0.2s,
-    border-color 0.2s,
-    box-shadow 0.2s;
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+.cond-item:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--stroke));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
 }
 .cond-item.cond-active {
-  border-color: var(--accent);
-  background: rgba(46, 164, 255, 0.08);
-  box-shadow: 0 0 8px rgba(46, 164, 255, 0.15);
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 8%, var(--bg));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--danger) 15%, transparent);
 }
 .cond-label {
   display: flex;
@@ -1030,14 +1163,21 @@ button:active {
 .cond-label input[type="checkbox"] {
   width: 18px;
   height: 18px;
-  accent-color: var(--accent);
+  accent-color: var(--danger);
   cursor: pointer;
+  flex-shrink: 0;
+  border-radius: 4px;
+  transition: transform 0.15s ease;
+}
+.cond-label input[type="checkbox"]:hover {
+  transform: scale(1.1);
 }
 .cond-name {
   color: var(--ink);
+  transition: color 0.2s ease;
 }
 .cond-item.cond-active .cond-name {
-  color: var(--accent);
+  color: var(--danger);
 }
 .cond-desc-text {
   font-size: 12px;
@@ -1126,16 +1266,15 @@ button:active {
   left: 0;
   top: 0;
   bottom: 0;
-  width: 4px;
+  width: 3px;
   background: var(--accent);
-  transform: skewX(-12deg);
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: opacity 0.25s ease;
 }
 .tab.active {
-  box-shadow: none;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 35%, transparent);
   background-image: none;
 }
 .tab.active::before {
