@@ -120,6 +120,7 @@ const EL_IDS = {
 
   // Função para resetar todos os campos da ficha
   function resetFicha() {
+    if (!confirm('Tem certeza que deseja resetar a ficha?\nTodos os dados serão perdidos permanentemente.')) return;
     // Seleciona todos os inputs, selects e textareas dentro do .wrap
     const root = document.querySelector('.wrap');
     const fields = root.querySelectorAll('input, select, textarea');
@@ -141,7 +142,9 @@ const EL_IDS = {
     });
     // Limpa estados visuais de listas fixas (feitos/condições)
     document.querySelectorAll('.feat-item').forEach(el => el.classList.remove('feat-active'));
+    document.querySelectorAll('.feat-check').forEach(cb => cb.checked = false);
     document.querySelectorAll('.cond-item').forEach(el => el.classList.remove('cond-active'));
+    document.querySelectorAll('.cond-check').forEach(cb => cb.checked = false);
     // Limpa afinidades
     const afBody = document.getElementById('af-body');
     if (afBody) afBody.innerHTML = '';
@@ -150,7 +153,12 @@ const EL_IDS = {
     const testsOut = document.getElementById('tests-out');
     if (testsOut) testsOut.textContent = 'Clique em Testes para rodar as verificações.';
     // Remove dados do localStorage (mesma chave usada para salvar)
-    localStorage.removeItem('ficha-yby-p3r-skin');
+    try {
+      localStorage.removeItem('ficha-yby-p3r-skin');
+    } catch(e) {
+      console.warn("[Reset] Erro ao limpar localStorage:", e);
+    }
+    showToast("Ficha resetada", 'info');
   }
 
   // Adiciona evento ao botão de reset
@@ -711,52 +719,94 @@ function buildModifiersUI(){
   observer.observe(document.body, { childList: true, subtree: true });
 
   function recalc(options = {}){
+    if (!ids.CharLvl || !ids.CharVIT || !ids.CharMAG || !ids.MaxHP || !ids.EnergyMax) return;
     const keepMaxValues = !!options.keepMaxValues;
-    const lvl = clampInt(ids.CharLvl?.value||1,1,99);
-  const vit = clampInt(ids.CharVIT?.value||1,1,12);
-    if(ids.MaxHP && !keepMaxValues) ids.MaxHP.value = 25 + ((5 + vit) * lvl);
-  const mag = clampInt(ids.CharMAG?.value||1,1,99);
+    const lvl = clampInt(ids.CharLvl?.value||1, 1, 99);
+    const vit = clampInt(ids.CharVIT?.value||1, 1, 12);
+    const mag = clampInt(ids.CharMAG?.value||1, 1, 12);
+
+    // --- HP Máximo ---
+    // Fórmula: 25 + ((5 + VIT) * Nível)
+    const hpCalc = 25 + ((5 + vit) * lvl);
+
+    // --- PM Máximo ---
+    // Nível 1: 15 + ((MAG + 5) * 2)
+    // Nível 2+: base nível 1 + ((nível - 1) * 5)
     const pmBase = 15 + ((mag + 5) * 2);
-    const pmMax = pmBase + ((lvl - 1) * 5);
-    if(ids.EnergyMax && !keepMaxValues) ids.EnergyMax.value = Math.trunc(pmMax);
+    const pmCalc = pmBase + ((lvl - 1) * 5);
+
+    // Guardar HP/PM atuais ANTES de alterar máximos
+    const prevCurrentHP = clampInt(ids.CurrentHP?.value||0, 0, 99999);
+    const prevCurrentPM = clampInt(ids.CurrentPM?.value||0, 0, 99999);
+    const prevMaxHP = clampInt(ids.MaxHP?.value||0, 0, 99999);
+    const prevMaxPM = clampInt(ids.EnergyMax?.value||0, 0, 99999);
+
+    // Atualizar máximos (apenas se não estiver restaurando snapshot com valores salvos)
+    if (!keepMaxValues) {
+      ids.MaxHP.value = hpCalc;
+      ids.EnergyMax.value = pmCalc;
+    }
 
     // Aplicar modificadores globais nos badges e valores calculados
-    if(typeof window.applyModifiers === 'function'){
+    if (typeof window.applyModifiers === 'function') {
       const baseVals = {
-        STR: clampInt(ids.CharSTR?.value||1,1,12),
-        MAG: clampInt(ids.CharMAG?.value||1,1,12),
-        TEC: clampInt(ids.CharTEC?.value||1,1,12),
-        AGI: clampInt(ids.CharAGI?.value||1,1,12),
-        VIT: clampInt(ids.CharVIT?.value||1,1,12),
-        LCK: clampInt(ids.CharLCK?.value||1,1,12),
+        STR: clampInt(ids.CharSTR?.value||1, 1, 12),
+        MAG: mag,
+        TEC: clampInt(ids.CharTEC?.value||1, 1, 12),
+        AGI: clampInt(ids.CharAGI?.value||1, 1, 12),
+        VIT: vit,
+        LCK: clampInt(ids.CharLCK?.value||1, 1, 12),
         HP: Number(ids.MaxHP?.value||0),
         PM: Number(ids.EnergyMax?.value||0)
       };
       const modded = window.applyModifiers(baseVals);
-      ["STR","MAG","TEC","AGI","VIT","LCK"].forEach(k=>{
-        const el = document.getElementById("b"+k);
-        if(el) el.textContent = modded[k] !== baseVals[k] ? `${modded[k]} (${baseVals[k]})` : baseVals[k];
+      ["STR","MAG","TEC","AGI","VIT","LCK"].forEach(k => {
+        const el = document.getElementById("b" + k);
+        if (el) el.textContent = modded[k] !== baseVals[k] ? `${modded[k]} (${baseVals[k]})` : baseVals[k];
       });
-      if(ids.MaxHP && !keepMaxValues && modded.HP !== baseVals.HP) ids.MaxHP.value = modded.HP;
-      if(ids.EnergyMax && !keepMaxValues && modded.PM !== baseVals.PM) ids.EnergyMax.value = modded.PM;
+      if (!keepMaxValues && modded.HP !== baseVals.HP) ids.MaxHP.value = modded.HP;
+      if (!keepMaxValues && modded.PM !== baseVals.PM) ids.EnergyMax.value = modded.PM;
     } else {
-      ["STR","MAG","TEC","AGI","VIT","LCK"].forEach(k=>{
-        const el = document.getElementById("b"+k);
-        if(el && ids["Char"+k]) el.textContent = ids["Char"+k].value;
+      ["STR","MAG","TEC","AGI","VIT","LCK"].forEach(k => {
+        const el = document.getElementById("b" + k);
+        if (el && ids["Char" + k]) el.textContent = ids["Char" + k].value;
       });
     }
+
+    // --- Sincronizar HP/PM atuais ---
+    const newMaxHP = clampInt(ids.MaxHP?.value||0, 0, 99999);
+    const newMaxPM = clampInt(ids.EnergyMax?.value||0, 0, 99999);
+
+    // Se o máximo subiu: manter o atual (não inflar automaticamente)
+    // Se o máximo desceu: clampar o atual ao novo máximo
+    // Nunca permitir negativo
+    if (!keepMaxValues) {
+      const clampedHP = Math.max(0, Math.min(prevCurrentHP, newMaxHP));
+      const clampedPM = Math.max(0, Math.min(prevCurrentPM, newMaxPM));
+      // Só ajustar se o valor atual ultrapassou o novo máximo
+      if (ids.CurrentHP && prevCurrentHP > newMaxHP) ids.CurrentHP.value = clampedHP;
+      if (ids.CurrentPM && prevCurrentPM > newMaxPM) ids.CurrentPM.value = clampedPM;
+    }
+
     validateCurrentValues();
   }
   window._recalcWithMods = recalc;
   function validateCurrentValues(){
-    const maxHP = clampInt(ids.MaxHP?.value||0,0,9999);
-    if(ids.MaxHP) ids.MaxHP.value = maxHP;
-    const currentHP = clampInt(ids.CurrentHP?.value||0,0,9999);
-    if(ids.CurrentHP) ids.CurrentHP.value = Math.min(currentHP, maxHP);
-    const maxPM = clampInt(ids.EnergyMax?.value||0,0,9999);
-    if(ids.EnergyMax) ids.EnergyMax.value = maxPM;
-    const currentPM = clampInt(ids.CurrentPM?.value||0,0,9999);
-    if(ids.CurrentPM) ids.CurrentPM.value = Math.min(currentPM, maxPM);
+    // Garantir que máximos sejam >= 0 e sem NaN
+    const maxHP = Math.max(0, Math.trunc(Number(ids.MaxHP?.value) || 0));
+    if (ids.MaxHP) ids.MaxHP.value = maxHP;
+
+    // HP atual: clamp entre 0 e maxHP
+    const rawHP = Math.trunc(Number(ids.CurrentHP?.value) || 0);
+    if (ids.CurrentHP) ids.CurrentHP.value = Math.max(0, Math.min(rawHP, maxHP));
+
+    // Garantir que PM máximo >= 0 e sem NaN
+    const maxPM = Math.max(0, Math.trunc(Number(ids.EnergyMax?.value) || 0));
+    if (ids.EnergyMax) ids.EnergyMax.value = maxPM;
+
+    // PM atual: clamp entre 0 e maxPM
+    const rawPM = Math.trunc(Number(ids.CurrentPM?.value) || 0);
+    if (ids.CurrentPM) ids.CurrentPM.value = Math.max(0, Math.min(rawPM, maxPM));
   }
   [ids.CharLvl, ids.CharVIT, ids.CharAGI, ids.CharSTR, ids.CharMAG, ids.CharTEC, ids.CharLCK].forEach(el=>{ if(el) el.addEventListener("input", recalc); });
   if(ids.MaxHP) ids.MaxHP.addEventListener("input", validateCurrentValues);
@@ -935,8 +985,6 @@ function buildModifiersUI(){
   if(ids.CurrentHP && g.pvAtual != null && g.pvAtual !== "") ids.CurrentHP.value = g.pvAtual;
   if(ids.EnergyMax && g.pmMax != null && g.pmMax !== "") ids.EnergyMax.value = g.pmMax;
   if(ids.CurrentPM && g.pmAtual != null && g.pmAtual !== "") ids.CurrentPM.value = g.pmAtual;
-  const hasCurrentHP = (g.CurrentHP != null && g.CurrentHP !== "") || (g.pvAtual != null && g.pvAtual !== "");
-  const hasCurrentPM = (g.CurrentPM != null && g.CurrentPM !== "") || (g.pmAtual != null && g.pmAtual !== "");
 
   // persona
   if (data.persona) {
@@ -958,34 +1006,29 @@ function buildModifiersUI(){
   }
 
   // Recria tabelas dinâmicas
-  eqBody.innerHTML = '';
-  (data.equip||[]).forEach(addEq);
+  if(eqBody) { eqBody.innerHTML = ''; (data.equip||[]).forEach(addEq); }
 
-  spellBody.innerHTML = '';
-  (data.spells||[]).forEach(addSpell);
+  if(spellBody) { spellBody.innerHTML = ''; (data.spells||[]).forEach(addSpell); }
 
-  linkBody.innerHTML = '';
-  (data.links||[]).forEach(addLink);
+  if(linkBody) { linkBody.innerHTML = ''; (data.links||[]).forEach(addLink); }
 
-  clueBody.innerHTML = '';
-  (data.notes?.clues||[]).forEach(addClue);
+  if(clueBody) { clueBody.innerHTML = ''; (data.notes?.clues||[]).forEach(addClue); }
 
-  cttBody.innerHTML = '';
-  (data.notes?.contacts||[]).forEach(addCtt);
+  if(cttBody) { cttBody.innerHTML = ''; (data.notes?.contacts||[]).forEach(addCtt); }
 
   // Feitos - restaurar checkboxes fixos
   try{
     if(window.applyFeitos){
       window.applyFeitos(data.feitos||[]);
     }
-  }catch(e){}
+  }catch(e){ console.warn("[applySnapshot] Erro ao restaurar feitos:", e); }
 
   // Condições - restaurar checkboxes fixos
   try{
     if(window.applyConditions){
       window.applyConditions(data.conditions||[]);
     }
-  }catch(e){}
+  }catch(e){ console.warn("[applySnapshot] Erro ao restaurar condições:", e); }
 
   // Modificadores Globais - limpar e restaurar
   try{
@@ -996,7 +1039,7 @@ function buildModifiersUI(){
         window.addMod(m);
       });
     }
-  }catch(e){}
+  }catch(e){ console.warn("[applySnapshot] Erro ao restaurar modificadores:", e); }
 
   // Notas gerais
   if(ids.NotesDiary) ids.NotesDiary.value = data.notes?.diary || "";
@@ -1013,10 +1056,34 @@ function buildModifiersUI(){
   }
 
   // socialPool não é mais usado, mas mantemos compatibilidade silenciosa com snapshots antigos
-  const hasSavedMax = (g.MaxHP != null && g.MaxHP !== "") || (g.pvMax != null && g.pvMax !== "") || (g.EnergyMax != null && g.EnergyMax !== "") || (g.pmMax != null && g.pmMax !== "");
-  recalc({ keepMaxValues: hasSavedMax });
-  if(ids.CurrentHP && !hasCurrentHP) ids.CurrentHP.value = ids.MaxHP?.value || 0;
-  if(ids.CurrentPM && !hasCurrentPM) ids.CurrentPM.value = ids.EnergyMax?.value || 0;
+
+  // --- Restaurar HP/PM de forma confiável ---
+  // 1. Recalcular máximos com base nos atributos restaurados
+  recalc({ keepMaxValues: false });
+
+  // 2. Se snapshot tinha valores máximos salvos pelo usuário (ex: com modificadores ou edição manual),
+  //    restaurá-los por cima do recálculo
+  const savedMaxHP = g.MaxHP || g.pvMax;
+  const savedMaxPM = g.EnergyMax || g.pmMax;
+  if (savedMaxHP != null && savedMaxHP !== "" && ids.MaxHP) ids.MaxHP.value = savedMaxHP;
+  if (savedMaxPM != null && savedMaxPM !== "" && ids.EnergyMax) ids.EnergyMax.value = savedMaxPM;
+
+  // 3. Restaurar valores ATUAIS (editados pelo jogador durante a sessão)
+  const savedCurrentHP = g.CurrentHP || g.pvAtual;
+  const savedCurrentPM = g.CurrentPM || g.pmAtual;
+  if (savedCurrentHP != null && savedCurrentHP !== "" && ids.CurrentHP) {
+    ids.CurrentHP.value = savedCurrentHP;
+  } else if (ids.CurrentHP) {
+    // Se não havia HP atual salvo, iniciar no máximo
+    ids.CurrentHP.value = ids.MaxHP?.value || 0;
+  }
+  if (savedCurrentPM != null && savedCurrentPM !== "" && ids.CurrentPM) {
+    ids.CurrentPM.value = savedCurrentPM;
+  } else if (ids.CurrentPM) {
+    ids.CurrentPM.value = ids.EnergyMax?.value || 0;
+  }
+
+  // 4. Clamp final para garantir consistência
   validateCurrentValues();
   if(typeof window.initAutoResizeTextareas === 'function') window.initAutoResizeTextareas();
   }
@@ -1024,20 +1091,25 @@ function buildModifiersUI(){
   const saveBtn = document.getElementById("save");
   if(saveBtn) saveBtn.addEventListener("click", ()=>{
     // Validação de campos obrigatórios
-    const obrigatorios = [ids.CharClass, ids.CharPlayer, ids.PerName];
+    const obrigatorios = [ids.CharClass, ids.CharPlayer, ids.PerName].filter(Boolean);
     let faltando = obrigatorios.filter(f => !f.value.trim());
     if (faltando.length > 0) {
       faltando.forEach(f => { f.classList.add('input-error'); f.focus(); });
       const camposNomes = faltando.map(f => {
-        const label = f.closest('div').querySelector('label').textContent.trim();
+        const label = f.closest('div')?.querySelector('label')?.textContent?.trim() || 'Campo';
         return label.split('*')[0].trim();
       }).join(', ');
       showToast(`Preencha: ${camposNomes}`, 'error', 3500);
       setTimeout(() => faltando.forEach(f => f.classList.remove('input-error')), 2000);
       return;
     }
-    localStorage.setItem("ficha-yby-p3r-skin", JSON.stringify(snapshot()));
-    showToast("✓ Ficha salva com sucesso", 'success');
+    try {
+      localStorage.setItem("ficha-yby-p3r-skin", JSON.stringify(snapshot()));
+      showToast("✓ Ficha salva com sucesso", 'success');
+    } catch(e) {
+      console.error("[Salvar] Erro ao salvar ficha:", e);
+      showToast("Erro ao salvar a ficha", 'error');
+    }
   });
   const loadBtn = document.getElementById("load");
   if(loadBtn) loadBtn.addEventListener("click", ()=>{ 
@@ -1046,7 +1118,21 @@ function buildModifiersUI(){
     try{ applySnapshot(JSON.parse(raw)); showToast("✓ Ficha carregada", 'success'); }catch(e){ showToast("Erro ao carregar ficha", 'error'); } 
   });
   const exportBtn = document.getElementById("export");
-  if(exportBtn) exportBtn.addEventListener("click", ()=>{ const blob = new Blob([JSON.stringify(snapshot(),null,2)], {type:"application/json"}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=((ids.CharPlayer?.value||'ficha')+".json"); a.click(); URL.revokeObjectURL(a.href); showToast("✓ Ficha exportada", 'success'); });
+  if(exportBtn) exportBtn.addEventListener("click", ()=>{
+    try {
+      const json = JSON.stringify(snapshot(), null, 2);
+      const blob = new Blob([json], {type:"application/json"});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = (ids.CharPlayer?.value || 'ficha') + ".json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+      showToast("✓ Ficha exportada", 'success');
+    } catch(e) {
+      console.error("[Exportar] Erro ao exportar ficha:", e);
+      showToast("Erro ao exportar ficha", 'error');
+    }
+  });
   const importBtn = document.getElementById("import");
   if(importBtn) importBtn.addEventListener("click", ()=>{ const i=document.createElement('input'); i.type='file'; i.accept='application/json'; i.onchange=()=>{ const f=i.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{ try{ applySnapshot(JSON.parse(r.result)); showToast("✓ Ficha importada", 'success'); }catch(e){ showToast("Erro ao importar ficha", 'error'); } }; r.readAsText(f); }; i.click(); });
 
@@ -1107,13 +1193,17 @@ function buildModifiersUI(){
 
     const backup = snapshot();
 
-    ids.CharLvl.value = 1; ids.CharVIT.value = 1; ids.CharAGI.value = 2; recalc();
+    ids.CharLvl.value = 1; ids.CharVIT.value = 1; ids.CharMAG.value = 1; ids.CharAGI.value = 2; recalc();
+    // HP lvl1/VIT1 = 25 + ((5+1)*1) = 31
     ok('PV lvl1/VIT1 = 31', Number(ids.MaxHP.value) === 31, 31, ids.MaxHP.value);
-    ok('EN lvl1/VIT1 = 20', Number(ids.EnergyMax.value) === 20, 20, ids.EnergyMax.value);
+    // PM lvl1/MAG1 = 15 + ((1+5)*2) = 27
+    ok('PM lvl1/MAG1 = 27', Number(ids.EnergyMax.value) === 27, 27, ids.EnergyMax.value);
 
-    ids.CharLvl.value = 10; ids.CharVIT.value = 4; ids.CharAGI.value = 3; recalc();
+    ids.CharLvl.value = 10; ids.CharVIT.value = 4; ids.CharMAG.value = 3; ids.CharAGI.value = 3; recalc();
+    // HP lvl10/VIT4 = 25 + ((5+4)*10) = 115
     ok('PV lvl10/VIT4 = 115', Number(ids.MaxHP.value) === 115, 115, ids.MaxHP.value);
-    ok('EN lvl10/VIT4 = 65', Number(ids.EnergyMax.value) === 65, 65, ids.EnergyMax.value);
+    // PM lvl10/MAG3 = 15 + ((3+5)*2) + ((10-1)*5) = 15+16+45 = 76
+    ok('PM lvl10/MAG3 = 76', Number(ids.EnergyMax.value) === 76, 76, ids.EnergyMax.value);
     // Init field not present; check AGI badge instead
     ok('Init = AGI (badge bAGI)', Number(document.getElementById('bAGI')?.textContent||0) === 3, 3, document.getElementById('bAGI')?.textContent||'');
 
@@ -1140,22 +1230,24 @@ function buildModifiersUI(){
     const btnCtt = document.getElementById('add-ctt');
     if(btnCtt) btnCtt.click();
   }
-  seed();
-
   // ===== Auto-Load: restaurar dados do localStorage ao abrir =====
+  let _autoLoaded = false;
   try {
     const raw = localStorage.getItem("ficha-yby-p3r-skin");
     if (raw) {
       const data = JSON.parse(raw);
       if (data && typeof data === 'object' && data.id === "ficha-yby-p3r-skin") {
         applySnapshot(data);
+        _autoLoaded = true;
       } else {
-        console.warn("Auto-load: dados inválidos no localStorage, ignorando.");
+        console.warn("[Auto-load] Dados inválidos no localStorage, ignorando.");
       }
     }
   } catch (e) {
-    console.warn("Erro ao carregar auto-save:", e);
+    console.warn("[Auto-load] Erro ao carregar:", e);
   }
+  // Seed de linhas vazias só se não houver dados salvos
+  if (!_autoLoaded) seed();
 
   // ===== Auto-Save System =====
   function debounce(fn, delay) {
@@ -1183,15 +1275,21 @@ function buildModifiersUI(){
   }
 
   // Função central de auto-save
+  let _saving = false;
   function autoSave() {
+    if (_saving) return;
+    _saving = true;
     try {
       showSaveStatus('Salvando...');
       const data = snapshot();
-      localStorage.setItem("ficha-yby-p3r-skin", JSON.stringify(data));
+      const json = JSON.stringify(data);
+      localStorage.setItem("ficha-yby-p3r-skin", json);
       showSaveStatus('Salvo \u2714', 2000);
     } catch (e) {
-      console.warn("Erro ao salvar automaticamente:", e);
+      console.warn("[Auto-save] Erro ao salvar:", e);
       showSaveStatus('Erro ao salvar', 3000);
+    } finally {
+      _saving = false;
     }
   }
 
