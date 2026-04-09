@@ -1,6 +1,6 @@
 # Ficha Automatizada — Persona
 
-Ficha de personagem digital e editável para o sistema de RPG **Persona**, construída inteiramente com HTML, CSS e JavaScript puro, sem dependências de servidor ou framework. Basta abrir o arquivo `index.html` no navegador para começar a usar.
+Ficha de personagem digital e editável para o sistema de RPG **Persona**, construída inteiramente com HTML, CSS e JavaScript puro, sem dependências de servidor ou framework. Arquitetura baseada em **estado centralizado** (`state` → `setState` → `render`), com cálculos puros e renderização reativa. Basta abrir o arquivo `index.html` no navegador para começar a usar.
 
 ---
 
@@ -33,6 +33,7 @@ Ficha de personagem digital e editável para o sistema de RPG **Persona**, const
 - **Retrato do personagem** — Upload de imagem local com modal de visualização ampliada.
 - **Notificações toast** — Feedback visual leve e não bloqueante para ações do usuário.
 - **UX refinada** — Cards com hover lift, inputs com focus ring temático, tabs em container com glow, scrollbar customizada, micro-interações em checkboxes e botões, botões de ação diferenciados (primário/perigo).
+- **Estado centralizado** — Objeto `state` único que concentra todos os dados da ficha. Alterações via `setState()` disparam recálculo, validação, renderização e auto-save automaticamente. API exposta (`window.state`, `window.setState`, `window.getState`) para debug e extensão.
 
 ---
 
@@ -60,7 +61,7 @@ fichas-editaveis-persona-main/
 ├── index.html             # Estrutura completa da ficha (8 abas, formulários, tabelas)
 ├── styles.css             # Estilos globais, 7 temas visuais e micro-interações
 ├── theme-amarelo-fix.css  # Tema amarelo externo (opcional, não vinculado por padrão)
-├── app.js                 # Lógica de interação, auto-save, modificadores e validação
+├── app.js                 # Estado central, cálculos puros, renderização reativa, auto-save
 └── README.md              # Este arquivo
 ```
 
@@ -104,6 +105,27 @@ O Louco, O Mago, A Sacerdotisa, A Imperatriz, O Imperador, O Hierofante, Os Enam
 | Degradê Verde/Roxo | Fundo esverdeado com accent verde esmeralda |
 | Corinthians | Preto e vermelho — homenagem ao clube |
 | Rosa Pastel | Tons suaves de rosa e lilás — modo pastel |
+
+---
+
+## 🏗 Arquitetura
+
+```
+Evento DOM → setState(partial) → recalcState() → validateState() → render() → autoSave()
+```
+
+| Conceito | Descrição |
+|---|---|
+| `state` | Objeto único com todos os dados editáveis da ficha |
+| `setState(partial, options)` | Merge parcial → recalc condicional → render → auto-save |
+| `getState()` | Retorna cópia profunda (sem referências internas) |
+| `recalcState()` | Calcula HP/PM máximos e badges a partir de atributos + modificadores |
+| `validateState()` | Clamp de HP/PM (≥ 0, ≤ máximo) |
+| `render()` | Atualiza campos simples, badges e social |
+| `renderAll()` | Render completo: tabelas, feitos, condições, modificadores, afinidades, retrato, background |
+| `snapshot()` | Serializa `state` para formato JSON (backward-compatible) |
+| `applySnapshot(data)` | Deserializa JSON → `state` → `renderAll()` |
+| `applyModifiers()` | Função pura: base + flat + percentual → resultado (clamp ≥ 0) |
 
 ---
 
