@@ -14,7 +14,7 @@ Ficha de personagem digital e editável para o sistema de RPG **Persona**, const
 | **Modificadores** | Buffs e debuffs globais (flat ou percentual) que afetam atributos em tempo real, e sistema de 9 condições de status. |
 | **Persona** | Identidade da Persona, magias & técnicas e tabela de afinidades elementais. |
 | **Feitos** | 45 feitos especiais organizados em 6 categorias (Geral, Social, Combate, Persona, Atributos, Convicção) com checkboxes fixos. |
-| **Equipamentos** | Inventário dinâmico de armas, armaduras, acessórios e itens. |
+| **Inventário** | Sistema de gerenciamento de itens com peso, separação entre Equipados e Mochila, cálculo automático de capacidade de carga `(FOR × 5) + VIT` e feedback visual de sobrecarga. |
 | **Vínculos** | Registro de vínculos de Arcana (NPCs, rank 1–10 e observações). |
 | **Anotações** | Diário livre, lista de objetivos, pistas/âncoras e contatos/locais. |
 | **Lore** | Retrato do personagem, histórico detalhado (26 campos) e características físicas. |
@@ -27,6 +27,7 @@ Ficha de personagem digital e editável para o sistema de RPG **Persona**, const
 - **Exportar / Importar JSON** — Exporta todos os dados em um arquivo `.json` e importa de volta em qualquer momento.
 - **Resetar Ficha** — Limpa todos os campos e dados salvos.
 - **Modificadores Globais** — Sistema de buffs/debuffs (flat ou %) aplicados sobre STR, MAG, TEC, AGI, VIT, LCK, HP e PM, com toggle de ativo/inativo e resumo visual.
+- **Sistema de Inventário com Peso** — Itens divididos entre Equipados e Mochila, com nome, peso, quantidade e efeito. Capacidade de carga calculada por `(FOR × 5) + VIT`, barra de progresso visual e 3 estados de feedback (Normal, Pesado, Sobrecarregado). Migração automática de saves antigos.
 - **Tabela de afinidades** — 10 elementos (Físico, Fogo, Gelo, Vento, Raio, Nuclear, PSY, Luz, Trevas, Onipotente) com 6 relações configuráveis.
 - **Feitos** — 45 feitos organizados em categorias (Geral, Social, Combate, Persona, Atributos, Convicção) com cards de checkbox e descrição.
 - **Condições** — 9 condições de status pré-definidas (Charme, Pânico, Medo, Fúria, Atordoado, Choque, Lento, Veneno, Derrubado) com flag de ativa/inativa.
@@ -126,6 +127,10 @@ Evento DOM → setState(partial) → recalcState() → validateState() → rende
 | `snapshot()` | Serializa `state` para formato JSON (backward-compatible) |
 | `applySnapshot(data)` | Deserializa JSON → `state` → `renderAll()` |
 | `applyModifiers()` | Função pura: base + flat + percentual → resultado (clamp ≥ 0) |
+| `calcInventoryCapacity()` | Calcula limite de carga: `(FOR × 5) + VIT` (usa valores com modificadores) |
+| `calcInventoryWeight()` | Soma `peso × quantidade` de todos os itens do inventário |
+| `renderInventoryStatus()` | Atualiza barra de capacidade e estado de carga (Normal / Pesado / Sobrecarregado) |
+| `migrateEquipItem()` | Converte itens do formato antigo `{tipo, nome, efeito}` para o novo `{nome, peso, qtd, efeito, local}` |
 
 ---
 
