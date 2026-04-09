@@ -1058,17 +1058,14 @@ function buildModifiersUI(){
   // socialPool não é mais usado, mas mantemos compatibilidade silenciosa com snapshots antigos
 
   // --- Restaurar HP/PM de forma confiável ---
-  // 1. Recalcular máximos com base nos atributos restaurados
+  // Neste ponto, atributos e modificadores já foram restaurados acima.
+  // 1. Recalcular máximos (fórmula base + modificadores ativos)
+  //    O recalc lê VIT, MAG, Nível dos campos já restaurados e aplica applyModifiers()
   recalc({ keepMaxValues: false });
 
-  // 2. Se snapshot tinha valores máximos salvos pelo usuário (ex: com modificadores ou edição manual),
-  //    restaurá-los por cima do recálculo
-  const savedMaxHP = g.MaxHP || g.pvMax;
-  const savedMaxPM = g.EnergyMax || g.pmMax;
-  if (savedMaxHP != null && savedMaxHP !== "" && ids.MaxHP) ids.MaxHP.value = savedMaxHP;
-  if (savedMaxPM != null && savedMaxPM !== "" && ids.EnergyMax) ids.EnergyMax.value = savedMaxPM;
-
-  // 3. Restaurar valores ATUAIS (editados pelo jogador durante a sessão)
+  // 2. Restaurar valores ATUAIS (editados pelo jogador durante a sessão)
+  //    Não restauramos MaxHP/EnergyMax do snapshot — o recalc já calculou o valor correto
+  //    incluindo modificadores ativos. Restaurar o valor salvo causaria dessincronização.
   const savedCurrentHP = g.CurrentHP || g.pvAtual;
   const savedCurrentPM = g.CurrentPM || g.pmAtual;
   if (savedCurrentHP != null && savedCurrentHP !== "" && ids.CurrentHP) {
