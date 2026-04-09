@@ -39,10 +39,10 @@ body.theme-padrao {
 }
 body.theme-roxo,
 body.theme-claro,
-body.theme-dourado,
 body.theme-vermelho,
 body.theme-degrade,
-body.theme-corinthians {
+body.theme-corinthians,
+body.theme-rosa {
   background: var(--bg);
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -71,31 +71,6 @@ body.theme-claro {
   --accent-2: #4a9ad4;
   --danger: #c9424f;
   --ok: #2e9e5e;
-}
-body.theme-dourado {
-  --ink: #2a2010;
-  --ink-dim: #7a6840;
-  --bg: #faf7f0;
-  --bg-2: #f0ead8;
-  --bg-3: #e6ddc4;
-  --stroke: #c4b68a;
-  --accent: #b8912e;
-  --accent-2: #d4a844;
-  --danger: #c04838;
-  --ok: #488a3e;
-}
-
-/* Placeholders específicos para tema dourado — contraste aprimorado */
-body.theme-dourado input::placeholder,
-body.theme-dourado textarea::placeholder {
-  color: #8a7850;
-  opacity: 1;
-}
-
-body.theme-dourado input:focus::placeholder,
-body.theme-dourado textarea:focus::placeholder {
-  color: #7a6840;
-  opacity: 0.85;
 }
 body.theme-vermelho {
   --ink: #f0e0e2;
@@ -146,6 +121,31 @@ body.theme-corinthians input:focus::placeholder,
 body.theme-corinthians textarea:focus::placeholder {
   color: #888888;
   opacity: 0.9;
+}
+body.theme-rosa {
+  --ink: #3a2832;
+  --ink-dim: #8a7080;
+  --bg: #fdf5f7;
+  --bg-2: #f4e4ea;
+  --bg-3: #ead4de;
+  --stroke: #d4b4c4;
+  --accent: #c47090;
+  --accent-2: #d898b0;
+  --danger: #c04858;
+  --ok: #4a9868;
+}
+
+/* Placeholders específicos para tema Rosa Pastel */
+body.theme-rosa input::placeholder,
+body.theme-rosa textarea::placeholder {
+  color: #a08890;
+  opacity: 1;
+}
+
+body.theme-rosa input:focus::placeholder,
+body.theme-rosa textarea:focus::placeholder {
+  color: #907880;
+  opacity: 0.85;
 }
 /* Persona 3 Reload — Skin */
 :root {
