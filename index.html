@@ -43,7 +43,7 @@
   <button class="tab" data-view="modificadores">Modificadores</button>
   <button class="tab" data-view="persona">Persona</button>
     <button class="tab" data-view="feitos">Feitos</button>
-  <button class="tab" data-view="equip">Equipamentos</button>
+  <button class="tab" data-view="equip">Inventário</button>
   <button class="tab" data-view="vinculos">Vínculos</button>
   <button class="tab" data-view="notes">Anotações</button>
   <button class="tab" data-view="background">Lore</button>
@@ -140,7 +140,7 @@
         </section>
 
         <section class="card">
-          <div class="section-title"><div class="bar"></div><h2>Equipamento</h2></div>
+          <div class="section-title"><div class="bar"></div><h2>Inventário</h2></div>
           <div class="row row3">
             <div><label>Arma</label><input id="Weapon" placeholder="Arma"/></div>
             <div><label>Dano</label><input id="WeaponDmg" placeholder="Dano"/></div>
@@ -310,17 +310,46 @@
       </section>
     </div>
 
-    <!-- VIEW: EQUIPAMENTOS -->
+    <!-- VIEW: INVENTÁRIO -->
   <div class="view" id="equip">
+
+      <!-- Capacidade de Carga -->
       <section class="card">
-        <div class="section-title"><div class="bar"></div><h2>Equipamentos & Itens</h2></div>
-        <div class="actions"><button class="mini" id="add-eq">+ Adicionar</button></div>
-        <div class="hint">Use para armas, armaduras, acessórios e itens diversos.</div>
-        <table id="tbl-eq">
-          <thead><tr><th>Tipo</th><th>Nome</th><th>Efeito/Notas</th><th></th></tr></thead>
+        <div class="section-title"><div class="bar"></div><h2>Capacidade de Carga</h2></div>
+        <div class="inv-capacity-wrap">
+          <div class="inv-capacity-bar">
+            <div class="inv-capacity-fill" id="inv-capacity-fill"></div>
+          </div>
+          <div class="inv-capacity-info">
+            <span id="inv-weight-text">Peso: 0 / 0</span>
+            <span id="inv-status-text" class="inv-status inv-normal">Normal</span>
+          </div>
+        </div>
+        <div class="hint">Capacidade = (FOR × 5) + VIT</div>
+      </section>
+
+      <!-- Equipados -->
+      <section class="card">
+        <div class="section-title"><div class="bar"></div><h2>⚔️ Equipados</h2></div>
+        <div class="actions"><button class="mini" id="add-eq-equipado">+ Equipar Item</button></div>
+        <div class="hint">Itens que estão sendo usados ativamente.</div>
+        <table id="tbl-eq-equipado">
+          <thead><tr><th>Nome</th><th>Peso</th><th>Qtd</th><th>Efeito/Notas</th><th></th></tr></thead>
           <tbody></tbody>
         </table>
       </section>
+
+      <!-- Mochila -->
+      <section class="card">
+        <div class="section-title"><div class="bar"></div><h2>🎒 Mochila</h2></div>
+        <div class="actions"><button class="mini" id="add-eq-mochila">+ Guardar Item</button></div>
+        <div class="hint">Itens carregados, mas não equipados.</div>
+        <table id="tbl-eq-mochila">
+          <thead><tr><th>Nome</th><th>Peso</th><th>Qtd</th><th>Efeito/Notas</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
     </div>
 
     <!-- VIEW: MAGIAS -->

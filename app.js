@@ -395,6 +395,7 @@ function render() {
     renderFields();
     renderBadges();
     renderSocial();
+    renderInventoryStatus();
   } finally {
     _rendering = false;
   }
@@ -789,31 +790,190 @@ function renderModifiers() {
 // FUNÇÕES DE TABELAS DINÂMICAS
 // =============================================
 
-var eqBody = $("#tbl-eq tbody");
+var eqBody = null; // legacy — replaced by inventory system
+var eqBodyEquipado = $("#tbl-eq-equipado tbody");
+var eqBodyMochila = $("#tbl-eq-mochila tbody");
 var spellBody = $("#tbl-spell tbody");
 var linkBody = $("#tbl-link tbody");
 var clueBody = $("#tbl-clue tbody");
 var cttBody = $("#tbl-ctt tbody");
 
-// ---- Equipamentos ----
-function addEq(data) {
-  data = data || { tipo: "Item", nome: "", efeito: "" };
-  if (!eqBody) return;
-  var tr = document.createElement("tr");
-  tr.innerHTML = '<td><select class="eq-tipo"><option>Arma</option><option>Armadura</option><option>Acessório</option><option>Item</option></select></td>' +
-    '<td><input class="eq-nome" placeholder="Nome"/></td>' +
-    '<td><textarea class="eq-ef" rows="1" placeholder="Efeito/Notas"></textarea></td>' +
-    '<td class="row-actions"><button class="mini del">Remover</button></td>';
-  eqBody.appendChild(tr);
-  tr.querySelector('.eq-tipo').value = data.tipo || "Item";
-  tr.querySelector('.eq-nome').value = data.nome || "";
-  tr.querySelector('.eq-ef').value = data.efeito || "";
-  tr.querySelector('.del').addEventListener('click', function() { tr.remove(); syncEquipToState(); });
+// ---- Inventário (Sistema de Peso) ----
+
+/**
+ * Calcula capacidade de carga: (FOR × 5) + VIT
+ */
+function calcInventoryCapacity() {
+  var comp = state._computed;
+  if (!comp) return 0;
+  var str = comp.modded ? comp.modded.STR : (state.CharSTR || 1);
+  var vit = comp.modded ? comp.modded.VIT : (state.CharVIT || 1);
+  return (str * 5) + vit;
 }
+
+/**
+ * Calcula o peso total dos itens do inventário.
+ */
+function calcInventoryWeight() {
+  var total = 0;
+  (state.equip || []).forEach(function(item) {
+    total += (Number(item.peso) || 0) * (Number(item.qtd) || 1);
+  });
+  return Math.round(total * 100) / 100;
+}
+
+/**
+ * Renderiza a barra de capacidade e o status de carga.
+ */
+function renderInventoryStatus() {
+  var cap = calcInventoryCapacity();
+  var weight = calcInventoryWeight();
+  var pct = cap > 0 ? Math.min((weight / cap) * 100, 100) : (weight > 0 ? 100 : 0);
+
+  var fill = document.getElementById('inv-capacity-fill');
+  var weightText = document.getElementById('inv-weight-text');
+  var statusText = document.getElementById('inv-status-text');
+  if (!fill || !weightText || !statusText) return;
+
+  fill.style.width = pct + '%';
+  weightText.textContent = 'Peso: ' + weight + ' / ' + cap;
+
+  // Determinar estado
+  fill.classList.remove('inv-normal', 'inv-pesado', 'inv-sobrecarregado');
+  statusText.classList.remove('inv-normal', 'inv-pesado', 'inv-sobrecarregado');
+
+  if (weight > cap) {
+    fill.classList.add('inv-sobrecarregado');
+    statusText.classList.add('inv-sobrecarregado');
+    statusText.textContent = '⚠ Sobrecarregado';
+    fill.style.width = '100%';
+  } else if (weight >= cap * 0.8) {
+    fill.classList.add('inv-pesado');
+    statusText.classList.add('inv-pesado');
+    statusText.textContent = 'Pesado';
+  } else {
+    fill.classList.add('inv-normal');
+    statusText.classList.add('inv-normal');
+    statusText.textContent = 'Normal';
+  }
+}
+
+/**
+ * Adiciona um item ao inventário (em uma das duas tbodies).
+ */
+function addInventoryItem(data, targetLocal) {
+  data = data || {};
+  var local = data.local || targetLocal || 'mochila';
+  var tbody = (local === 'equipado') ? eqBodyEquipado : eqBodyMochila;
+  if (!tbody) return;
+
+  var tr = document.createElement('tr');
+  var moveLabel = (local === 'equipado') ? '→ Mochila' : '← Equipar';
+  tr.dataset.local = local;
+  tr.innerHTML = '<td><input class="eq-nome" placeholder="Nome do item"/></td>' +
+    '<td><input class="eq-peso" type="number" min="0" step="0.1" value="0" placeholder="0"/></td>' +
+    '<td><input class="eq-qtd" type="number" min="1" step="1" value="1" placeholder="1"/></td>' +
+    '<td><textarea class="eq-ef" rows="1" placeholder="Efeito/Notas"></textarea></td>' +
+    '<td class="row-actions"><button class="eq-move-btn">' + moveLabel + '</button><button class="mini del">X</button></td>';
+  tbody.appendChild(tr);
+
+  tr.querySelector('.eq-nome').value = data.nome || '';
+  tr.querySelector('.eq-peso').value = data.peso != null ? data.peso : 0;
+  tr.querySelector('.eq-qtd').value = data.qtd != null ? data.qtd : 1;
+  tr.querySelector('.eq-ef').value = data.efeito || '';
+
+  // Eventos de atualização de peso
+  tr.querySelector('.eq-peso').addEventListener('input', function() { syncEquipToState(); renderInventoryStatus(); });
+  tr.querySelector('.eq-qtd').addEventListener('input', function() { syncEquipToState(); renderInventoryStatus(); });
+  tr.querySelector('.eq-nome').addEventListener('input', function() { syncEquipToState(); });
+  tr.querySelector('.eq-ef').addEventListener('input', function() { syncEquipToState(); });
+
+  // Botão mover entre equipado/mochila
+  tr.querySelector('.eq-move-btn').addEventListener('click', function() {
+    syncEquipToState();
+    var idx = getItemIndexFromRow(tr, local);
+    if (idx === -1) return;
+    var item = state.equip[idx];
+    item.local = (local === 'equipado') ? 'mochila' : 'equipado';
+    tr.remove();
+    addInventoryItem(item, item.local);
+    syncEquipToState();
+    renderInventoryStatus();
+    if (window.debouncedAutoSave) window.debouncedAutoSave();
+  });
+
+  // Botão remover
+  tr.querySelector('.del').addEventListener('click', function() {
+    tr.remove();
+    syncEquipToState();
+    renderInventoryStatus();
+    if (window.debouncedAutoSave) window.debouncedAutoSave();
+  });
+}
+
+/**
+ * Encontra o índice no state.equip de um item baseado em sua row TR.
+ */
+function getItemIndexFromRow(tr, local) {
+  var tbody = (local === 'equipado') ? eqBodyEquipado : eqBodyMochila;
+  if (!tbody) return -1;
+  var rows = Array.from(tbody.querySelectorAll('tr'));
+  var rowIdx = rows.indexOf(tr);
+  if (rowIdx === -1) return -1;
+  // Contar itens no state com esse local até achar o índice correto
+  var count = 0;
+  for (var i = 0; i < state.equip.length; i++) {
+    if ((state.equip[i].local || 'mochila') === local) {
+      if (count === rowIdx) return i;
+      count++;
+    }
+  }
+  return -1;
+}
+
 function syncEquipToState() {
-  state.equip = eqBody ? Array.from(eqBody.querySelectorAll('tr')).map(function(tr) {
-    return { tipo: tr.querySelector('.eq-tipo').value, nome: tr.querySelector('.eq-nome').value, efeito: tr.querySelector('.eq-ef').value };
-  }) : [];
+  var items = [];
+  // Equipados
+  if (eqBodyEquipado) {
+    Array.from(eqBodyEquipado.querySelectorAll('tr')).forEach(function(tr) {
+      items.push({
+        nome: tr.querySelector('.eq-nome').value,
+        peso: Number(tr.querySelector('.eq-peso').value) || 0,
+        qtd: Number(tr.querySelector('.eq-qtd').value) || 1,
+        efeito: tr.querySelector('.eq-ef').value,
+        local: 'equipado'
+      });
+    });
+  }
+  // Mochila
+  if (eqBodyMochila) {
+    Array.from(eqBodyMochila.querySelectorAll('tr')).forEach(function(tr) {
+      items.push({
+        nome: tr.querySelector('.eq-nome').value,
+        peso: Number(tr.querySelector('.eq-peso').value) || 0,
+        qtd: Number(tr.querySelector('.eq-qtd').value) || 1,
+        efeito: tr.querySelector('.eq-ef').value,
+        local: 'mochila'
+      });
+    });
+  }
+  state.equip = items;
+}
+
+/**
+ * Migra item do formato antigo (tipo/nome/efeito) para o novo (nome/peso/qtd/efeito/local).
+ */
+function migrateEquipItem(item) {
+  if (item.local) return item; // Já no formato novo
+  var local = 'mochila';
+  if (item.tipo && item.tipo !== 'Item') local = 'equipado';
+  return {
+    nome: item.nome || '',
+    peso: item.peso != null ? item.peso : 0,
+    qtd: item.qtd != null ? item.qtd : 1,
+    efeito: item.efeito || '',
+    local: local
+  };
 }
 
 // ---- Magias ----
@@ -928,7 +1088,15 @@ function syncContactsToState() {
 
 // ---- Render todas as tabelas a partir do state ----
 function renderTables() {
-  if (eqBody) { eqBody.innerHTML = ''; (state.equip || []).forEach(addEq); }
+  // Inventário: migrar e renderizar nas duas seções
+  if (eqBodyEquipado) eqBodyEquipado.innerHTML = '';
+  if (eqBodyMochila) eqBodyMochila.innerHTML = '';
+  (state.equip || []).forEach(function(item) {
+    var migrated = migrateEquipItem(item);
+    addInventoryItem(migrated, migrated.local);
+  });
+  renderInventoryStatus();
+
   if (spellBody) { spellBody.innerHTML = ''; (state.spells || []).forEach(addSpell); }
   if (linkBody) { linkBody.innerHTML = ''; (state.links || []).forEach(addLink); }
   if (clueBody) { clueBody.innerHTML = ''; (state.clues || []).forEach(addClue); }
@@ -936,8 +1104,10 @@ function renderTables() {
 }
 
 // ---- Botões de adicionar ----
-var addEqBtn = $("#add-eq");
-if (addEqBtn) addEqBtn.addEventListener("click", function() { addEq(); syncEquipToState(); });
+var addEqEquipadoBtn = $("#add-eq-equipado");
+if (addEqEquipadoBtn) addEqEquipadoBtn.addEventListener("click", function() { addInventoryItem({}, 'equipado'); syncEquipToState(); renderInventoryStatus(); });
+var addEqMochilaBtn = $("#add-eq-mochila");
+if (addEqMochilaBtn) addEqMochilaBtn.addEventListener("click", function() { addInventoryItem({}, 'mochila'); syncEquipToState(); renderInventoryStatus(); });
 var addSpellBtn = $("#add-spell");
 if (addSpellBtn) addSpellBtn.addEventListener("click", function() { addSpell(); syncSpellsToState(); });
 var addLinkBtn = $("#add-link");
@@ -1089,7 +1259,7 @@ function applySnapshot(data) {
   // Arrays e objetos complexos
   state.affinities = data.affinities || {};
   state.spells = data.spells || [];
-  state.equip = data.equip || [];
+  state.equip = (data.equip || []).map(migrateEquipItem);
   state.links = data.links || [];
   state.clues = (data.notes && data.notes.clues) || [];
   state.contacts = (data.notes && data.notes.contacts) || [];
@@ -1384,7 +1554,7 @@ if (pdfFileEl) pdfFileEl.addEventListener("change", async function(ev) {
     MaxHP: g.MaxHP || '', CurrentHP: g.CurrentHP || '', EnergyMax: g.EnergyMax || '', CurrentPM: g.CurrentPM || '', DmgRed: g.DmgRed || '',
     KNOPts: g.KNOPts || '', DISPts: g.DISPts || '', EMPpts: g.EMPpts || '', CHAPts: g.CHAPts || '', EXPPts: g.EXPPts || '', COUPts: g.COUPts || '',
     PerName: p.PerName || g.PerName || '', PerArcana: p.PerArcana || g.PerArcana || '', PerLvl: p.PerLvl || g.PerLvl || '', PerNotes: p.PerNotes || g.PerNotes || '',
-    EquipList: (s.equip || []).map(function(e) { return '[' + e.tipo + '] ' + e.nome + ' \u2014 ' + e.efeito; }).join("\n"),
+    EquipList: (s.equip || []).map(function(e) { return '[' + (e.local === 'equipado' ? 'Equipado' : 'Mochila') + '] ' + e.nome + ' (Peso:' + (e.peso || 0) + ' x' + (e.qtd || 1) + ')' + (e.efeito ? ' \u2014 ' + e.efeito : ''); }).join("\n"),
     SpellList: (s.spells || []).map(function(sp) { return sp.nome + ' (' + sp.tipo + ', ' + sp.custo + ') \u2014 ' + sp.efeito; }).join("\n"),
     LinksList: (s.links || []).map(function(l) { return l.nome + ' \u2014 ' + l.arcana + ' Rk.' + l.rank + (l.obs ? (' \u2014 ' + l.obs) : ''); }).join("\n"),
     NotesDiary: n.diary || '', NotesGoals: n.goals || '',
@@ -1477,7 +1647,7 @@ if (testsBtn) testsBtn.addEventListener('click', runTests);
 // =============================================
 
 function seed() {
-  addEq(); syncEquipToState();
+  addInventoryItem({}, 'mochila'); syncEquipToState(); renderInventoryStatus();
   addSpell(); syncSpellsToState();
   addLink(); syncLinksToState();
   addClue(); syncCluesToState();
@@ -1559,7 +1729,7 @@ document.addEventListener('input', function() { if (!_rendering) debouncedAutoSa
 document.addEventListener('change', function() { if (!_rendering) debouncedAutoSave(); });
 
 // Observer para tabelas dinâmicas
-var autoSaveTableIds = ['tbl-eq','tbl-spell','tbl-link','tbl-clue','tbl-ctt','tbl-mod'];
+var autoSaveTableIds = ['tbl-eq-equipado','tbl-eq-mochila','tbl-spell','tbl-link','tbl-clue','tbl-ctt','tbl-mod'];
 var tableObserver = new MutationObserver(function() {
   setTimeout(debouncedAutoSave, 100);
 });
