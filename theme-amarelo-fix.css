@@ -1,11 +1,13 @@
 /* Novo tema amarelo - Dark Mode Dourado/Mostarda */
 body.theme-amarelo {
-  --accent: #d4af37;
-  --accent-2: #e8c854;
-  --ink: #f5e6d3;
-  --ink-dim: #c9b87a;
-  --bg: linear-gradient(135deg, #2a1f0a 0%, #3d2d10 100%);
-  --bg-2: #332410;
-  --bg-3: #453020;
-  --stroke: #6b5a2a;
+  --ink: #f0e4d0;
+  --ink-dim: #a89870;
+  --bg: #141008;
+  --bg-2: #1e1810;
+  --bg-3: #28201a;
+  --stroke: #4a3c28;
+  --accent: #c8a038;
+  --accent-2: #dab850;
+  --danger: #c84838;
+  --ok: #58a050;
 }
