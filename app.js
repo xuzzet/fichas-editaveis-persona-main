@@ -135,51 +135,51 @@ const CONDITIONS_LIST = [
 const SOCIAL_SKILL_META = {
   KNOPts: {name:'Conhecimento', titles:['Preguiçoso','Ciente','Sabido','Estudado','Enciclopédico','Erudito'], desc:[
     'Tier 0 — Preguiçoso: nenhuma habilidade especial ainda.',
-    'Tier I — Ciente: uma vez por dia, revelar uma Fraqueza de uma Sombra que você possa ver.',
-    'Tier II — Sabido: uma vez por combate, ganhe +1 DDC contra um ataque que exija teste de esquiva.',
-    'Tier III — Estudado: bônus permanente de +1 FOR, +1 MAG ou +1 TEC, sua escolha.',
-    'Tier IV — Enciclopédico: uma vez por dia conjurar uma magia Tier III ou menor sem gastar Energia.',
-    'Tier V — Erudito: ganha um Aspecto baseado no conhecimento e uma vez por dia pode gastar ação rápida para obter Carga Mental/Carga Poderosa.'
+    'Tier I — Ciente: uma vez por cena, revela uma Fraqueza de uma Sombra que você possa ver.',
+    'Tier II — Sabido: uma vez por combate, ganhe Vantagem contra um ataque que exija teste de esquiva.',
+    'Tier III — Estudado: bônus permanente de +1 MAG e +1 TEC, sua escolha.',
+    'Tier IV — Enciclopédico: uma vez por Combate, pode conjurar uma magia sem gastar Energia.',
+    'Tier V — Erudito: crie uma característica especial relacionado a Conhecimento e uma vez por descanso longo pode recuperar Metade de seus Pontos de Magia.'
   ]},
   DISPts: {name:'Disciplina', titles:['Desatento','Decente','Persistente','Minucioso','Magistral','Transcendente'], desc:[
     'Tier 0 — Desatento: nenhuma habilidade especial ainda.',
-    'Tier I — Decente: +10 PV e +1 de Limite de Energia.',
-    'Tier II — Persistente: armaduras ganham +2 Redução de dano.',
-    'Tier III — Minucioso: concede um Feito extra.',
-    'Tier IV — Magistral: uma vez por combate, adicione metade do seu Tier de Disciplina (arredondado para baixo) a um teste não ofensivo.',
-    'Tier V — Transcendente: uma vez por dia, ao invés de morrer, retorna com 50% de vida (conta como Interromper) e ganha um Aspecto de resiliência.'
+    'Tier I — Decente: uma vez por cena, revela uma Reação Elemental de uma Sombra que você possa ver.',
+    'Tier II — Persistente: passa a receber (+2 de PM) por nível e uma vez por rodada pode reduzir em (-2) o teste de acerto de um Inimigo que você possa ver, pode ser utilizado quantidade de vezes igual sua TEC e recupera 1 uso por descanso longo.',
+    'Tier III — Minucioso: concede Vantagem em testes relacionados a Perceber, Investigar e Focar. Se estiver sob condição mental o efeito dessa habilidade não funcionará.',
+    'Tier IV — Magistral: Soma o Tier em testes de Ataque como acerto bônus.',
+    'Tier V — Transcendente: uma vez por combate, pode escolher causar um (Ataque Crítico) automático, pode ser utilizado quantidade de vezes igual metade de sua TEC e recupera 1 uso por descanso longo.'
   ]},
   EMPpts: {name:'Empatia', titles:['Indiferente','Inofensivo','Gentil','Generoso','Altruísta','Angelical'], desc:[
     'Tier 0 — Indiferente: nenhuma habilidade especial ainda.',
-    'Tier I — Inofensivo: uma vez por dia, sucesso automático em teste de resistência contra Status Mental.',
-    'Tier II — Gentil: uma vez por dia, remover todos os Status Mentais de um aliado que possa ouvir você (ação livre).',
-    'Tier III — Generoso: uma vez por dia (movimento) reproduz buff de aliado ou aplicar seu buff a aliado por 2 rodadas.',
-    'Tier IV — Altruísta: uma vez por dia, quando consumível não-Especial for usado, role d4; com 3-4 o item não é consumido.',
-    'Tier V — Angelical: até 3x/dia, ao curar, pode redirecionar cura para outro alvo; ganha Aspecto de empatia.'
+    'Tier I — Inofensivo: uma vez por combate, pode conceder um sucesso automático em teste de resistência contra Status Mental de um aliado que possa ouvir você.',
+    'Tier II — Gentil: uma vez por descanso longo, remove todas Condições e Status Mentais que esteja afetando você (ação livre).',
+    'Tier III — Generoso: uma vez por combate pode escolher, aumentar a duração de Buff\'s em aliados em (+3 Rodadas) ou copiar os mesmos efeitos para um outro aliado que você possa ver.',
+    'Tier IV — Altruísta: enquanto estiver no combate, seus aliados recebem seu (Tier de Empatia) como bônus em testes para resistir a condições negativas, caso seja em (Porcentagem %), para cada Tier aumenta a chance de seu aliado superar o teste em [5%].',
+    'Tier V — Angelical: Se torna (Imune) a condições negativas enquanto estiver adjacente a um aliado e recebe a Reação Elemental (Refletir) ao elemento que o Aliado próximo possui como fraqueza. Se o aliado for afetado por uma condição negativa os efeitos dessa habilidade são retirados.'
   ]},
   EXPPts: {name:'Expressão', titles:['Monótono','Rudimentar','Eloquente','Inspirador','Tocante','Fascinante'], desc:[
     'Tier 0 — Monótono: nenhuma habilidade especial ainda.',
-    'Tier I — Rudimentar: uma vez por dia, como movimento, todos aliados podem tentar um Crítico sem gastar Cargas de Sorte.',
-    'Tier II — Eloquente: uma vez por dia (ação rápida), aumentar categoria de esquiva de todos aliados em +1 até fim do próximo turno.',
-    'Tier III — Inspirador: uma vez por dia (ação rápida), tentar causar Fúria em unidades em 12m (chance 25 + Tier*4%).',
-    'Tier IV — Tocante: uma vez por dia (ação padrão), escolha alvo; por 2 rodadas alvo recebe Margem de Crítico -2 e ataques contra ele não podem errar.',
-    'Tier V — Fascinante: uma vez por dia (ação padrão) gasta para dar ação de movimento extra a cada aliado; ganha Aspecto de liderança.'
+    'Tier I — Rudimentar: Essa habilidade pode ser utilizada igual ao seu Tier de Expressão, com uma Ação de Interromper, todos aliados recebe (+1 de Margem Crítica) sem gastar Cargas de Sorte.',
+    'Tier II — Eloquente: Essa habilidade pode ser utilizada igual ao seu Tier de Expressão. Com uma Ação de Interromper pode conceder (Vantagem) em testes de esquiva de um aliado que você possa ver, até fim do próximo turno dele.',
+    'Tier III — Inspirador: uma vez por combate, marca um alvo inimigo que você possa ver e causa "Debochar". Alvos sob o efeito de "Debochar" têm desvantagens em testes para superar condições e status negativos por 1 Cena.',
+    'Tier IV — Tocante: escolha um aliado assim que iniciar um combate para se tornar um "Ajudante", esse aliado recebe (+2 em Margem Crítica), e uma vez por combate esse aliado não pode (Errar Ataques) por 2 rodadas.',
+    'Tier V — Fascinante: uma vez por descanso longo aumenta todos os atributos de combate em +2 de todos os seus aliados por 1 Cena. Esse efeito dura 1 Cena e pode superar o limite de 12 em Atributos de Combate.'
   ]},
   COUPts: {name:'Coragem', titles:['Tímido','Comum','Determinado','Firme','Destemido','Fodão'], desc:[
     'Tier 0 — Tímido: nenhuma habilidade especial ainda.',
-    'Tier I — Comum: uma vez por dia, ao declarar ataque, pode adicionar Redução de Dano ao cálculo de dano (reduz RDM a 0 até fim do turno).',
-    'Tier II — Determinado: pode escolher falhar resistência para aplicar o mesmo Status ao conjurador.',
-    'Tier III — Firme: escolha ganhar +1 VIT, +1 AGI ou +2 SOR permanente.',
-    'Tier IV — Destemido: quando toma dano de tipos elementais, pode ativar efeito Fortificar <Elemento> 1d10 até o fim do combate.',
-    'Tier V — Fodão: ganha Aspecto de bravura e uma vez por dia pode ignorar penalties por exceder limite de Energia por um turno com custos posteriores.'
+    'Tier I — Comum: Essa habilidade pode ser utilizada igual ao seu Tier de Coragem, ao declarar ataque, pode adicionar Redução de Dano ao cálculo de dano.',
+    'Tier II — Determinado: Recebe [+25 de PV] permanente e +1 de VIG. E uma vez por combate pode replicar efeitos negativos afetando você para um alvo inimigo que você possa ver.',
+    'Tier III — Firme: recebe +1 FOR, +1 TEC e +1 VIG permanente. E sempre que for alvo de um efeito de (Medo) recebe seu Tier de Coragem como bônus para resistir. Cada ponto de Tier aumenta em [5%] para superar o efeito.',
+    'Tier IV — Destemido: quando receber Dano Elemental que não seja a sua Fraqueza, recebe seu Tier de Coragem como [Dados de Dano Bônus] para seu próximo ataque. (Esses dados não são multiplicados em acertos críticos ou dobrados por efeitos de fraqueza.)',
+    'Tier V — Fodão: Possui imunidade total a efeitos de Pavor & Medo. E recebe uma Reação Elemental nova, podendo ser entre: Resistir, Refletir, Absorver ou Anular.'
   ]},
   CHAPts: {name:'Charme', titles:['Sem Graça','Existente','Confiante','Suave','Popular','Debonair'], desc:[
     'Tier 0 — Sem Graça: nenhuma habilidade especial ainda.',
-    'Tier I — Existente: uma vez por dia, conjurar Pulinpa.',
-    'Tier II — Confiante: uma vez por dia, conjurar Dekaja.',
-    'Tier III — Suave: uma vez por dia, conjurar Marin Karin; pode usar o dobro do Tier de Charme no lugar de TEC.',
-    'Tier IV — Popular: uma vez por dia, como Interromper, pode mudar alvo de ataque inimigo para outro alvo.',
-    'Tier V — Debonair: ganha Aspecto de magnetismo e uma vez por bloco pode usar Tier+2 ao invés de Expressão/Empatia para qualquer teste.'
+    'Tier I — Existente: Essa habilidade pode ser utilizada igual ao seu Tier de Charme, aumenta em [5%] a dificuldade para superar uma Condição ou Status negativa de um alvo que você possa ver.',
+    'Tier II — Confiante: Recebe +1 de MAG e sempre que fizer um teste de Charme, adicione o Tier como bônus extra.',
+    'Tier III — Suave: Magias de (Stats) custam apenas [Metade do Custo] de PM.',
+    'Tier IV — Popular: Essa habilidade pode ser utilizada igual ao seu Tier de Charme, quando um alvo inimigo efetuar um Ataque pode utilizar uma Ação de Interromper como Reação. Faz um teste de [Charme vs Conhecimento], se o alvo inimigo falhar pode mudar o alvo de ataque para outro alvo do combate; se não houver um alvo disponível o ataque simplesmente erra.',
+    'Tier V — Debonair: recebe +2 de MAG e toda condição aplicada por você tem sua duração aumentada em [+3 Rodadas], e todo teste para superar uma Condição ou Status tem desvantagem. Alvos sob suas condições negativas têm seu bônus de [Acerto & Esquiva] reduzidos igual ao seu Tier.'
   ]}
 };
 const SOCIAL_IDS = ['KNOPts','DISPts','EMPpts','EXPPts','COUPts','CHAPts'];
