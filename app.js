@@ -134,7 +134,7 @@ const CONDITIONS_LIST = [
 
 const SOCIAL_SKILL_META = {
   KNOPts: {name:'Conhecimento', titles:['Preguiçoso','Ciente','Sabido','Estudado','Enciclopédico','Erudito'], desc:[
-    'Tier 0 — Preguiçoso: nenhuma habilidade especial ainda.',
+    'Tier 0 — Preguiçoso: Nenhum benefício. A habilidade ainda não foi desenvolvida o suficiente para gerar efeitos.',
     'Tier I — Ciente: uma vez por cena, revela uma Fraqueza de uma Sombra que você possa ver.',
     'Tier II — Sabido: uma vez por combate, ganhe Vantagem contra um ataque que exija teste de esquiva.',
     'Tier III — Estudado: bônus permanente de +1 MAG e +1 TEC, sua escolha.',
@@ -142,7 +142,7 @@ const SOCIAL_SKILL_META = {
     'Tier V — Erudito: crie uma característica especial relacionado a Conhecimento e uma vez por descanso longo pode recuperar Metade de seus Pontos de Magia.'
   ]},
   DISPts: {name:'Disciplina', titles:['Desatento','Decente','Persistente','Minucioso','Magistral','Transcendente'], desc:[
-    'Tier 0 — Desatento: nenhuma habilidade especial ainda.',
+    'Tier 0 — Desatento: Nenhum benefício. A habilidade ainda não foi desenvolvida o suficiente para gerar efeitos.',
     'Tier I — Decente: uma vez por cena, revela uma Reação Elemental de uma Sombra que você possa ver.',
     'Tier II — Persistente: passa a receber (+2 de PM) por nível e uma vez por rodada pode reduzir em (-2) o teste de acerto de um Inimigo que você possa ver, pode ser utilizado quantidade de vezes igual sua TEC e recupera 1 uso por descanso longo.',
     'Tier III — Minucioso: concede Vantagem em testes relacionados a Perceber, Investigar e Focar. Se estiver sob condição mental o efeito dessa habilidade não funcionará.',
@@ -150,7 +150,7 @@ const SOCIAL_SKILL_META = {
     'Tier V — Transcendente: uma vez por combate, pode escolher causar um (Ataque Crítico) automático, pode ser utilizado quantidade de vezes igual metade de sua TEC e recupera 1 uso por descanso longo.'
   ]},
   EMPpts: {name:'Empatia', titles:['Indiferente','Inofensivo','Gentil','Generoso','Altruísta','Angelical'], desc:[
-    'Tier 0 — Indiferente: nenhuma habilidade especial ainda.',
+    'Tier 0 — Indiferente: Nenhum benefício. A habilidade ainda não foi desenvolvida o suficiente para gerar efeitos.',
     'Tier I — Inofensivo: uma vez por combate, pode conceder um sucesso automático em teste de resistência contra Status Mental de um aliado que possa ouvir você.',
     'Tier II — Gentil: uma vez por descanso longo, remove todas Condições e Status Mentais que esteja afetando você (ação livre).',
     'Tier III — Generoso: uma vez por combate pode escolher, aumentar a duração de Buff\'s em aliados em (+3 Rodadas) ou copiar os mesmos efeitos para um outro aliado que você possa ver.',
@@ -158,7 +158,7 @@ const SOCIAL_SKILL_META = {
     'Tier V — Angelical: Se torna (Imune) a condições negativas enquanto estiver adjacente a um aliado e recebe a Reação Elemental (Refletir) ao elemento que o Aliado próximo possui como fraqueza. Se o aliado for afetado por uma condição negativa os efeitos dessa habilidade são retirados.'
   ]},
   EXPPts: {name:'Expressão', titles:['Monótono','Rudimentar','Eloquente','Inspirador','Tocante','Fascinante'], desc:[
-    'Tier 0 — Monótono: nenhuma habilidade especial ainda.',
+    'Tier 0 — Monótono: Nenhum benefício. A habilidade ainda não foi desenvolvida o suficiente para gerar efeitos.',
     'Tier I — Rudimentar: Essa habilidade pode ser utilizada igual ao seu Tier de Expressão, com uma Ação de Interromper, todos aliados recebe (+1 de Margem Crítica) sem gastar Cargas de Sorte.',
     'Tier II — Eloquente: Essa habilidade pode ser utilizada igual ao seu Tier de Expressão. Com uma Ação de Interromper pode conceder (Vantagem) em testes de esquiva de um aliado que você possa ver, até fim do próximo turno dele.',
     'Tier III — Inspirador: uma vez por combate, marca um alvo inimigo que você possa ver e causa "Debochar". Alvos sob o efeito de "Debochar" têm desvantagens em testes para superar condições e status negativos por 1 Cena.',
@@ -166,7 +166,7 @@ const SOCIAL_SKILL_META = {
     'Tier V — Fascinante: uma vez por descanso longo aumenta todos os atributos de combate em +2 de todos os seus aliados por 1 Cena. Esse efeito dura 1 Cena e pode superar o limite de 12 em Atributos de Combate.'
   ]},
   COUPts: {name:'Coragem', titles:['Tímido','Comum','Determinado','Firme','Destemido','Fodão'], desc:[
-    'Tier 0 — Tímido: nenhuma habilidade especial ainda.',
+    'Tier 0 — Tímido: Nenhum benefício. A habilidade ainda não foi desenvolvida o suficiente para gerar efeitos.',
     'Tier I — Comum: Essa habilidade pode ser utilizada igual ao seu Tier de Coragem, ao declarar ataque, pode adicionar Redução de Dano ao cálculo de dano.',
     'Tier II — Determinado: Recebe [+25 de PV] permanente e +1 de VIG. E uma vez por combate pode replicar efeitos negativos afetando você para um alvo inimigo que você possa ver.',
     'Tier III — Firme: recebe +1 FOR, +1 TEC e +1 VIG permanente. E sempre que for alvo de um efeito de (Medo) recebe seu Tier de Coragem como bônus para resistir. Cada ponto de Tier aumenta em [5%] para superar o efeito.',
@@ -174,7 +174,7 @@ const SOCIAL_SKILL_META = {
     'Tier V — Fodão: Possui imunidade total a efeitos de Pavor & Medo. E recebe uma Reação Elemental nova, podendo ser entre: Resistir, Refletir, Absorver ou Anular.'
   ]},
   CHAPts: {name:'Charme', titles:['Sem Graça','Existente','Confiante','Suave','Popular','Debonair'], desc:[
-    'Tier 0 — Sem Graça: nenhuma habilidade especial ainda.',
+    'Tier 0 — Sem Graça: Nenhum benefício. A habilidade ainda não foi desenvolvida o suficiente para gerar efeitos.',
     'Tier I — Existente: Essa habilidade pode ser utilizada igual ao seu Tier de Charme, aumenta em [5%] a dificuldade para superar uma Condição ou Status negativa de um alvo que você possa ver.',
     'Tier II — Confiante: Recebe +1 de MAG e sempre que fizer um teste de Charme, adicione o Tier como bônus extra.',
     'Tier III — Suave: Magias de (Stats) custam apenas [Metade do Custo] de PM.',
