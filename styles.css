@@ -314,6 +314,137 @@ body.theme-rosa textarea:focus::placeholder {
   color: #907880;
   opacity: 0.85;
 }
+
+/* =============================================
+   TEMA: KAMEN RIDER
+   Verde vibrante + Roxo intenso + Preto profundo
+   ============================================= */
+body.theme-kamenrider {
+  --ink: #e8f8ee;
+  --ink-dim: #7aab8a;
+  --bg: #07100a;
+  --bg-2: #0e1c12;
+  --bg-3: #162a1c;
+  --stroke: #2a5038;
+  --accent: #2edd6a;
+  --accent-2: #8b30e0;
+  --danger: #e03060;
+  --ok: #2edd6a;
+  --tooltip-border: #2edd6a;
+}
+body.theme-kamenrider {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(
+      900px 500px at 75% 0%,
+      rgba(46, 221, 106, 0.1),
+      transparent 60%
+    ),
+    radial-gradient(
+      800px 600px at 10% 100%,
+      rgba(139, 48, 224, 0.12),
+      transparent 60%
+    ),
+    linear-gradient(180deg, #07100a 0%, #0a160e 60%, #07100a 100%);
+  background-repeat: no-repeat;
+  background-attachment: fixed, fixed, fixed;
+  background-size: cover, cover, cover;
+}
+body.theme-kamenrider input::placeholder,
+body.theme-kamenrider textarea::placeholder {
+  color: #3d6b4d;
+  opacity: 1;
+}
+body.theme-kamenrider input:focus::placeholder,
+body.theme-kamenrider textarea:focus::placeholder {
+  color: #5a8a6a;
+  opacity: 0.85;
+}
+
+/* --- Kamen Rider: elementos da ficha com roxo --- */
+
+/* Cards: borda topo alternada entre verde e roxo (ímpares=verde, pares=roxo) */
+body.theme-kamenrider .card {
+  border-top: 3px solid var(--accent-2);
+  background: color-mix(in srgb, var(--bg-2) 90%, #8b30e0 10%);
+}
+body.theme-kamenrider .card:nth-child(odd) {
+  border-top: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--bg-2) 92%, #2edd6a 8%);
+}
+
+/* Barra decorativa do section-title: alterna verde/roxo */
+body.theme-kamenrider .card:nth-child(even) .bar {
+  background: var(--accent-2);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent-2) 50%, transparent);
+}
+body.theme-kamenrider .card:nth-child(even) .section-title h2 {
+  color: var(--accent-2);
+}
+
+/* Labels: alternam a cada dois via seletor geral */
+body.theme-kamenrider label {
+  color: var(--accent);
+}
+
+/* Inputs e textareas: borda com toque de roxo, focus em verde */
+body.theme-kamenrider input,
+body.theme-kamenrider select,
+body.theme-kamenrider textarea {
+  border-color: color-mix(in srgb, var(--stroke) 60%, #8b30e0 40%);
+  background: color-mix(in srgb, var(--bg) 92%, #8b30e0 8%);
+}
+body.theme-kamenrider input:focus,
+body.theme-kamenrider select:focus,
+body.theme-kamenrider textarea:focus {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--bg-3) 85%, #8b30e0 15%);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent),
+    0 0 0 5px color-mix(in srgb, var(--accent-2) 10%, transparent);
+}
+
+/* Tabs: hover em roxo, ativa em verde */
+body.theme-kamenrider .tab:hover {
+  background: color-mix(in srgb, var(--bg-3) 70%, #8b30e0 30%);
+  color: var(--ink);
+}
+body.theme-kamenrider .tab.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #07100a;
+  box-shadow: 0 2px 12px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+/* Barra de tabs: borda roxa */
+body.theme-kamenrider .tabs {
+  border-color: color-mix(in srgb, var(--stroke) 40%, #8b30e0 60%);
+  background: color-mix(in srgb, var(--bg-2) 80%, #8b30e0 20%);
+}
+
+/* Botões mini: roxa */
+body.theme-kamenrider button.mini {
+  border-color: var(--accent-2);
+  color: var(--accent-2);
+}
+body.theme-kamenrider button.mini:hover {
+  background: var(--accent-2);
+  color: #fff;
+}
+
+/* Botões principais: verde */
+body.theme-kamenrider .actions button,
+body.theme-kamenrider .btn-feedback {
+  background: var(--accent);
+  color: #07100a;
+  border-color: var(--accent);
+}
+body.theme-kamenrider .actions button:hover,
+body.theme-kamenrider .btn-feedback:hover {
+  background: var(--accent-2);
+  border-color: var(--accent-2);
+  color: #fff;
+}
 /* Persona 3 Reload — Skin */
 :root {
   --ink: #e2eef8;

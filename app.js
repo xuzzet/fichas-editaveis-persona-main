@@ -582,7 +582,8 @@ var themeSelect = document.getElementById('themeSelect');
 var themeMap = {
   padrao: 'theme-padrao', roxo: 'theme-roxo', claro: 'theme-claro',
   vermelho: 'theme-vermelho', degrade: 'theme-degrade',
-  corinthians: 'theme-corinthians', rosa: 'theme-rosa'
+  corinthians: 'theme-corinthians', rosa: 'theme-rosa',
+  kamenrider: 'theme-kamenrider'
 };
 function applyTheme(theme) {
   Object.values(themeMap).forEach(function(cls) { document.body.classList.remove(cls); });
