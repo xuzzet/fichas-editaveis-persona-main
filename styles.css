@@ -1,4 +1,75 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap");
+﻿@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap");
+
+/* =============================================
+   HEXAGRAMA DE HABILIDADES SOCIAIS
+   ============================================= */
+#social-tier-list {
+  text-align: center;
+  user-select: none;
+  padding: 16px 0 8px;
+}
+#social-tier-list svg {
+  overflow: visible;
+}
+#social-tier-list svg text {
+  font-family: "Barlow Condensed", Inter, sans-serif;
+  pointer-events: none;
+}
+
+/* Tip group hover */
+.hx-tip {
+  cursor: default;
+}
+.hx-tip .hx-tip-halo {
+  transition: opacity 0.25s ease;
+}
+.hx-tip:hover .hx-tip-halo {
+  opacity: 0.36;
+}
+.hx-tip .hx-tip-diamond {
+  transition: opacity 0.22s ease;
+}
+.hx-tip:hover .hx-tip-diamond {
+  opacity: 1;
+}
+
+/* Tier label change flash */
+@keyframes hxTierFlash {
+  0% {
+    opacity: 0.1;
+  }
+  55% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.hx-tier-flash {
+  animation: hxTierFlash 0.42s ease-out;
+}
+
+/* Fill polygon tier-change pulse */
+@keyframes hxFillPulse {
+  0% {
+    opacity: 0.3;
+  }
+  45% {
+    opacity: 0.75;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.hx-fill-pulse {
+  animation: hxFillPulse 0.45s ease-out;
+}
+
+/* Subtle transitions on tier/title text */
+[id$="-hx-tier"],
+[id$="-hx-title"] {
+  transition: opacity 0.28s ease;
+}
 
 /* Feedback visual para erro de campo obrigatório */
 .input-error {

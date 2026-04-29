@@ -1,4 +1,4 @@
-// ===== Retrato do Personagem (Portrait) =====
+﻿// ===== Retrato do Personagem (Portrait) =====
 document.addEventListener('DOMContentLoaded', function() {
   const portraitBtn = document.getElementById('portraitBtn');
   const portraitInput = document.getElementById('portraitInput');
@@ -67,16 +67,16 @@ const ARCANAS = ["","0 - Louco","I - Mago","II - Sacerdotisa","III - Imperatriz"
 const MOD_TARGETS = ['STR','MAG','TEC','AGI','VIT','LCK','HP','PM'];
 
 const FEITOS_LIST = [
-  // ── Geral ──
+  // â”€â”€ Geral â”€â”€
   { id: 'mente_aberta', name: 'Mente Aberta', cat: 'Geral', desc: 'Durante uma cena de Interlúdio, pode selecionar uma Magia de seu Deck como principal de Mente Aberta. Em combate pode utilizá-la por apenas 1 PM. Pode ser utilizado igual à sua MAG (Limitado a 3 Usos).' },
   { id: 'longe_do_fim', name: 'Longe do Fim', cat: 'Geral', desc: 'Recebe +5 de PM Máximo extra para cada Novo Nível (Afeta Níveis posteriores).' },
   { id: 'habil', name: 'Hábil', cat: 'Geral', desc: 'Concede +1 para uma Habilidade de Combate ou +3 para uma Habilidade Social. (Pode ser adquirido várias vezes)' },
-  // ── Social ──
+  // â”€â”€ Social â”€â”€
   { id: 'furioso', name: 'Furioso', cat: 'Social', desc: 'Você pode, como uma Ação Rápida, receber os efeitos de Fúria. Você não pode ser curado desse Status ou se recuperar naturalmente dele até o final do seu próximo turno e não recebe mais a Penalidade de Acerto enquanto enfurecido.', prereq: 'Tier I em Coragem' },
   { id: 'auxilio_altruista', name: 'Auxílio Altruísta', cat: 'Social', desc: 'Como uma Ação Padrão, você pode sacrificar até 50% do seu PV atual para aumentar o PV Máximo de um alvo adjacente igual à quantidade sacrificada. Alvos dessa habilidade que estiverem com 0 PV só recebem o sacrifício como Cura.', prereq: 'Tier I em Empatia' },
   { id: 'um_em_espirito', name: 'Um em Espírito', cat: 'Social', desc: 'Quando você atingir uma Fraqueza pela primeira vez em uma Sombra ou atingir um Golpe Crítico, você pode Atacar novamente com uma Ação Livre. (O Ataque Extra causado por atingir uma Fraqueza só é ativado uma única vez por combate, mas Golpes Críticos continuam aplicando os Ataques Extras.)', prereq: 'Tier I em Conhecimento ou Disciplina' },
   { id: 'explorador', name: 'Explorador', cat: 'Social', desc: 'Qualquer teste de Disciplina relacionado à ação de Procurar e Investigar no Metaverso; o Narrador tratará seu personagem como permanentemente procurando. Você pode re-rolar qualquer teste relacionado à procura de itens ou aparatos, uma vez por teste.', prereq: 'Tier I em Disciplina' },
-  // ── Combate — Armas ──
+  // â”€â”€ Combate â€” Armas â”€â”€
   { id: 'esp_espadas', name: 'Especialização em Espadas', cat: 'Combate', desc: 'Enquanto Empunhar uma Espada, selecione 2 Tipos de Magia para receber Vantagem. Caso seja bem sucedido contra a magia, pode se mover Metade do Movimento com uma Ação Livre. (Não pode ser alocado na sua Fraqueza Elemental)', prereq: 'Tier I em Disciplina' },
   { id: 'esp_corpo_a_corpo', name: 'Especialização em Corpo a Corpo', cat: 'Combate', desc: 'Enquanto estiver Desarmado ou Empunhar qualquer tipo de Manoplas, você ganha +2 Dados em testes de Acerto e aumenta em 1 Passo o seu dado de dano. (Não afeta Magias)', prereq: 'Tier I em Coragem' },
   { id: 'esp_lanca', name: 'Especialização em Lança', cat: 'Combate', desc: 'Com uma Lança Equipada e um Inimigo entra ou sai do alcance da sua lança, você pode desferir um ataque básico como Ação Livre e caso seja bem sucedido, Interrompe o alvo e causa perda de sua Ação Padrão.', prereq: '5 de Agilidade' },
@@ -85,20 +85,20 @@ const FEITOS_LIST = [
   { id: 'esp_armas_fogo', name: 'Especialização em Armas de Fogo', cat: 'Combate', desc: 'Se você acertar um Ataque Básico com uma Arma de Fogo em sua distância máxima, você ganha Vantagem e se estiver em alcance corpo a corpo recebe Desvantagem em acerto, mas causa Dano Máximo.', prereq: 'Tier I de Disciplina e 4 de Agilidade ou Magia' },
   { id: 'esp_escudos_placas', name: 'Especialização em Escudos e Placas', cat: 'Combate', desc: 'Com um Escudo ou Armadura Pesada equipado, como uma Ação Completa, você pode optar por adotar uma postura defensiva e ganhar Resistência a todos os tipos de dano e Soma Novamente seu Vigor como RD até seu próximo turno.', prereq: '6 de Vigor' },
   { id: 'esp_adagas', name: 'Especialização em Adagas', cat: 'Combate', desc: 'Seus ataques com Adagas têm +1 de Alcance, podem ser arremessadas sem Desvantagem e podem ser recuperadas sem necessidade de testes. E soma sua Agilidade como Dano Extra. (Aplica em Ataque Básico e Magias)', prereq: '6 de Agilidade' },
-  { id: 'fisico_gladiador', name: 'Físico do Gladiador', cat: 'Combate', desc: 'Uma Vez por Combate — Quando você declarar uma Magia Física que pode aplicar um efeito de Status, você causa Automaticamente o efeito, funcionando tanto em Benéficos & Maligno. E adiciona sua Força como Dados de Dano Extra.', prereq: '4 de Força' },
-  // ── Persona ──
+  { id: 'fisico_gladiador', name: 'Físico do Gladiador', cat: 'Combate', desc: 'Uma Vez por Combate â€” Quando você declarar uma Magia Física que pode aplicar um efeito de Status, você causa Automaticamente o efeito, funcionando tanto em Benéficos & Maligno. E adiciona sua Força como Dados de Dano Extra.', prereq: '4 de Força' },
+  // â”€â”€ Persona â”€â”€
   { id: 'transe_monge_fogo', name: 'Transe do Monge de Fogo', cat: 'Persona', desc: 'Quando você causa dano com uma Magia de Fogo, você pode Incendiar o espaço ocupado pelo(s) alvo(s) pelas próximas Duas rodadas. Espaços incendiados causam Magia como dano de Fogo contra qualquer Sombra que terminar seu turno nesse espaço ou passar por ele durante seu movimento; caso o alvo estiver Queimando, recebe o Dobro de Dano. (Cada Sombra só pode tomar dano de cada espaço incendiado uma vez por rodada.)', prereq: 'Persona possuir Tipo Fogo' },
   { id: 'toque_rainha_gelo', name: 'Toque da Rainha de Gelo', cat: 'Persona', desc: 'Quando você Derrotar um inimigo usando uma Magia de Gelo, cause Congelado em um alvo adjacente Automaticamente e caso possua Buffs ativos, aumente sua duração em +2 Rodadas.\nCongelado: Alvos Congelados tem metade de seu movimento e recebem Dobro de Dano do próximo Dano Físico ou Raio utilizado contra ele.', prereq: 'Persona possuir Tipo Gelo' },
-  { id: 'investida_ventos', name: 'Investida da Cavalaria dos Ventos', cat: 'Persona', desc: 'Depois de acertar um alvo com uma Magia de Vento, você Reduz da próxima Rolagem de Reação do alvo igual a sua Magia.\nCusto: 10 PM — Cria um Tornado de 6 Metros de Raio ao redor do alvo atingido; enquanto inimigos estiverem dentro do Tornado devem fazer um teste de Agilidade contra DT = 10 + Magia, caso falhe se tornam Caídos até sua próxima rodada.', prereq: 'Persona possuir Tipo Vento' },
+  { id: 'investida_ventos', name: 'Investida da Cavalaria dos Ventos', cat: 'Persona', desc: 'Depois de acertar um alvo com uma Magia de Vento, você Reduz da próxima Rolagem de Reação do alvo igual a sua Magia.\nCusto: 10 PM â€” Cria um Tornado de 6 Metros de Raio ao redor do alvo atingido; enquanto inimigos estiverem dentro do Tornado devem fazer um teste de Agilidade contra DT = 10 + Magia, caso falhe se tornam Caídos até sua próxima rodada.', prereq: 'Persona possuir Tipo Vento' },
   { id: 'maos_lorde_raio', name: 'Mãos do Lorde do Raio', cat: 'Persona', desc: 'Ao atingir um alvo com uma Magia de Raio você pode gastar 8 de PM para tornar Magias de Alvo único em efeito de Área mantendo seu Dado de Dano; caso a Magia de Raio já seja em área, aumenta a chance de todos os alvos receberem Choque em 30%.\nChoque: Alvos que sofrerem de Choque ficam atordoados por 1 Rodada.', prereq: 'Persona possuir Tipo Raio' },
   { id: 'sombra_assassino_nuclear', name: 'Sombra do Assassino Nuclear', cat: 'Persona', desc: 'Aumente seu limite de Acúmulo em +2. Você ganha a capacidade de "Transferir" os acúmulos de Radiação para um Alvo Inimigo, igual à sua Vitalidade por rodada. Alvos inimigos que passarem seu limite ativam o mesmo efeito que ocorreria se você excedesse seu limite de contadores. (O Usuário deve fazer um teste de Magia vs Vitalidade do Alvo)', prereq: 'Persona possuir Tipo Nuclear' },
-  { id: 'caos_psicocinetico', name: 'Caos do Vidente Psicocinético', cat: 'Persona', desc: 'Efeitos de Status são Ampliados e recebem as seguintes adições:\n• Chance de Efeito: Todo efeito de Status com 50% de Chance ou menor se torna 80%. (NÃO AFETA EFEITOS DE EXECUTAR)\n• Recuperação de Efeito: Todo efeito de 33% de Recuperação se torna 25% e se já for 25% se torna 18%.\n• Redução de Habilidade de Combate: Todo Status de -3 se torna -4.', prereq: 'Persona possuir Tipo Psíquico' },
+  { id: 'caos_psicocinetico', name: 'Caos do Vidente Psicocinético', cat: 'Persona', desc: 'Efeitos de Status são Ampliados e recebem as seguintes adições:\nâ€¢ Chance de Efeito: Todo efeito de Status com 50% de Chance ou menor se torna 80%. (NÃO AFETA EFEITOS DE EXECUTAR)\nâ€¢ Recuperação de Efeito: Todo efeito de 33% de Recuperação se torna 25% e se já for 25% se torna 18%.\nâ€¢ Redução de Habilidade de Combate: Todo Status de -3 se torna -4.', prereq: 'Persona possuir Tipo Psíquico' },
   { id: 'voto_clerigo_luz', name: 'Voto do Clérigo da Luz', cat: 'Persona', desc: 'Quando você causa dano com uma Magia de Luz, você pode gastar 6 de PM para ganhar Vitalidade + Magia como Pontos de Vida temporários. Enquanto você tiver PV temporário, você não pode ativar esse Feito novamente. (PV temporário é somado ao seu PV máximo, é gasto antes do seu PV normal e não pode ser recuperado)', prereq: 'Persona possuir Tipo Luz' },
   { id: 'ritual_herege_trevas', name: 'Ritual do Herege das Trevas', cat: 'Persona', desc: 'Quando você Derrotar uma Sombra usando uma magia do Tipo Trevas, você pode escolher entre: Reciclar o Custo da Magia utilizada de volta como PM ou causar Metade do Dano utilizado no alvo derrotado anteriormente em até 1d4 alvos que você pode ver (Automaticamente).', prereq: 'Persona possuir Tipo Trevas' },
   { id: 'vanguarda_onipotente', name: 'Vanguarda Onipotente', cat: 'Persona', desc: 'Quando você Acertar um Crítico com uma Magia Onipotente, ignore qualquer teste de esquiva de todos os alvos afetados e rouba seus PM igual sua MAG.', prereq: 'Persona possuir Tipo Onipotente' },
-  { id: 'sacerdotisa_milagre', name: 'Sacerdotisa do Milagre Divino', cat: 'Persona', desc: 'Reduz MAG no custo de PM em Magias de Cura & Reviver e quando usar uma magia de Alvo Único pode escolher até MAG = Alvos Extras para receber metade da cura do alvo principal. E sempre que for bem sucedido em Curar um Aliado que estiver acima da Metade da Vida Máxima, retira 1 Efeito de Status maligno.', prereq: 'Persona possuir Tipo Cura' },
+  { id: 'sacerdotisa_milagre', name: 'Sacerdotisa do Milagre Divino', cat: 'Persona', desc: 'Reduz MAG no custo de PM em Magias de Cura & Reviver e quando usar uma magia de Alvo Ãšnico pode escolher até MAG = Alvos Extras para receber metade da cura do alvo principal. E sempre que for bem sucedido em Curar um Aliado que estiver acima da Metade da Vida Máxima, retira 1 Efeito de Status maligno.', prereq: 'Persona possuir Tipo Cura' },
   { id: 'olho_onipotente', name: '"O Olho Onipotente que tudo Vê"', cat: 'Persona', desc: 'No início do combate recebe MAG = Contadores para utilizar suas habilidades de Intel. Todo início de rodada a primeira Magia de Intel não consome nenhum tipo de Ação independente do custo. E recebe +5 em Testes contra qualquer Efeito mental.', prereq: 'Persona possuir Tipo Intel' },
-  // ── Atributos ──
+  // â”€â”€ Atributos â”€â”€
   { id: 'mente_afiada', name: 'Mente Afiada', cat: 'Atributos', desc: 'Você sempre sabe onde está localizado em relação a outros pontos que já conhece; sempre tem uma estimativa precisa das horas; e recebe Crítico Automático para lembrar-se de qualquer evento que tenha presenciado nos últimos sete dias.', prereq: '10 de Conhecimento' },
   { id: 'impiedoso', name: 'Impiedoso', cat: 'Atributos', desc: 'Pode Re-rolar o acerto de um ataque que você declarou nesse turno com +5 de Acerto. (2 Usos por Combate e recebe +1 Uso nos níveis 6, 12 e 18)', prereq: '5 de Técnica' },
   { id: 'atleta', name: 'Atleta', cat: 'Atributos', desc: 'Calcule seu movimento com FOR ao invés de AGI. Você pode saltar uma distância igual a metade do seu movimento. Você tem sucesso automático em testes de escalada em superfícies até 1m acima da sua altura. (Só pode ser escolhido uma vez)', prereq: '3 de Força' },
@@ -111,7 +111,7 @@ const FEITOS_LIST = [
   { id: 'volatil', name: 'Volátil', cat: 'Atributos', desc: 'Suas magias que atingem mais de um alvo podem acertar um alvo a mais, por rank. (Só pode ser escolhido uma vez a cada quatro níveis)', prereq: '4 de Magia' },
   { id: 'milagre', name: 'Milagre', cat: 'Atributos', desc: 'Uma vez por combate, se seu PV estiver acima de 1 e você receber dano que reduza seu PV para 0 ou menos, role SORd8. Se qualquer um dos seus dados resultar em 5 ou mais, você sobrevive com 1 PV. (Só pode ser escolhido uma vez)', prereq: '3 de Sorte' },
   { id: 'mira_certeira', name: 'Mira Certeira', cat: 'Atributos', desc: 'Você ganha 1 Carga de Sorte a mais no começo de cada combate, por rank. Isso pode exceder seu limite de Cargas. (Só pode ser escolhido quatro vezes)', prereq: '4 de Sorte' },
-  // ── Convicção ──
+  // â”€â”€ Convicção â”€â”€
   { id: 'teu_proprio_ser', name: 'Teu Próprio Ser', cat: 'Convicção', desc: 'Você pode alterar a Convicção da sua Persona inicial. (Só pode ser escolhido uma vez a cada quatro níveis)', prereq: 'CNv. 4' },
   { id: 'perseveranca', name: 'Perseverança', cat: 'Convicção', desc: 'Cada vez que você escolher esse Feito, escolha uma Persona e uma de suas Fraquezas. A Persona perde a Fraqueza selecionada. (Só pode ser escolhido uma vez a cada cinco níveis)', prereq: 'CNv. 10' },
   { id: 'feito_de_ferro', name: 'Feito de Ferro', cat: 'Convicção', desc: 'Cada vez que você escolher esse feito, escolha uma Persona e um Tipo ao qual ela não tem nenhuma interação. A Persona ganha Resistir a esse Tipo. (Só pode ser escolhido duas vezes)', prereq: 'CNv. 10' },
@@ -135,55 +135,144 @@ const CONDITIONS_LIST = [
 const SOCIAL_SKILL_META = {
   KNOPts: {name:'Conhecimento', titles:['Preguiçoso','Ciente','Sabido','Estudado','Enciclopédico','Erudito'], desc:[
     'Título: Preguiçoso.',
-    'Tier I — Ciente: uma vez por dia, revelar uma Fraqueza de uma Sombra que você possa ver.',
-    'Tier II — Sabido: uma vez por combate, ganhe +1 DDC contra um ataque que exija teste de esquiva.',
-    'Tier III — Estudado: bônus permanente de +1 FOR, +1 MAG ou +1 TEC, sua escolha.',
-    'Tier IV — Enciclopédico: uma vez por dia conjurar uma magia Tier III ou menor sem gastar Energia.',
-    'Tier V — Erudito: ganha um Aspecto baseado no conhecimento e uma vez por dia pode gastar ação rápida para obter Carga Mental/Carga Poderosa.'
+    'Tier I â€” Ciente: uma vez por dia, revelar uma Fraqueza de uma Sombra que você possa ver.',
+    'Tier II â€” Sabido: uma vez por combate, ganhe +1 DDC contra um ataque que exija teste de esquiva.',
+    'Tier III â€” Estudado: bônus permanente de +1 FOR, +1 MAG ou +1 TEC, sua escolha.',
+    'Tier IV â€” Enciclopédico: uma vez por dia conjurar uma magia Tier III ou menor sem gastar Energia.',
+    'Tier V â€” Erudito: ganha um Aspecto baseado no conhecimento e uma vez por dia pode gastar ação rápida para obter Carga Mental/Carga Poderosa.'
   ]},
   DISPts: {name:'Disciplina', titles:['Desatento','Decente','Persistente','Minucioso','Magistral','Transcendente'], desc:[
-    'Tier 0 — Desatento.',
-    'Tier I — Decente: +10 PV e +1 de Limite de Energia.',
-    'Tier II — Persistente: armaduras ganham +2 Redução de dano.',
-    'Tier III — Minucioso: concede um Feito extra.',
-    'Tier IV — Magistral: uma vez por combate, adicione metade do seu Tier de Disciplina (arredondado para baixo) a um teste não ofensivo.',
-    'Tier V — Transcendente: uma vez por dia, ao invés de morrer, retorna com 50% de vida (conta como Interromper) e ganha um Aspecto de resiliência.'
+    'Tier 0 â€” Desatento.',
+    'Tier I â€” Decente: +10 PV e +1 de Limite de Energia.',
+    'Tier II â€” Persistente: armaduras ganham +2 Redução de dano.',
+    'Tier III â€” Minucioso: concede um Feito extra.',
+    'Tier IV â€” Magistral: uma vez por combate, adicione metade do seu Tier de Disciplina (arredondado para baixo) a um teste não ofensivo.',
+    'Tier V â€” Transcendente: uma vez por dia, ao invés de morrer, retorna com 50% de vida (conta como Interromper) e ganha um Aspecto de resiliência.'
   ]},
   EMPpts: {name:'Empatia', titles:['Indiferente','Inofensivo','Gentil','Generoso','Altruísta','Angelical'], desc:[
-    'Tier 0 — Indiferente.',
-    'Tier I — Inofensivo: uma vez por dia, sucesso automático em teste de resistência contra Status Mental.',
-    'Tier II — Gentil: uma vez por dia, remover todos os Status Mentais de um aliado que possa ouvir você (ação livre).',
-    'Tier III — Generoso: uma vez por dia (movimento) reproduz buff de aliado ou aplicar seu buff a aliado por 2 rodadas.',
-    'Tier IV — Altruísta: uma vez por dia, quando consumível não-Especial for usado, role d4; com 3-4 o item não é consumido.',
-    'Tier V — Angelical: até 3x/dia, ao curar, pode redirecionar cura para outro alvo; ganha Aspecto de empatia.'
+    'Tier 0 â€” Indiferente.',
+    'Tier I â€” Inofensivo: uma vez por dia, sucesso automático em teste de resistência contra Status Mental.',
+    'Tier II â€” Gentil: uma vez por dia, remover todos os Status Mentais de um aliado que possa ouvir você (ação livre).',
+    'Tier III â€” Generoso: uma vez por dia (movimento) reproduz buff de aliado ou aplicar seu buff a aliado por 2 rodadas.',
+    'Tier IV â€” Altruísta: uma vez por dia, quando consumível não-Especial for usado, role d4; com 3-4 o item não é consumido.',
+    'Tier V â€” Angelical: até 3x/dia, ao curar, pode redirecionar cura para outro alvo; ganha Aspecto de empatia.'
   ]},
   EXPPts: {name:'Expressão', titles:['Monótono','Rudimentar','Eloquente','Inspirador','Tocante','Fascinante'], desc:[
-    'Tier 0 — Monótono.',
-    'Tier I — Rudimentar: uma vez por dia, como movimento, todos aliados podem tentar um Crítico sem gastar Cargas de Sorte.',
-    'Tier II — Eloquente: uma vez por dia (ação rápida), aumentar categoria de esquiva de todos aliados em +1 até fim do próximo turno.',
-    'Tier III — Inspirador: uma vez por dia (ação rápida), tentar causar Fúria em unidades em 12m (chance 25 + Tier*4%).',
-    'Tier IV — Tocante: uma vez por dia (ação padrão), escolha alvo; por 2 rodadas alvo recebe Margem de Crítico -2 e ataques contra ele não podem errar.',
-    'Tier V — Fascinante: uma vez por dia (ação padrão) gasta para dar ação de movimento extra a cada aliado; ganha Aspecto de liderança.'
+    'Tier 0 â€” Monótono.',
+    'Tier I â€” Rudimentar: uma vez por dia, como movimento, todos aliados podem tentar um Crítico sem gastar Cargas de Sorte.',
+    'Tier II â€” Eloquente: uma vez por dia (ação rápida), aumentar categoria de esquiva de todos aliados em +1 até fim do próximo turno.',
+    'Tier III â€” Inspirador: uma vez por dia (ação rápida), tentar causar Fúria em unidades em 12m (chance 25 + Tier*4%).',
+    'Tier IV â€” Tocante: uma vez por dia (ação padrão), escolha alvo; por 2 rodadas alvo recebe Margem de Crítico -2 e ataques contra ele não podem errar.',
+    'Tier V â€” Fascinante: uma vez por dia (ação padrão) gasta para dar ação de movimento extra a cada aliado; ganha Aspecto de liderança.'
   ]},
   COUPts: {name:'Coragem', titles:['Tímido','Comum','Determinado','Firme','Destemido','Fodão'], desc:[
-    'Tier 0 — Tímido.',
-    'Tier I — Comum: uma vez por dia, ao declarar ataque, pode adicionar Redução de Dano ao cálculo de dano (reduz RDM a 0 até fim do turno).',
-    'Tier II — Determinado: pode escolher falhar resistência para aplicar o mesmo Status ao conjurador.',
-    'Tier III — Firme: escolha ganhar +1 VIT, +1 AGI ou +2 SOR permanente.',
-    'Tier IV — Destemido: quando toma dano de tipos elementais, pode ativar efeito Fortificar <Elemento> 1d10 até o fim do combate.',
-    'Tier V — Fodão: ganha Aspecto de bravura e uma vez por dia pode ignorar penalties por exceder limite de Energia por um turno com custos posteriores.'
+    'Tier 0 â€” Tímido.',
+    'Tier I â€” Comum: uma vez por dia, ao declarar ataque, pode adicionar Redução de Dano ao cálculo de dano (reduz RDM a 0 até fim do turno).',
+    'Tier II â€” Determinado: pode escolher falhar resistência para aplicar o mesmo Status ao conjurador.',
+    'Tier III â€” Firme: escolha ganhar +1 VIT, +1 AGI ou +2 SOR permanente.',
+    'Tier IV â€” Destemido: quando toma dano de tipos elementais, pode ativar efeito Fortificar <Elemento> 1d10 até o fim do combate.',
+    'Tier V â€” Fodão: ganha Aspecto de bravura e uma vez por dia pode ignorar penalties por exceder limite de Energia por um turno com custos posteriores.'
   ]},
   CHAPts: {name:'Charme', titles:['Sem Graça','Existente','Confiante','Suave','Popular','Debonair'], desc:[
-    'Tier 0 — Sem Graça.',
-    'Tier I — Existente: uma vez por dia, conjurar Pulinpa.',
-    'Tier II — Confiante: uma vez por dia, conjurar Dekaja.',
-    'Tier III — Suave: uma vez por dia, conjurar Marin Karin; pode usar o dobro do Tier de Charme no lugar de TEC.',
-    'Tier IV — Popular: uma vez por dia, como Interromper, pode mudar alvo de ataque inimigo para outro alvo.',
-    'Tier V — Debonair: ganha Aspecto de magnetismo e uma vez por bloco pode usar Tier+2 ao invés de Expressão/Empatia para qualquer teste.'
+    'Tier 0 â€” Sem Graça.',
+    'Tier I â€” Existente: uma vez por dia, conjurar Pulinpa.',
+    'Tier II â€” Confiante: uma vez por dia, conjurar Dekaja.',
+    'Tier III â€” Suave: uma vez por dia, conjurar Marin Karin; pode usar o dobro do Tier de Charme no lugar de TEC.',
+    'Tier IV â€” Popular: uma vez por dia, como Interromper, pode mudar alvo de ataque inimigo para outro alvo.',
+    'Tier V â€” Debonair: ganha Aspecto de magnetismo e uma vez por bloco pode usar Tier+2 ao invés de Expressão/Empatia para qualquer teste.'
   ]}
 };
 const SOCIAL_IDS = ['KNOPts','DISPts','EMPpts','EXPPts','COUPts','CHAPts'];
 const INITIAL_SOCIAL_POINTS = 7;
+
+// =============================================
+// HEXAGRAMA â€” LAYOUT & ANIMAÇÃO (module-scope)
+// =============================================
+
+var HX = {
+  CX: 310, CY: 280,    // SVG centre
+  R:   135,            // outer radius  = Tier V
+  Rmin: 15,            // inner radius  = Tier 0
+  Ri:   70,            // inner decorative hexagon
+  LR:  218,            // label anchor radius
+  W: 660, H: 580,
+  TIER_MAX: 5,
+  skills: null,        // populated below
+  animRadii:   null,
+  targetRadii: null,
+  animRunning: false,
+  rad: function(d) { return d * Math.PI / 180; },
+  tipR: function(tier) { return HX.Rmin + (tier / HX.TIER_MAX) * (HX.R - HX.Rmin); }
+};
+
+(function _initHX() {
+  HX.skills = [
+    { id: 'KNOPts', angle: 90,   anchor: 'middle' },
+    { id: 'DISPts', angle: 30,   anchor: 'start'  },
+    { id: 'EMPpts', angle: -30,  anchor: 'start'  },
+    { id: 'EXPPts', angle: -90,  anchor: 'middle' },
+    { id: 'COUPts', angle: -150, anchor: 'end'    },
+    { id: 'CHAPts', angle: 150,  anchor: 'end'    }
+  ];
+  HX.skills.forEach(function(s) {
+    var ar = HX.rad(s.angle);
+    s.tx  = HX.CX + HX.R  * Math.cos(ar);  // outer tip pos (Tier V)
+    s.ty  = HX.CY - HX.R  * Math.sin(ar);
+    s.lx  = HX.CX + HX.LR * Math.cos(ar);  // label anchor
+    s.ly  = HX.CY - HX.LR * Math.sin(ar);
+    s.cos = Math.cos(ar);
+    s.sin = Math.sin(ar);
+  });
+  HX.animRadii   = HX.skills.map(function() { return HX.Rmin; });
+  HX.targetRadii = HX.skills.map(function() { return HX.Rmin; });
+}());
+
+/** Flush current animRadii into the SVG (fill polygon + moving dots/halos). */
+function hxUpdateProgress() {
+  var fillEl   = document.getElementById('hx-progress-fill');
+  var strokeEl = document.getElementById('hx-progress-stroke');
+  if (!fillEl) return;
+  var pts = HX.skills.map(function(s, i) {
+    return (HX.CX + HX.animRadii[i] * s.cos).toFixed(2) + ',' +
+           (HX.CY - HX.animRadii[i] * s.sin).toFixed(2);
+  }).join(' ');
+  fillEl.setAttribute('points', pts);
+  if (strokeEl) strokeEl.setAttribute('points', pts);
+  HX.skills.forEach(function(s, i) {
+    var cx = (HX.CX + HX.animRadii[i] * s.cos).toFixed(2);
+    var cy = (HX.CY - HX.animRadii[i] * s.sin).toFixed(2);
+    var dot  = document.getElementById(s.id + '-hx-dot');
+    var halo = document.getElementById(s.id + '-hx-halo');
+    if (dot)  { dot.setAttribute('cx',  cx); dot.setAttribute('cy',  cy); }
+    if (halo) { halo.setAttribute('cx', cx); halo.setAttribute('cy', cy); }
+  });
+}
+
+/** RAF-based exponential ease-out interpolation toward targetRadii. */
+function hxAnimate() {
+  var done = true;
+  HX.skills.forEach(function(s, i) {
+    var diff = HX.targetRadii[i] - HX.animRadii[i];
+    if (Math.abs(diff) > 0.3) {
+      HX.animRadii[i] += diff * 0.18;
+      done = false;
+    } else {
+      HX.animRadii[i] = HX.targetRadii[i];
+    }
+  });
+  hxUpdateProgress();
+  if (done) {
+    HX.animRunning = false;
+  } else {
+    requestAnimationFrame(hxAnimate);
+  }
+}
+
+function hxStartAnimation() {
+  if (HX.animRunning) return;
+  HX.animRunning = true;
+  requestAnimationFrame(hxAnimate);
+}
 
 // =============================================
 // UTILITÁRIOS
@@ -203,7 +292,7 @@ const ids = {
   MaxHP: $("#MaxHP"), CurrentHP: $("#CurrentHP"), EnergyMax: $("#EnergyMax"), CurrentPM: $("#CurrentPM"), DmgRed: $("#DmgRed"),
   KNOPts: $("#KNOPts"), DISPts: $("#DISPts"), EMPpts: $("#EMPpts"), EXPPts: $("#EXPPts"), COUPts: $("#COUPts"), CHAPts: $("#CHAPts"),
   Aspectos: $("#Aspectos"), AspectPoints: $("#AspectPoints"), Buffs: $("#Buffs"),
-  PerName: $("#PerName"), PerArcana: $("#PerArcana"), PerNotes: $("#PerNotes"), Conviction: $("#Conviction"), NaturalSkill: $("#NaturalSkill"), PerLvl: $("#PerLvl"), PerSP: $("#PerSP"), PerTypes: $("#PerTypes"),
+  PerName: $("#PerName"), PerArcana: $("#PerArcana"), PerNotes: $("#PerNotes"), Conviction: $("#Conviction"), PerLvl: $("#PerLvl"), PerSP: $("#PerSP"), PerTypes: $("#PerTypes"),
   Weapon: $("#Weapon"), WeaponDmg: $("#WeaponDmg"), WeaponReach: $("#WeaponReach"), WeaponEffect: $("#WeaponEffect"),
   Armor: $("#Armor"), ArmorDmgRed: $("#ArmorDmgRed"), ArmorEffect: $("#ArmorEffect"),
   Accessory: $("#Accessory"), AccessoryEffect: $("#AccessoryEffect"),
@@ -425,22 +514,49 @@ function renderBadges() {
 function renderSocial() {
   var remainingEl = document.getElementById('social-remaining');
   if (!remainingEl) return;
+  var ROMAN = ['0', 'I', 'II', 'III', 'IV', 'V'];
   var sum = 0;
-  SOCIAL_IDS.forEach(function(id) {
-    var val = Math.max(0, Number(state[id]) || 0);
+  var tierChanged = false;
+
+  HX.skills.forEach(function(s, i) {
+    var val = Math.max(0, Number(state[s.id]) || 0);
     var tier = Math.min(5, Math.floor(val / 5));
-    var meta = SOCIAL_SKILL_META[id];
+    var meta = SOCIAL_SKILL_META[s.id];
     if (!meta) return;
-    var displayTitle = meta.titles[tier] || meta.titles[meta.titles.length - 1];
-    var displayDesc = meta.desc[tier] || meta.desc[meta.desc.length - 1];
-    var tierEl = document.getElementById(id + '-tier');
-    var shortEl = document.getElementById(id + '-short');
-    var descEl = document.getElementById(id + '-desc');
-    if (tierEl) tierEl.textContent = 'Tier ' + tier + ' \u2014 ' + displayTitle + ' (' + val + ' pts)';
-    if (shortEl) shortEl.textContent = displayTitle;
-    if (descEl) descEl.textContent = displayDesc;
+
+    // Update target radius for animation
+    var targetR = HX.tipR(tier);
+    if (Math.abs(HX.targetRadii[i] - targetR) > 0.1) {
+      HX.targetRadii[i] = targetR;
+      tierChanged = true;
+    }
+
+    // Update label text
+    var hxTier  = document.getElementById(s.id + '-hx-tier');
+    var hxTitle = document.getElementById(s.id + '-hx-title');
+    var newTierText = 'TIER ' + ROMAN[tier];
+    if (hxTier && hxTier.textContent !== newTierText) {
+      hxTier.textContent = newTierText;
+      hxTier.classList.remove('hx-tier-flash');
+      void hxTier.offsetWidth;
+      hxTier.classList.add('hx-tier-flash');
+    }
+    if (hxTitle) hxTitle.textContent = meta.titles[tier] || meta.titles[meta.titles.length - 1];
+
     sum += val;
   });
+
+  if (tierChanged) {
+    hxStartAnimation();
+    // Pulse the fill polygon to signal the shape change
+    var fillEl = document.getElementById('hx-progress-fill');
+    if (fillEl) {
+      fillEl.classList.remove('hx-fill-pulse');
+      void fillEl.offsetWidth;
+      fillEl.classList.add('hx-fill-pulse');
+    }
+  }
+
   remainingEl.textContent = Math.max(0, INITIAL_SOCIAL_POINTS - sum);
 }
 
@@ -689,28 +805,149 @@ function buildSocialUI() {
   if (!container || !remainingEl) return;
 
   container.innerHTML = '';
-  SOCIAL_IDS.forEach(function(id) {
-    var meta = SOCIAL_SKILL_META[id];
-    var wrapper = document.createElement('div');
-    wrapper.className = 'social-skill';
-    wrapper.style.padding = '8px 0';
-    wrapper.style.borderBottom = '1px dashed rgba(255,255,255,0.03)';
-    wrapper.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;"><div style="font-weight:800">' + meta.name + '</div><div style="text-align:right"><div id="' + id + '-tier" style="font-weight:900">Tier 0 \u2014 ' + meta.titles[0] + '</div><div id="' + id + '-short" style="font-size:13px;color:var(--ink-dim)"></div></div></div><div id="' + id + '-desc" style="margin-top:6px;color:var(--ink);font-size:13px"></div>';
-    container.appendChild(wrapper);
+
+  var NS = 'http://www.w3.org/2000/svg';
+  var CX = HX.CX, CY = HX.CY, R = HX.R;
+  var skills = HX.skills;
+
+  function mk(tag, attrs) {
+    var el = document.createElementNS(NS, tag);
+    if (attrs) Object.keys(attrs).forEach(function(k) { el.setAttribute(k, attrs[k]); });
+    return el;
+  }
+
+  // Regular hexagon polygon points centred at (cx,cy) with radius r
+  function hexPts(cx, cy, r) {
+    return [0,1,2,3,4,5].map(function(i) {
+      var a = HX.rad(90 - i * 60);
+      return (cx + r * Math.cos(a)).toFixed(2) + ',' + (cy - r * Math.sin(a)).toFixed(2);
+    }).join(' ');
+  }
+
+  // Initial progress polygon (all tips at Rmin)
+  function fillPts0() {
+    return skills.map(function(s) {
+      return (CX + HX.Rmin * s.cos).toFixed(2) + ',' + (CY - HX.Rmin * s.sin).toFixed(2);
+    }).join(' ');
+  }
+
+  var svg = mk('svg', { viewBox: '0 0 ' + HX.W + ' ' + HX.H, width: '100%', 'aria-hidden': 'true' });
+  svg.style.cssText = 'max-width:640px;display:block;margin:0 auto;overflow:visible;';
+
+  // DEFS -- single glow used for tip dots
+  var defs = mk('defs', {});
+  var fGlow = mk('filter', { id: 'hx-glow', x: '-80%', y: '-80%', width: '260%', height: '260%' });
+  fGlow.appendChild(mk('feGaussianBlur', { in: 'SourceGraphic', stdDeviation: '3', result: 'blur' }));
+  var fMerge = mk('feMerge', {});
+  fMerge.appendChild(mk('feMergeNode', { in: 'blur' }));
+  fMerge.appendChild(mk('feMergeNode', { in: 'SourceGraphic' }));
+  fGlow.appendChild(fMerge);
+  defs.appendChild(fGlow);
+  svg.appendChild(defs);
+
+  // -- LAYER 1: Tier rings (T1..T4 subtle guides + T5 outer boundary) --
+  for (var t = 1; t <= 5; t++) {
+    var rT = HX.tipR(t);
+    var isOuter = (t === 5);
+    svg.appendChild(mk('polygon', {
+      points: hexPts(CX, CY, rT),
+      fill: 'none',
+      stroke: 'var(--stroke)',
+      'stroke-width': isOuter ? '1.5' : '0.9',
+      'stroke-opacity': isOuter ? '0.55' : '0.25',
+      'stroke-linejoin': 'round'
+    }));
+  }
+
+  // -- LAYER 2: Radial spokes from centre to each outer tip --
+  skills.forEach(function(s) {
+    svg.appendChild(mk('line', {
+      x1: CX, y1: CY,
+      x2: s.tx.toFixed(2), y2: s.ty.toFixed(2),
+      stroke: 'var(--stroke)',
+      'stroke-width': '0.9',
+      'stroke-opacity': '0.30'
+    }));
   });
 
-  // Listeners sincronizam com state
-  SOCIAL_IDS.forEach(function(id) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    el.addEventListener('input', function() {
-      var val = Number(el.value || 0);
-      if (val < 0) { el.value = 0; val = 0; }
-      var partial = {};
-      partial[id] = val;
-      setState(partial, { skipRecalc: true });
-    });
+  // -- LAYER 3: Progress fill polygon --
+  svg.appendChild(mk('polygon', {
+    id: 'hx-progress-fill',
+    points: fillPts0(),
+    fill: 'var(--accent)',
+    'fill-opacity': '0.18',
+    stroke: 'none'
+  }));
+
+  // -- LAYER 4: Progress stroke polygon --
+  svg.appendChild(mk('polygon', {
+    id: 'hx-progress-stroke',
+    points: fillPts0(),
+    fill: 'none',
+    stroke: 'var(--accent)',
+    'stroke-width': '2.5',
+    'stroke-opacity': '0.85',
+    'stroke-linejoin': 'round'
+  }));
+
+  // -- LAYER 5: Central node (no text) --
+  svg.appendChild(mk('circle', { cx: CX, cy: CY, r: '6', fill: 'var(--accent)', opacity: '0.50', filter: 'url(#hx-glow)' }));
+  svg.appendChild(mk('circle', { cx: CX, cy: CY, r: '4', fill: 'var(--accent)' }));
+
+  // -- LAYER 6: Dynamic tip halos + dots (repositioned by hxUpdateProgress) --
+  skills.forEach(function(s) {
+    var ix = (CX + HX.Rmin * s.cos).toFixed(2);
+    var iy = (CY - HX.Rmin * s.sin).toFixed(2);
+    svg.appendChild(mk('circle', {
+      id: s.id + '-hx-halo',
+      cx: ix, cy: iy, r: '14',
+      fill: 'var(--accent)', opacity: '0.12', filter: 'url(#hx-glow)'
+    }));
+    svg.appendChild(mk('circle', {
+      id: s.id + '-hx-dot',
+      cx: ix, cy: iy, r: '4',
+      fill: 'var(--accent)', filter: 'url(#hx-glow)'
+    }));
   });
+
+  // -- LAYER 7: Labels at fixed outer positions --
+  skills.forEach(function(s) {
+    var meta = SOCIAL_SKILL_META[s.id];
+    var g = mk('g', { class: 'hx-tip' });
+
+    var nameEl = mk('text', {
+      x: s.lx.toFixed(2), y: (s.ly - 16).toFixed(2),
+      'text-anchor': s.anchor,
+      'font-size': '13', 'font-weight': '900', 'letter-spacing': '0.10em',
+      fill: 'var(--ink)'
+    });
+    nameEl.textContent = meta.name.toUpperCase();
+    g.appendChild(nameEl);
+
+    var tierEl = mk('text', {
+      id: s.id + '-hx-tier',
+      x: s.lx.toFixed(2), y: (s.ly + 4).toFixed(2),
+      'text-anchor': s.anchor,
+      'font-size': '12', 'font-weight': '700', 'letter-spacing': '0.16em',
+      fill: 'var(--accent)'
+    });
+    tierEl.textContent = 'TIER 0';
+    g.appendChild(tierEl);
+
+    var titleEl = mk('text', {
+      id: s.id + '-hx-title',
+      x: s.lx.toFixed(2), y: (s.ly + 22).toFixed(2),
+      'text-anchor': s.anchor,
+      'font-size': '11', 'font-weight': '400', 'letter-spacing': '0.05em',
+      fill: 'var(--ink-dim)'
+    });
+    titleEl.textContent = meta.titles[0];
+    g.appendChild(titleEl);
+
+    svg.appendChild(g);
+  });
+
+  container.appendChild(svg);
 }
 
 // =============================================
@@ -790,7 +1027,6 @@ function renderModifiers() {
 // FUNÇÕES DE TABELAS DINÂMICAS
 // =============================================
 
-var eqBody = null; // legacy — replaced by inventory system
 var eqBodyEquipado = $("#tbl-eq-equipado tbody");
 var eqBodyMochila = $("#tbl-eq-mochila tbody");
 var spellBody = $("#tbl-spell tbody");
@@ -801,7 +1037,7 @@ var cttBody = $("#tbl-ctt tbody");
 // ---- Inventário (Sistema de Peso) ----
 
 /**
- * Calcula capacidade de carga: (FOR × 5) + VIT
+ * Calcula capacidade de carga: (FOR Ã— 5) + VIT
  */
 function calcInventoryCapacity() {
   var comp = state._computed;
@@ -845,7 +1081,7 @@ function renderInventoryStatus() {
   if (weight > cap) {
     fill.classList.add('inv-sobrecarregado');
     statusText.classList.add('inv-sobrecarregado');
-    statusText.textContent = '⚠ Sobrecarregado';
+    statusText.textContent = 'âš  Sobrecarregado';
     fill.style.width = '100%';
   } else if (weight >= cap * 0.8) {
     fill.classList.add('inv-pesado');
@@ -868,7 +1104,7 @@ function addInventoryItem(data, targetLocal) {
   if (!tbody) return;
 
   var tr = document.createElement('tr');
-  var moveLabel = (local === 'equipado') ? '→ Mochila' : '← Equipar';
+  var moveLabel = (local === 'equipado') ? 'â†’ Mochila' : 'â† Equipar';
   tr.dataset.local = local;
   tr.innerHTML = '<td><input class="eq-nome" placeholder="Nome do item"/></td>' +
     '<td><input class="eq-peso" type="number" min="0" step="0.1" value="0" placeholder="0"/></td>' +
@@ -1169,7 +1405,7 @@ function renderAll() {
 }
 
 // =============================================
-// PERSISTÊNCIA — SNAPSHOT
+// PERSISTÊNCIA â€” SNAPSHOT
 // =============================================
 
 /**
@@ -1177,7 +1413,7 @@ function renderAll() {
  * Formato compatível com versões anteriores.
  */
 function snapshot() {
-  // Sincronizar tabelas DOM → state antes do snapshot
+  // Sincronizar tabelas DOM â†’ state antes do snapshot
   syncEquipToState();
   syncSpellsToState();
   syncLinksToState();
@@ -1401,7 +1637,7 @@ var textareaObserver = new MutationObserver(function() { initAutoResizeTextareas
 textareaObserver.observe(document.body, { childList: true, subtree: true });
 
 // =============================================
-// EVENTOS — CAMPOS SIMPLES
+// EVENTOS â€” CAMPOS SIMPLES
 // =============================================
 
 // Campos de atributos de combate (range sliders + nível): disparam recalc via setState
@@ -1470,16 +1706,20 @@ if (resetBtn) resetBtn.addEventListener('click', resetFicha);
 
 var saveBtn = document.getElementById("save");
 if (saveBtn) saveBtn.addEventListener("click", function() {
-  var obrigatorios = [ids.CharClass, ids.CharPlayer, ids.PerName].filter(Boolean);
-  var faltando = obrigatorios.filter(function(f) { return !f.value.trim(); });
+  var required = [
+    { el: ids.CharClass,  label: 'Classe' },
+    { el: ids.CharPlayer, label: 'Nome do Personagem' },
+    { el: ids.PerName,    label: 'Nome da Persona' }
+  ];
+  var faltando = required.filter(function(r) { return r.el && !r.el.value.trim(); });
   if (faltando.length > 0) {
-    faltando.forEach(function(f) { f.classList.add('input-error'); f.focus(); });
-    var camposNomes = faltando.map(function(f) {
-      var label = f.closest('div') && f.closest('div').querySelector('label');
-      return (label ? label.textContent.trim() : 'Campo').split('*')[0].trim();
-    }).join(', ');
-    showToast('Preencha: ' + camposNomes, 'error', 3500);
-    setTimeout(function() { faltando.forEach(function(f) { f.classList.remove('input-error'); }); }, 2000);
+    faltando.forEach(function(r) {
+      r.el.classList.add('input-error');
+      // Only focus if the field is currently visible (in active tab)
+      if (r.el.offsetParent !== null) r.el.focus();
+      setTimeout(function() { r.el.classList.remove('input-error'); }, 2000);
+    });
+    showToast('Preencha: ' + faltando.map(function(r) { return r.label; }).join(', '), 'error', 3500);
     return;
   }
   try {
