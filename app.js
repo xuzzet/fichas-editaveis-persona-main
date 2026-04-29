@@ -76,7 +76,7 @@ const FEITOS_LIST = [
   { id: 'auxilio_altruista', name: 'Auxílio Altruísta', cat: 'Social', desc: 'Como uma Ação Padrão, você pode sacrificar até 50% do seu PV atual para aumentar o PV Máximo de um alvo adjacente igual à quantidade sacrificada. Alvos dessa habilidade que estiverem com 0 PV só recebem o sacrifício como Cura.', prereq: 'Tier I em Empatia' },
   { id: 'um_em_espirito', name: 'Um em Espírito', cat: 'Social', desc: 'Quando você atingir uma Fraqueza pela primeira vez em uma Sombra ou atingir um Golpe Crítico, você pode Atacar novamente com uma Ação Livre. (O Ataque Extra causado por atingir uma Fraqueza só é ativado uma única vez por combate, mas Golpes Críticos continuam aplicando os Ataques Extras.)', prereq: 'Tier I em Conhecimento ou Disciplina' },
   { id: 'explorador', name: 'Explorador', cat: 'Social', desc: 'Qualquer teste de Disciplina relacionado à ação de Procurar e Investigar no Metaverso; o Narrador tratará seu personagem como permanentemente procurando. Você pode re-rolar qualquer teste relacionado à procura de itens ou aparatos, uma vez por teste.', prereq: 'Tier I em Disciplina' },
-  // â”€â”€ Combate â€” Armas â”€â”€
+  // â”€â”€ Combate — Armas â”€â”€
   { id: 'esp_espadas', name: 'Especialização em Espadas', cat: 'Combate', desc: 'Enquanto Empunhar uma Espada, selecione 2 Tipos de Magia para receber Vantagem. Caso seja bem sucedido contra a magia, pode se mover Metade do Movimento com uma Ação Livre. (Não pode ser alocado na sua Fraqueza Elemental)', prereq: 'Tier I em Disciplina' },
   { id: 'esp_corpo_a_corpo', name: 'Especialização em Corpo a Corpo', cat: 'Combate', desc: 'Enquanto estiver Desarmado ou Empunhar qualquer tipo de Manoplas, você ganha +2 Dados em testes de Acerto e aumenta em 1 Passo o seu dado de dano. (Não afeta Magias)', prereq: 'Tier I em Coragem' },
   { id: 'esp_lanca', name: 'Especialização em Lança', cat: 'Combate', desc: 'Com uma Lança Equipada e um Inimigo entra ou sai do alcance da sua lança, você pode desferir um ataque básico como Ação Livre e caso seja bem sucedido, Interrompe o alvo e causa perda de sua Ação Padrão.', prereq: '5 de Agilidade' },
@@ -85,14 +85,14 @@ const FEITOS_LIST = [
   { id: 'esp_armas_fogo', name: 'Especialização em Armas de Fogo', cat: 'Combate', desc: 'Se você acertar um Ataque Básico com uma Arma de Fogo em sua distância máxima, você ganha Vantagem e se estiver em alcance corpo a corpo recebe Desvantagem em acerto, mas causa Dano Máximo.', prereq: 'Tier I de Disciplina e 4 de Agilidade ou Magia' },
   { id: 'esp_escudos_placas', name: 'Especialização em Escudos e Placas', cat: 'Combate', desc: 'Com um Escudo ou Armadura Pesada equipado, como uma Ação Completa, você pode optar por adotar uma postura defensiva e ganhar Resistência a todos os tipos de dano e Soma Novamente seu Vigor como RD até seu próximo turno.', prereq: '6 de Vigor' },
   { id: 'esp_adagas', name: 'Especialização em Adagas', cat: 'Combate', desc: 'Seus ataques com Adagas têm +1 de Alcance, podem ser arremessadas sem Desvantagem e podem ser recuperadas sem necessidade de testes. E soma sua Agilidade como Dano Extra. (Aplica em Ataque Básico e Magias)', prereq: '6 de Agilidade' },
-  { id: 'fisico_gladiador', name: 'Físico do Gladiador', cat: 'Combate', desc: 'Uma Vez por Combate â€” Quando você declarar uma Magia Física que pode aplicar um efeito de Status, você causa Automaticamente o efeito, funcionando tanto em Benéficos & Maligno. E adiciona sua Força como Dados de Dano Extra.', prereq: '4 de Força' },
+  { id: 'fisico_gladiador', name: 'Físico do Gladiador', cat: 'Combate', desc: 'Uma Vez por Combate — Quando você declarar uma Magia Física que pode aplicar um efeito de Status, você causa Automaticamente o efeito, funcionando tanto em Benéficos & Maligno. E adiciona sua Força como Dados de Dano Extra.', prereq: '4 de Força' },
   // â”€â”€ Persona â”€â”€
   { id: 'transe_monge_fogo', name: 'Transe do Monge de Fogo', cat: 'Persona', desc: 'Quando você causa dano com uma Magia de Fogo, você pode Incendiar o espaço ocupado pelo(s) alvo(s) pelas próximas Duas rodadas. Espaços incendiados causam Magia como dano de Fogo contra qualquer Sombra que terminar seu turno nesse espaço ou passar por ele durante seu movimento; caso o alvo estiver Queimando, recebe o Dobro de Dano. (Cada Sombra só pode tomar dano de cada espaço incendiado uma vez por rodada.)', prereq: 'Persona possuir Tipo Fogo' },
   { id: 'toque_rainha_gelo', name: 'Toque da Rainha de Gelo', cat: 'Persona', desc: 'Quando você Derrotar um inimigo usando uma Magia de Gelo, cause Congelado em um alvo adjacente Automaticamente e caso possua Buffs ativos, aumente sua duração em +2 Rodadas.\nCongelado: Alvos Congelados tem metade de seu movimento e recebem Dobro de Dano do próximo Dano Físico ou Raio utilizado contra ele.', prereq: 'Persona possuir Tipo Gelo' },
-  { id: 'investida_ventos', name: 'Investida da Cavalaria dos Ventos', cat: 'Persona', desc: 'Depois de acertar um alvo com uma Magia de Vento, você Reduz da próxima Rolagem de Reação do alvo igual a sua Magia.\nCusto: 10 PM â€” Cria um Tornado de 6 Metros de Raio ao redor do alvo atingido; enquanto inimigos estiverem dentro do Tornado devem fazer um teste de Agilidade contra DT = 10 + Magia, caso falhe se tornam Caídos até sua próxima rodada.', prereq: 'Persona possuir Tipo Vento' },
+  { id: 'investida_ventos', name: 'Investida da Cavalaria dos Ventos', cat: 'Persona', desc: 'Depois de acertar um alvo com uma Magia de Vento, você Reduz da próxima Rolagem de Reação do alvo igual a sua Magia.\nCusto: 10 PM — Cria um Tornado de 6 Metros de Raio ao redor do alvo atingido; enquanto inimigos estiverem dentro do Tornado devem fazer um teste de Agilidade contra DT = 10 + Magia, caso falhe se tornam Caídos até sua próxima rodada.', prereq: 'Persona possuir Tipo Vento' },
   { id: 'maos_lorde_raio', name: 'Mãos do Lorde do Raio', cat: 'Persona', desc: 'Ao atingir um alvo com uma Magia de Raio você pode gastar 8 de PM para tornar Magias de Alvo único em efeito de Área mantendo seu Dado de Dano; caso a Magia de Raio já seja em área, aumenta a chance de todos os alvos receberem Choque em 30%.\nChoque: Alvos que sofrerem de Choque ficam atordoados por 1 Rodada.', prereq: 'Persona possuir Tipo Raio' },
   { id: 'sombra_assassino_nuclear', name: 'Sombra do Assassino Nuclear', cat: 'Persona', desc: 'Aumente seu limite de Acúmulo em +2. Você ganha a capacidade de "Transferir" os acúmulos de Radiação para um Alvo Inimigo, igual à sua Vitalidade por rodada. Alvos inimigos que passarem seu limite ativam o mesmo efeito que ocorreria se você excedesse seu limite de contadores. (O Usuário deve fazer um teste de Magia vs Vitalidade do Alvo)', prereq: 'Persona possuir Tipo Nuclear' },
-  { id: 'caos_psicocinetico', name: 'Caos do Vidente Psicocinético', cat: 'Persona', desc: 'Efeitos de Status são Ampliados e recebem as seguintes adições:\nâ€¢ Chance de Efeito: Todo efeito de Status com 50% de Chance ou menor se torna 80%. (NÃO AFETA EFEITOS DE EXECUTAR)\nâ€¢ Recuperação de Efeito: Todo efeito de 33% de Recuperação se torna 25% e se já for 25% se torna 18%.\nâ€¢ Redução de Habilidade de Combate: Todo Status de -3 se torna -4.', prereq: 'Persona possuir Tipo Psíquico' },
+  { id: 'caos_psicocinetico', name: 'Caos do Vidente Psicocinético', cat: 'Persona', desc: 'Efeitos de Status são Ampliados e recebem as seguintes adições:\n• Chance de Efeito: Todo efeito de Status com 50% de Chance ou menor se torna 80%. (NÃO AFETA EFEITOS DE EXECUTAR)\n• Recuperação de Efeito: Todo efeito de 33% de Recuperação se torna 25% e se já for 25% se torna 18%.\n• Redução de Habilidade de Combate: Todo Status de -3 se torna -4.', prereq: 'Persona possuir Tipo Psíquico' },
   { id: 'voto_clerigo_luz', name: 'Voto do Clérigo da Luz', cat: 'Persona', desc: 'Quando você causa dano com uma Magia de Luz, você pode gastar 6 de PM para ganhar Vitalidade + Magia como Pontos de Vida temporários. Enquanto você tiver PV temporário, você não pode ativar esse Feito novamente. (PV temporário é somado ao seu PV máximo, é gasto antes do seu PV normal e não pode ser recuperado)', prereq: 'Persona possuir Tipo Luz' },
   { id: 'ritual_herege_trevas', name: 'Ritual do Herege das Trevas', cat: 'Persona', desc: 'Quando você Derrotar uma Sombra usando uma magia do Tipo Trevas, você pode escolher entre: Reciclar o Custo da Magia utilizada de volta como PM ou causar Metade do Dano utilizado no alvo derrotado anteriormente em até 1d4 alvos que você pode ver (Automaticamente).', prereq: 'Persona possuir Tipo Trevas' },
   { id: 'vanguarda_onipotente', name: 'Vanguarda Onipotente', cat: 'Persona', desc: 'Quando você Acertar um Crítico com uma Magia Onipotente, ignore qualquer teste de esquiva de todos os alvos afetados e rouba seus PM igual sua MAG.', prereq: 'Persona possuir Tipo Onipotente' },
@@ -134,59 +134,59 @@ const CONDITIONS_LIST = [
 
 const SOCIAL_SKILL_META = {
   KNOPts: {name:'Conhecimento', titles:['Preguiçoso','Ciente','Sabido','Estudado','Enciclopédico','Erudito'], desc:[
-    'Título: Preguiçoso.',
-    'Tier I â€” Ciente: uma vez por dia, revelar uma Fraqueza de uma Sombra que você possa ver.',
-    'Tier II â€” Sabido: uma vez por combate, ganhe +1 DDC contra um ataque que exija teste de esquiva.',
-    'Tier III â€” Estudado: bônus permanente de +1 FOR, +1 MAG ou +1 TEC, sua escolha.',
-    'Tier IV â€” Enciclopédico: uma vez por dia conjurar uma magia Tier III ou menor sem gastar Energia.',
-    'Tier V â€” Erudito: ganha um Aspecto baseado no conhecimento e uma vez por dia pode gastar ação rápida para obter Carga Mental/Carga Poderosa.'
+    'Tier 0 — Preguiçoso: nenhuma habilidade especial ainda.',
+    'Tier I — Ciente: uma vez por dia, revelar uma Fraqueza de uma Sombra que você possa ver.',
+    'Tier II — Sabido: uma vez por combate, ganhe +1 DDC contra um ataque que exija teste de esquiva.',
+    'Tier III — Estudado: bônus permanente de +1 FOR, +1 MAG ou +1 TEC, sua escolha.',
+    'Tier IV — Enciclopédico: uma vez por dia conjurar uma magia Tier III ou menor sem gastar Energia.',
+    'Tier V — Erudito: ganha um Aspecto baseado no conhecimento e uma vez por dia pode gastar ação rápida para obter Carga Mental/Carga Poderosa.'
   ]},
   DISPts: {name:'Disciplina', titles:['Desatento','Decente','Persistente','Minucioso','Magistral','Transcendente'], desc:[
-    'Tier 0 â€” Desatento.',
-    'Tier I â€” Decente: +10 PV e +1 de Limite de Energia.',
-    'Tier II â€” Persistente: armaduras ganham +2 Redução de dano.',
-    'Tier III â€” Minucioso: concede um Feito extra.',
-    'Tier IV â€” Magistral: uma vez por combate, adicione metade do seu Tier de Disciplina (arredondado para baixo) a um teste não ofensivo.',
-    'Tier V â€” Transcendente: uma vez por dia, ao invés de morrer, retorna com 50% de vida (conta como Interromper) e ganha um Aspecto de resiliência.'
+    'Tier 0 — Desatento: nenhuma habilidade especial ainda.',
+    'Tier I — Decente: +10 PV e +1 de Limite de Energia.',
+    'Tier II — Persistente: armaduras ganham +2 Redução de dano.',
+    'Tier III — Minucioso: concede um Feito extra.',
+    'Tier IV — Magistral: uma vez por combate, adicione metade do seu Tier de Disciplina (arredondado para baixo) a um teste não ofensivo.',
+    'Tier V — Transcendente: uma vez por dia, ao invés de morrer, retorna com 50% de vida (conta como Interromper) e ganha um Aspecto de resiliência.'
   ]},
   EMPpts: {name:'Empatia', titles:['Indiferente','Inofensivo','Gentil','Generoso','Altruísta','Angelical'], desc:[
-    'Tier 0 â€” Indiferente.',
-    'Tier I â€” Inofensivo: uma vez por dia, sucesso automático em teste de resistência contra Status Mental.',
-    'Tier II â€” Gentil: uma vez por dia, remover todos os Status Mentais de um aliado que possa ouvir você (ação livre).',
-    'Tier III â€” Generoso: uma vez por dia (movimento) reproduz buff de aliado ou aplicar seu buff a aliado por 2 rodadas.',
-    'Tier IV â€” Altruísta: uma vez por dia, quando consumível não-Especial for usado, role d4; com 3-4 o item não é consumido.',
-    'Tier V â€” Angelical: até 3x/dia, ao curar, pode redirecionar cura para outro alvo; ganha Aspecto de empatia.'
+    'Tier 0 — Indiferente: nenhuma habilidade especial ainda.',
+    'Tier I — Inofensivo: uma vez por dia, sucesso automático em teste de resistência contra Status Mental.',
+    'Tier II — Gentil: uma vez por dia, remover todos os Status Mentais de um aliado que possa ouvir você (ação livre).',
+    'Tier III — Generoso: uma vez por dia (movimento) reproduz buff de aliado ou aplicar seu buff a aliado por 2 rodadas.',
+    'Tier IV — Altruísta: uma vez por dia, quando consumível não-Especial for usado, role d4; com 3-4 o item não é consumido.',
+    'Tier V — Angelical: até 3x/dia, ao curar, pode redirecionar cura para outro alvo; ganha Aspecto de empatia.'
   ]},
   EXPPts: {name:'Expressão', titles:['Monótono','Rudimentar','Eloquente','Inspirador','Tocante','Fascinante'], desc:[
-    'Tier 0 â€” Monótono.',
-    'Tier I â€” Rudimentar: uma vez por dia, como movimento, todos aliados podem tentar um Crítico sem gastar Cargas de Sorte.',
-    'Tier II â€” Eloquente: uma vez por dia (ação rápida), aumentar categoria de esquiva de todos aliados em +1 até fim do próximo turno.',
-    'Tier III â€” Inspirador: uma vez por dia (ação rápida), tentar causar Fúria em unidades em 12m (chance 25 + Tier*4%).',
-    'Tier IV â€” Tocante: uma vez por dia (ação padrão), escolha alvo; por 2 rodadas alvo recebe Margem de Crítico -2 e ataques contra ele não podem errar.',
-    'Tier V â€” Fascinante: uma vez por dia (ação padrão) gasta para dar ação de movimento extra a cada aliado; ganha Aspecto de liderança.'
+    'Tier 0 — Monótono: nenhuma habilidade especial ainda.',
+    'Tier I — Rudimentar: uma vez por dia, como movimento, todos aliados podem tentar um Crítico sem gastar Cargas de Sorte.',
+    'Tier II — Eloquente: uma vez por dia (ação rápida), aumentar categoria de esquiva de todos aliados em +1 até fim do próximo turno.',
+    'Tier III — Inspirador: uma vez por dia (ação rápida), tentar causar Fúria em unidades em 12m (chance 25 + Tier*4%).',
+    'Tier IV — Tocante: uma vez por dia (ação padrão), escolha alvo; por 2 rodadas alvo recebe Margem de Crítico -2 e ataques contra ele não podem errar.',
+    'Tier V — Fascinante: uma vez por dia (ação padrão) gasta para dar ação de movimento extra a cada aliado; ganha Aspecto de liderança.'
   ]},
   COUPts: {name:'Coragem', titles:['Tímido','Comum','Determinado','Firme','Destemido','Fodão'], desc:[
-    'Tier 0 â€” Tímido.',
-    'Tier I â€” Comum: uma vez por dia, ao declarar ataque, pode adicionar Redução de Dano ao cálculo de dano (reduz RDM a 0 até fim do turno).',
-    'Tier II â€” Determinado: pode escolher falhar resistência para aplicar o mesmo Status ao conjurador.',
-    'Tier III â€” Firme: escolha ganhar +1 VIT, +1 AGI ou +2 SOR permanente.',
-    'Tier IV â€” Destemido: quando toma dano de tipos elementais, pode ativar efeito Fortificar <Elemento> 1d10 até o fim do combate.',
-    'Tier V â€” Fodão: ganha Aspecto de bravura e uma vez por dia pode ignorar penalties por exceder limite de Energia por um turno com custos posteriores.'
+    'Tier 0 — Tímido: nenhuma habilidade especial ainda.',
+    'Tier I — Comum: uma vez por dia, ao declarar ataque, pode adicionar Redução de Dano ao cálculo de dano (reduz RDM a 0 até fim do turno).',
+    'Tier II — Determinado: pode escolher falhar resistência para aplicar o mesmo Status ao conjurador.',
+    'Tier III — Firme: escolha ganhar +1 VIT, +1 AGI ou +2 SOR permanente.',
+    'Tier IV — Destemido: quando toma dano de tipos elementais, pode ativar efeito Fortificar <Elemento> 1d10 até o fim do combate.',
+    'Tier V — Fodão: ganha Aspecto de bravura e uma vez por dia pode ignorar penalties por exceder limite de Energia por um turno com custos posteriores.'
   ]},
   CHAPts: {name:'Charme', titles:['Sem Graça','Existente','Confiante','Suave','Popular','Debonair'], desc:[
-    'Tier 0 â€” Sem Graça.',
-    'Tier I â€” Existente: uma vez por dia, conjurar Pulinpa.',
-    'Tier II â€” Confiante: uma vez por dia, conjurar Dekaja.',
-    'Tier III â€” Suave: uma vez por dia, conjurar Marin Karin; pode usar o dobro do Tier de Charme no lugar de TEC.',
-    'Tier IV â€” Popular: uma vez por dia, como Interromper, pode mudar alvo de ataque inimigo para outro alvo.',
-    'Tier V â€” Debonair: ganha Aspecto de magnetismo e uma vez por bloco pode usar Tier+2 ao invés de Expressão/Empatia para qualquer teste.'
+    'Tier 0 — Sem Graça: nenhuma habilidade especial ainda.',
+    'Tier I — Existente: uma vez por dia, conjurar Pulinpa.',
+    'Tier II — Confiante: uma vez por dia, conjurar Dekaja.',
+    'Tier III — Suave: uma vez por dia, conjurar Marin Karin; pode usar o dobro do Tier de Charme no lugar de TEC.',
+    'Tier IV — Popular: uma vez por dia, como Interromper, pode mudar alvo de ataque inimigo para outro alvo.',
+    'Tier V — Debonair: ganha Aspecto de magnetismo e uma vez por bloco pode usar Tier+2 ao invés de Expressão/Empatia para qualquer teste.'
   ]}
 };
 const SOCIAL_IDS = ['KNOPts','DISPts','EMPpts','EXPPts','COUPts','CHAPts'];
 const INITIAL_SOCIAL_POINTS = 7;
 
 // =============================================
-// HEXAGRAMA â€” LAYOUT & ANIMAÇÃO (module-scope)
+// HEXAGRAMA — LAYOUT & ANIMAÇÃO (module-scope)
 // =============================================
 
 var HX = {
@@ -947,7 +947,128 @@ function buildSocialUI() {
     svg.appendChild(g);
   });
 
+  // -- LAYER 8: Invisible hit targets for mouse/touch interaction --
+  // Tooltip element (shared, appended once to body)
+  var ttEl = document.getElementById('hx-tooltip');
+  if (!ttEl) {
+    ttEl = document.createElement('div');
+    ttEl.id = 'hx-tooltip';
+    document.body.appendChild(ttEl);
+  }
+
+  // Detail panel (below the SVG inside container)
+  var detailEl = document.createElement('div');
+  detailEl.id = 'hx-detail';
+  detailEl.innerHTML = '<p class="hx-detail-empty">Passe o mouse ou toque em uma habilidade para ver os detalhes.</p>';
+
+  var ROMAN_HX = ['0', 'I', 'II', 'III', 'IV', 'V'];
+
+  function getSkillInfo(skillId) {
+    var meta = SOCIAL_SKILL_META[skillId];
+    var inp  = document.getElementById(skillId);
+    var pts  = inp ? (parseInt(inp.value, 10) || 0) : 0;
+    // Same formula used everywhere else in the system
+    var tier = Math.min(5, Math.floor(pts / 5));
+    var title = meta.titles[tier];
+    var desc  = meta.desc[tier];
+    if (!title) {
+      console.warn('[HX] Título ausente para', skillId, 'tier', tier, '— usando fallback.');
+      title = meta.titles[meta.titles.length - 1] || skillId;
+    }
+    if (!desc) {
+      console.warn('[HX] Descrição ausente para', skillId, 'tier', tier, '— usando fallback.');
+      desc = 'Descrição não disponível para este tier.';
+    }
+    return {
+      name:   meta.name,
+      tier:   tier,
+      roman:  ROMAN_HX[tier] || String(tier),
+      title:  title,
+      desc:   desc
+    };
+  }
+
+  function renderTooltip(info, x, y) {
+    ttEl.innerHTML =
+      '<div class="hx-tt-name">' + info.name + '</div>' +
+      '<div class="hx-tt-badge">TIER ' + info.roman + ' — ' + info.title + '</div>' +
+      '<div class="hx-tt-desc">'  + info.desc  + '</div>';
+    var tx = x + 18;
+    var ty = y - 12;
+    if (tx + 270 > window.innerWidth)  tx = x - 270;
+    if (ty + 130 > window.innerHeight) ty = y - 130;
+    ttEl.style.left = tx + 'px';
+    ttEl.style.top  = ty + 'px';
+    ttEl.classList.add('hx-tt-visible');
+  }
+
+  function renderPanel(info) {
+    detailEl.innerHTML =
+      '<div class="hx-detail-header">' +
+        '<span class="hx-detail-name">' + info.name.toUpperCase() + '</span>' +
+        '<span class="hx-detail-tier">TIER ' + info.roman + ' — ' + info.title.toUpperCase() + '</span>' +
+      '</div>' +
+      '<p class="hx-detail-desc">' + info.desc + '</p>';
+  }
+
+  function resetPanel() {
+    detailEl.innerHTML = '<p class="hx-detail-empty">Passe o mouse ou toque em uma habilidade para ver os detalhes.</p>';
+  }
+
+  skills.forEach(function(s) {
+    // Static hit circle centred on the label area
+    var hitCirc = mk('circle', {
+      cx: s.lx.toFixed(2), cy: s.ly.toFixed(2),
+      r: '42', fill: 'transparent', cursor: 'pointer'
+    });
+    svg.appendChild(hitCirc);
+
+    var halo = document.getElementById(s.id + '-hx-halo');
+
+    function activate(e) {
+      var info = getSkillInfo(s.id);
+      renderPanel(info);
+      if (e && e.type === 'mousemove') {
+        renderTooltip(info, e.clientX, e.clientY);
+      } else if (e && (e.type === 'mouseenter' || e.type === 'mouseover')) {
+        renderTooltip(info, e.clientX, e.clientY);
+      }
+    }
+
+    function deactivate() {
+      ttEl.classList.remove('hx-tt-visible');
+      resetPanel();
+    }
+
+    function moveTooltip(e) {
+      if (ttEl.classList.contains('hx-tt-visible')) {
+        var tx = e.clientX + 18;
+        var ty = e.clientY - 12;
+        if (tx + 270 > window.innerWidth)  tx = e.clientX - 270;
+        if (ty + 130 > window.innerHeight) ty = e.clientY - 130;
+        ttEl.style.left = tx + 'px';
+        ttEl.style.top  = ty + 'px';
+      }
+    }
+
+    [hitCirc, halo].forEach(function(el) {
+      if (!el) return;
+      el.addEventListener('mouseenter', activate);
+      el.addEventListener('mouseleave', deactivate);
+      el.addEventListener('mousemove',  moveTooltip);
+      el.addEventListener('touchstart', function(e) {
+        var info = getSkillInfo(s.id);
+        renderPanel(info);
+        e.stopPropagation();
+      }, { passive: true });
+    });
+  });
+
+  // Tap on empty SVG area resets the panel (mobile)
+  svg.addEventListener('touchstart', resetPanel, { passive: true });
+
   container.appendChild(svg);
+  container.appendChild(detailEl);
 }
 
 // =============================================
@@ -1405,7 +1526,7 @@ function renderAll() {
 }
 
 // =============================================
-// PERSISTÊNCIA â€” SNAPSHOT
+// PERSISTÊNCIA — SNAPSHOT
 // =============================================
 
 /**
@@ -1637,7 +1758,7 @@ var textareaObserver = new MutationObserver(function() { initAutoResizeTextareas
 textareaObserver.observe(document.body, { childList: true, subtree: true });
 
 // =============================================
-// EVENTOS â€” CAMPOS SIMPLES
+// EVENTOS — CAMPOS SIMPLES
 // =============================================
 
 // Campos de atributos de combate (range sliders + nível): disparam recalc via setState
