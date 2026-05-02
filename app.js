@@ -143,7 +143,7 @@ const SOCIAL_SKILL_META = {
   ]},
   DISPts: {name:'Disciplina', titles:['Desatento','Decente','Persistente','Minucioso','Magistral','Transcendente'], desc:[
     'Tier 0 — Desatento: Nenhum benefício. A habilidade ainda não foi desenvolvida o suficiente para gerar efeitos.',
-    'Tier I — Decente: uma vez por cena, revela uma Reação Elemental de uma Sombra que você possa ver.',
+    'Tier I — Decente: Com sua força de vontade ou treinos leves e pesados, você ganha +10 de PV e +10 de Mana.',
     'Tier II — Persistente: passa a receber (+2 de PM) por nível e uma vez por rodada pode reduzir em (-2) o teste de acerto de um Inimigo que você possa ver, pode ser utilizado quantidade de vezes igual sua TEC e recupera 1 uso por descanso longo.',
     'Tier III — Minucioso: concede Vantagem em testes relacionados a Perceber, Investigar e Focar. Se estiver sob condição mental o efeito dessa habilidade não funcionará.',
     'Tier IV — Magistral: Soma o Tier em testes de Ataque como acerto bônus.',
@@ -169,17 +169,17 @@ const SOCIAL_SKILL_META = {
     'Tier 0 — Tímido: Nenhum benefício. A habilidade ainda não foi desenvolvida o suficiente para gerar efeitos.',
     'Tier I — Comum: Essa habilidade pode ser utilizada igual ao seu Tier de Coragem, ao declarar ataque, pode adicionar Redução de Dano ao cálculo de dano.',
     'Tier II — Determinado: Recebe [+25 de PV] permanente e +1 de VIG. E uma vez por combate pode replicar efeitos negativos afetando você para um alvo inimigo que você possa ver.',
-    'Tier III — Firme: recebe +1 FOR, +1 TEC e +1 VIG permanente. E sempre que for alvo de um efeito de (Medo) recebe seu Tier de Coragem como bônus para resistir. Cada ponto de Tier aumenta em [5%] para superar o efeito.',
+    'Tier III — Firme: recebe +1 FOR e +1 VIG permanente. E sempre que for alvo de um efeito de (Medo) recebe seu Tier de Coragem como bônus para resistir. Cada ponto de Tier aumenta em [5%] para superar o efeito.',
     'Tier IV — Destemido: quando receber Dano Elemental que não seja a sua Fraqueza, recebe seu Tier de Coragem como [Dados de Dano Bônus] para seu próximo ataque. (Esses dados não são multiplicados em acertos críticos ou dobrados por efeitos de fraqueza.)',
     'Tier V — Fodão: Possui imunidade total a efeitos de Pavor & Medo. E recebe uma Reação Elemental nova, podendo ser entre: Resistir, Refletir, Absorver ou Anular.'
   ]},
   CHAPts: {name:'Charme', titles:['Sem Graça','Existente','Confiante','Suave','Popular','Debonair'], desc:[
-    'Tier 0 — Sem Graça: Nenhum benefício. A habilidade ainda não foi desenvolvida o suficiente para gerar efeitos.',
+    'Tier 0 — Sem Graça.',
     'Tier I — Existente: Essa habilidade pode ser utilizada igual ao seu Tier de Charme, aumenta em [5%] a dificuldade para superar uma Condição ou Status negativa de um alvo que você possa ver.',
     'Tier II — Confiante: Recebe +1 de MAG e sempre que fizer um teste de Charme, adicione o Tier como bônus extra.',
-    'Tier III — Suave: Magias de (Stats) custam apenas [Metade do Custo] de PM.',
-    'Tier IV — Popular: Essa habilidade pode ser utilizada igual ao seu Tier de Charme, quando um alvo inimigo efetuar um Ataque pode utilizar uma Ação de Interromper como Reação. Faz um teste de [Charme vs Conhecimento], se o alvo inimigo falhar pode mudar o alvo de ataque para outro alvo do combate; se não houver um alvo disponível o ataque simplesmente erra.',
-    'Tier V — Debonair: recebe +2 de MAG e toda condição aplicada por você tem sua duração aumentada em [+3 Rodadas], e todo teste para superar uma Condição ou Status tem desvantagem. Alvos sob suas condições negativas têm seu bônus de [Acerto & Esquiva] reduzidos igual ao seu Tier.'
+    'Tier III — Suave: Magias de (Stats) custam apenas [Metade do Custo] de PM. ',
+    'Tier IV — Popular: Essa habilidade pode ser utilizada igual ao seu Tier de Charme, quando um alvo inimigo efetuar um Ataque pode utilizar uma Ação de Interromper como Reação. Faz um teste de [Charme vs Conhecimento], se o alvo inimigo falhar pode mudar o alvo de ataque para outro alvo do combate, se não houver um alvo no combate para o ataque ser redirecionado o alvo apenas errará.',
+    'Tier V — Debonair: recebe +2 de MAG e toda condição que for aplicada por você tem sua duração aumentada em [+3 Rodadas], e todo e qualquer teste para superar uma Condição ou Status tem desvantagem. Alvos que estiverem sob efeitos de suas condições negativas tem seu bônus de [Acerto & Esquiva] reduzidos igual a seu Tier.'
   ]}
 };
 const SOCIAL_IDS = ['KNOPts','DISPts','EMPpts','EXPPts','COUPts','CHAPts'];
