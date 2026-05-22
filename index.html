@@ -38,35 +38,62 @@
 
     <!-- TABS -->
     <nav class="tabs" id="tabs">
-  <button class="tab active" data-view="acessorapido">Acesso Rápido</button>
-  <button class="tab" data-view="modificadores">Modificadores</button>
-  <button class="tab" data-view="persona">Persona</button>
-    <button class="tab" data-view="feitos">Feitos</button>
-  <button class="tab" data-view="equip">Inventário</button>
-  <button class="tab" data-view="vinculos">Vínculos</button>
-  <button class="tab" data-view="notes">Anotações</button>
-  <button class="tab" data-view="background">Lore</button>
+      <button class="tab active" data-view="acessorapido">Acesso Rápido</button>
+      <button class="tab" data-view="persona">Persona</button>
+      <button class="tab" data-view="feitos">Feitos</button>
+      <button class="tab" data-view="equip">Inventário</button>
+      <button class="tab" data-view="modificadores">Modificadores</button>
+      <button class="tab" data-view="vinculos">Vínculos</button>
+      <button class="tab" data-view="notes">Anotações</button>
+      <button class="tab" data-view="background">Lore</button>
     </nav>
 
     <!-- VIEW: GERAL -->
   <div class="view active" id="acessorapido">
       <main class="grid one">
-        <!-- ACESSO RÁPIDO -->
+
+        <!-- ZONA 1: IDENTIDADE -->
         <section class="card">
-          <div class="section-title"><div class="bar"></div><h2>Informações do Personagem</h2></div>
-          <div class="row row2">
+          <div class="section-title"><div class="bar"></div><h2>Identidade</h2></div>
+          <div class="row row4">
             <div><label>Classe <span class="field-required-indicator" title="Campo obrigatório">*</span></label><input id="CharClass" placeholder="Emergentes, Cartas-Coringa, Sombras, Supressores, Tochas" required/></div>
             <div><label>Nível</label><input id="CharLvl" type="number" min="1" max="99" value="1"/></div>
-          </div>
-          <div class="row row2">
             <div><label>Arcana</label><select id="CharArcana"></select></div>
             <div><label>Nome do Personagem <span class="field-required-indicator" title="Campo obrigatório">*</span></label><input id="CharPlayer" placeholder="Nome do personagem" required/></div>
           </div>
         </section>
 
+        <!-- ZONA 2: RECURSOS VITAIS -->
+        <section class="card card-recursos">
+          <div class="section-title"><div class="bar"></div><h2>Recursos</h2></div>
+          <div class="recursos-grid">
+            <div class="recurso-bloco recurso-hp">
+              <span class="recurso-titulo">PV — Pontos de Vida</span>
+              <div class="recurso-par">
+                <div><label>Atual</label><input id="CurrentHP" type="number" min="0" value="0"/></div>
+                <span class="recurso-slash">/</span>
+                <div><label>Máximo</label><input id="MaxHP" type="number" min="0" value="0"/></div>
+              </div>
+            </div>
+            <div class="recurso-bloco recurso-pm">
+              <span class="recurso-titulo">PM — Mana</span>
+              <div class="recurso-par">
+                <div><label>Atual</label><input id="CurrentPM" type="number" min="0" value="0"/></div>
+                <span class="recurso-slash">/</span>
+                <div><label>Máximo</label><input id="EnergyMax" type="number" min="0" value="0"/></div>
+              </div>
+            </div>
+            <div class="recurso-bloco recurso-rd">
+              <span class="recurso-titulo">Redução de Dano</span>
+              <input id="DmgRed" type="number" min="0" max="99" value="0"/>
+            </div>
+          </div>
+        </section>
+
+        <!-- ZONA 3: ATRIBUTOS DE COMBATE -->
         <section class="card">
-          <div class="section-title"><div class="bar"></div><h2>Combate</h2></div>
-          <div class="hint" style="margin-bottom:8px;">Distribua <b>18 pontos</b> entre as suas Habilidades de Combate.<br>O valor mínimo para cada Habilidade de Combate é <b>1</b>; o valor máximo por Habilidade é <b>12</b>.</div>
+          <div class="section-title"><div class="bar"></div><h2>Atributos de Combate</h2></div>
+          <div class="hint" style="margin-bottom:8px;">Distribua <b>18 pontos</b> entre os atributos. Mínimo: <b>1</b> · Máximo: <b>12</b> por atributo.</div>
           <div class="row row3">
             <div><label>STR</label><input id="CharSTR" type="range" min="1" max="12" value="1"><span class="badge" id="bSTR">1</span></div>
             <div><label>MAG</label><input id="CharMAG" type="range" min="1" max="12" value="1"><span class="badge" id="bMAG">1</span></div>
@@ -77,18 +104,70 @@
             <div><label>VIT</label><input id="CharVIT" type="range" min="1" max="12" value="1"><span class="badge" id="bVIT">1</span></div>
             <div><label>LCK</label><input id="CharLCK" type="range" min="1" max="12" value="1"><span class="badge" id="bLCK">1</span></div>
           </div>
-          <div class="row row3">
-            <div><label>Pontos de Vida (Máx)</label><input id="MaxHP" type="number" min="0" value="0"/></div>
-            <div><label>Pontos de Vida (Atual)</label><input id="CurrentHP" type="number" min="0" value="0"/></div>
-            <div><label>Redução de Dano</label><input id="DmgRed" type="number" min="0" max="99" value="0"/></div>
+        </section>
+
+        <!-- ZONA 4: EQUIPAMENTO ATIVO -->
+        <section class="card">
+          <div class="section-title"><div class="bar"></div><h2>Equipamento Ativo</h2></div>
+
+          <div class="equip-bloco">
+            <div class="equip-bloco-titulo">Arma</div>
+            <div class="row row3">
+              <div><label>Nome</label><input id="Weapon" placeholder="Arma"/></div>
+              <div><label>Dano</label><input id="WeaponDmg" placeholder="Dano"/></div>
+              <div><label>Alcance</label><input id="WeaponReach" placeholder="Alcance"/></div>
+            </div>
+            <div class="row row2" style="margin-top:6px;">
+              <div><label>Efeito</label><textarea id="WeaponEffect" rows="1" placeholder="Efeito da arma"></textarea></div>
+            </div>
           </div>
-          <div class="row row3">
-            <div><label>Mana (PM) Máximo</label><input id="EnergyMax" type="number" min="0" value="0"/></div>
-            <div><label>Mana (PM) Atual</label><input id="CurrentPM" type="number" min="0" value="0"/></div>
-            <div></div>
+
+          <div class="equip-bloco">
+            <div class="equip-bloco-titulo">Armadura</div>
+            <div class="row row2">
+              <div><label>Nome</label><input id="Armor" placeholder="Armadura"/></div>
+              <div><label>Redução de Dano</label><input id="ArmorDmgRed" placeholder="Redução de dano"/></div>
+            </div>
+            <div class="row row2" style="margin-top:6px;">
+              <div><label>Efeito</label><textarea id="ArmorEffect" rows="1" placeholder="Efeito da armadura"></textarea></div>
+            </div>
+          </div>
+
+          <div class="equip-bloco">
+            <div class="equip-bloco-titulo">Acessório & Resistências</div>
+            <div class="row row2">
+              <div><label>Acessório</label><input id="Accessory" placeholder="Acessório"/></div>
+              <div><label>Efeito</label><textarea id="AccessoryEffect" rows="1" placeholder="Efeito do acessório"></textarea></div>
+            </div>
+            <div class="row row2" style="margin-top:6px;">
+              <div><label>Resistências</label><textarea id="Resistances" rows="1" placeholder="Resistências e imunidades"></textarea></div>
+            </div>
           </div>
         </section>
 
+        <!-- ZONA 5: STATUS & ASPECTOS -->
+        <section class="card">
+          <div class="section-title"><div class="bar"></div><h2>Status & Aspectos</h2></div>
+          <div class="row row3">
+            <div><label>SP</label><input id="PerSP" type="number" min="0" max="999" value="0"/></div>
+            <div><label>Tipos da Persona</label><input id="PerTypes" placeholder="Tipos"/></div>
+            <div><label>Convicção</label><input id="Conviction" placeholder="Convicção"/></div>
+          </div>
+          <div class="row row2" style="margin-top:6px;">
+            <div><label>Aspectos</label><input id="Aspectos" placeholder="Aspectos"/></div>
+            <div><label>Pontos de Aspecto</label><input id="AspectPoints" type="number" min="0" max="99" value="0"/></div>
+          </div>
+          <div class="row row2" style="margin-top:6px;">
+            <div style="position:relative">
+              <label style="display:flex;align-items:center;gap:8px;">Buffs Ativos
+                <button type="button" class="mini expand-btn" data-target="Buffs">[ ]</button>
+              </label>
+              <textarea id="Buffs" class="expandable" placeholder="Buffs ativos"></textarea>
+            </div>
+          </div>
+        </section>
+
+        <!-- ZONA 6: HABILIDADES SOCIAIS -->
         <section class="card">
           <div class="section-title"><div class="bar"></div><h2>Habilidades Sociais</h2></div>
           <div class="hint" style="margin-bottom:8px;">Na criação do personagem, distribua <strong>7 pontos iniciais</strong> entre as Habilidades Sociais.<br>Após isso, as habilidades podem crescer sem limite máximo.</div>
@@ -103,7 +182,7 @@
             <div><label>Charme</label><input id="CHAPts" type="number" min="0" value="0"/></div>
           </div>
           <div class="row" style="margin-top:10px;align-items:center;">
-            <div style="font-size:13px;color:var(--ink-dim);">Pontos iniciais restantes: <span id="social-remaining" style="font-weight:700;">7</span> (apenas informativo - não limita progressão)</div>
+            <div style="font-size:13px;color:var(--ink-dim);">Pontos iniciais restantes: <span id="social-remaining" style="font-weight:700;">7</span> <span style="opacity:0.6;">(apenas informativo)</span></div>
             <div style="margin-left:12px;color:var(--ink-dim);font-size:13px;" id="social-msg"></div>
           </div>
           <div id="social-tier-list" style="margin-top:12px;">
@@ -111,63 +190,9 @@
           </div>
         </section>
 
-        <section class="card">
-          <div class="section-title"><div class="bar"></div><h2>Aspectos & Buffs</h2></div>
-          <div class="row row2">
-            <div><label>Aspectos</label><input id="Aspectos" placeholder="Aspectos"/></div>
-            <div><label>Pontos de Aspecto</label><input id="AspectPoints" type="number" min="0" max="99" value="0"/></div>
-          </div>
-          <div class="row row2">
-            <div style="position:relative">
-              <label style="display:flex;align-items:center;gap:8px;">Buffs
-                <button type="button" class="mini expand-btn" data-target="Buffs">[ ]</button>
-              </label>
-              <textarea id="Buffs" class="expandable" placeholder="Buffs ativos"></textarea>
-            </div>
-          </div>
-        </section>
+        <!-- ZONA 7: RESUMO AUTOMÁTICO — inserido por JS via buildAutoSummaryPanel() -->
 
-        <section class="card">
-          <div class="section-title"><div class="bar"></div><h2>Persona (Acesso Rápido)</h2></div>
-          <div class="row row2">
-            <div><label>SP</label><input id="PerSP" type="number" min="0" max="999" value="0"/></div>
-            <div><label>Tipos</label><input id="PerTypes" placeholder="Tipos"/></div>
-          </div>
-          <div class="row row2">
-            <div><label>Convicção</label><input id="Conviction" placeholder="Convicção"/></div>
-          </div>
-        </section>
-
-        <section class="card">
-          <div class="section-title"><div class="bar"></div><h2>Inventário</h2></div>
-          <div class="row row3">
-            <div><label>Arma</label><input id="Weapon" placeholder="Arma"/></div>
-            <div><label>Dano</label><input id="WeaponDmg" placeholder="Dano"/></div>
-            <div><label>Alcance</label><input id="WeaponReach" placeholder="Alcance"/></div>
-          </div>
-          <div class="row row2">
-            <div><label>Efeito</label><textarea id="WeaponEffect" rows="1" placeholder="Efeito"></textarea></div>
-          </div>
-          <div class="row row2">
-            <div><label>Armadura</label><input id="Armor" placeholder="Armadura"/></div>
-            <div><label>Redução de Dano</label><input id="ArmorDmgRed" placeholder="Redução de dano"/></div>
-          </div>
-          <div class="row row2">
-            <div><label>Efeito</label><textarea id="ArmorEffect" rows="1" placeholder="Efeito"></textarea></div>
-          </div>
-          <div class="row row2">
-            <div><label>Acessório</label><input id="Accessory" placeholder="Acessório"/></div>
-            <div><label>Efeito</label><textarea id="AccessoryEffect" rows="1" placeholder="Efeito"></textarea></div>
-          </div>
-        </section>
-
-        <section class="card">
-          <div class="section-title"><div class="bar"></div><h2>Resistências</h2></div>
-          <div class="row row2">
-            <div><label>Resistências</label><textarea id="Resistances" rows="1" placeholder="Resistências"></textarea></div>
-          </div>
-        </section>
-
+        <!-- ZONA 8: AÇÕES -->
         <section class="card">
           <div class="section-title"><div class="bar"></div><h2>Ações</h2></div>
           <div class="actions">

@@ -338,6 +338,8 @@ const state = {
   spells: [], equip: [], links: [], clues: [], contacts: [],
   // Listas de checagem
   feitos: [], conditions: [], modifiers: [],
+  // Configuração de feitos com escolha do jogador
+  feitoConfig: {},
   // Afinidades
   affinities: {},
   // Retrato
@@ -438,6 +440,78 @@ function applyModifiers(baseValues, modifiers) {
   return result;
 }
 
+// =============================================
+// AUTOMAÇÃO: FEITOS E CONDIÇÕES
+// =============================================
+
+/** Verifica se um feito está ativo no state. */
+function feitoIsActive(id) {
+  return !!(state.feitos || []).find(function(f) { return f.id === id && f.ativo !== false; });
+}
+
+/**
+ * Calcula modificadores automáticos derivados de Feitos ativos.
+ * Retorna array no mesmo formato de state.modifiers.
+ * NUNCA modifica state.modifiers — lista separada que é combinada no recalcState.
+ */
+function computeFeitoModifiers() {
+  var mods = [];
+  var lvl = clampInt(state.CharLvl || 1, 1, 99);
+
+  // Longe do Fim: +5 PM por nível
+  if (feitoIsActive('longe_do_fim')) {
+    mods.push({ nome: 'Longe do Fim', tipo: 'flat', valor: 5 * lvl, alvo: 'PM', ativo: true });
+  }
+
+  // Hábil: usa feitoConfig para bônus configurados pelo jogador
+  var habilConfigs = (state.feitoConfig && state.feitoConfig.habil) || [];
+  habilConfigs.forEach(function(cfg) {
+    if (!cfg || !cfg.alvo || !cfg.valor) return;
+    mods.push({ nome: 'Hábil (' + cfg.alvo + ')', tipo: 'flat', valor: Number(cfg.valor) || 0, alvo: cfg.alvo, ativo: true });
+  });
+
+  return mods;
+}
+
+/**
+ * Calcula o movimento do personagem em metros.
+ * Considera Atleta (STR ao invés de AGI), Prodígio em Corrida (×2) e condição Lento (÷2).
+ */
+function computeMovement(moddedStats) {
+  var iAtleta  = feitoIsActive('atleta');
+  var iCorrida = feitoIsActive('prodigio_corrida');
+  var iLento   = !!(state.conditions || []).find(function(c) { return c.id === 'lento' && c.ativa !== false; });
+  var base  = iAtleta ? (moddedStats.STR + 3) : (moddedStats.AGI + 3);
+  var final = iCorrida ? base * 2 : base;
+  if (iLento) final = Math.floor(final / 2);
+  return { base: base, final: final, doubled: iCorrida, halved: iLento };
+}
+
+/**
+ * Retorna alertas mecânicos das condições ativas para exibição na ficha.
+ */
+function computeConditionAlerts() {
+  var EFFECTS = {
+    charme:    ['Personagem sob controle do Narrador', 'Recuperação: 33%'],
+    panico:    ['Sem uso de Persona ou habilidades especiais', 'Recuperação: 33%'],
+    medo:      ['Desvantagem nas esquivas (2 dados, pior)', 'Recuperação: 33% — se falhar: perde uso de magia ou 1 PM'],
+    furia:     ['Dano físico causado e recebido +50%', 'Desvantagem no ataque (2 dados, pior)', 'Recuperação: 33%'],
+    atordoado: ['Desvantagem na esquiva (2 dados, pior)', 'Sem Ações Livres, Rápidas ou de Interromper', 'Recuperação: 33%'],
+    choque:    ['Ataques recebidos acertam automaticamente', 'Ataques contra você: vantagem para crítico', 'Recupera automaticamente no fim do turno'],
+    lento:     ['Movimento reduzido à metade (automático)', 'Desvantagem no ataque (2 dados, pior)', 'Recuperação: 33%'],
+    veneno:    ['Perde 20% do PV máximo por turno', 'Recuperação: 33%'],
+    derrubado: ['Esquiva: 3 dados, pega o pior', 'Recupera no fim do turno ou por aliado (ação de movimento)']
+  };
+  var alerts = [];
+  (state.conditions || []).forEach(function(c) {
+    if (c.ativa === false) return;
+    var meta = CONDITIONS_LIST.find(function(x) { return x.id === c.id; });
+    var effects = EFFECTS[c.id] || [];
+    if (meta) alerts.push({ id: c.id, name: meta.name, effects: effects });
+  });
+  return alerts;
+}
+
 /**
  * Recalcula HP/PM máximos e valores de badges a partir do state.
  * Escreve diretamente em state.MaxHP, state.EnergyMax, state._computed.
@@ -462,11 +536,24 @@ function recalcState() {
     HP: baseHP,
     PM: basePM
   };
-  var modded = applyModifiers(baseVals, state.modifiers);
+  // Combina modificadores do jogador + modificadores automáticos de feitos
+  var feitoMods = computeFeitoModifiers();
+  var allMods = (state.modifiers || []).concat(feitoMods);
+  var modded = applyModifiers(baseVals, allMods);
 
   state.MaxHP = modded.HP;
   state.EnergyMax = modded.PM;
-  state._computed = { baseVals: baseVals, modded: modded };
+  state._computed = {
+    baseVals: baseVals,
+    modded: modded,
+    feitoMods: feitoMods,
+    movement: computeMovement(modded),
+    conditionAlerts: computeConditionAlerts(),
+    flags: {
+      rdUniversal:   feitoIsActive('prodigio_protecao'),
+      tecReplaceAgi: feitoIsActive('prodigio_defesa')
+    }
+  };
 }
 
 /**
@@ -494,6 +581,7 @@ function render() {
     renderBadges();
     renderSocial();
     renderInventoryStatus();
+    renderAutoSummary();
   } finally {
     _rendering = false;
   }
@@ -584,6 +672,133 @@ function renderModSummary() {
     return '<b>' + m.alvo + '</b> ' + sign + m.valor + suffix + ' (' + (m.nome || 'sem nome') + ')';
   });
   summary.innerHTML = '\u26A1 Ativos: ' + parts.join(' \u00B7 ');
+}
+
+// =============================================
+// PAINEL DE RESUMO AUTOMÁTICO
+// =============================================
+
+/**
+ * Cria (uma única vez) o card de Resumo Automático no view acessorapido.
+ * Idempotente — pode ser chamado várias vezes com segurança.
+ */
+function buildAutoSummaryPanel() {
+  if (document.getElementById('auto-summary-card')) return;
+  var mainEl = document.querySelector('#acessorapido main');
+  if (!mainEl) return;
+  var card = document.createElement('section');
+  card.className = 'card';
+  card.id = 'auto-summary-card';
+  card.innerHTML =
+    '<div class="section-title"><div class="bar"></div><h2>Resumo Autom\u00e1tico</h2></div>' +
+    '<div id="auto-summary-content"><p class="hint">Calculando...</p></div>';
+  // Insere antes da section que contém o botão de salvar (Ações)
+  var acoes = Array.from(mainEl.querySelectorAll('section.card')).find(function(c) {
+    return c.querySelector('#save');
+  });
+  if (acoes) {
+    mainEl.insertBefore(card, acoes);
+  } else {
+    mainEl.appendChild(card);
+  }
+}
+
+/**
+ * Atualiza o conteúdo do card de Resumo Automático com os dados de state._computed.
+ */
+function renderAutoSummary() {
+  var content = document.getElementById('auto-summary-content');
+  if (!content) return;
+  var comp = state._computed;
+  if (!comp || !comp.modded) {
+    content.innerHTML = '<p class="hint">Aguardando c\u00e1lculo...</p>';
+    return;
+  }
+
+  var m = comp.modded;
+  var b = comp.baseVals;
+  var mov = comp.movement || { final: 0, doubled: false, halved: false };
+  var alerts = comp.conditionAlerts || [];
+  var feitoMods = comp.feitoMods || [];
+  var flags = comp.flags || {};
+
+  // Atributo com nota de base quando diferente do final
+  function statStr(key) {
+    var fin = m[key], bas = b[key];
+    return fin !== bas
+      ? '<b>' + fin + '</b><span class="autos-base"> (' + bas + ')</span>'
+      : '<b>' + fin + '</b>';
+  }
+
+  // Movimento
+  var movLabel = mov.final + 'm';
+  if (mov.doubled && mov.halved) movLabel = mov.final + 'm <span class="autos-flag">(\u00d72, \u00f72)</span>';
+  else if (mov.doubled)          movLabel = mov.final + 'm <span class="autos-flag">(\u00d72 Prod\u00edgio)</span>';
+  else if (mov.halved)           movLabel = mov.final + 'm <span class="autos-flag">(\u00f72 Lento)</span>';
+
+  // Bônus automáticos de feitos
+  var feitoBonusHtml = '';
+  if (feitoMods.length > 0) {
+    feitoBonusHtml =
+      '<div class="autos-section">' +
+      '<div class="autos-label">B\u00f4nus de Feitos</div>' +
+      feitoMods.map(function(mod) {
+        var sign = mod.valor >= 0 ? '+' : '';
+        return '<div class="autos-row">\u26a1 ' + mod.nome + ': ' + sign + mod.valor + ' ' + mod.alvo + '</div>';
+      }).join('') +
+      '</div>';
+  }
+
+  // Flags / efeitos passivos de feitos
+  var activeFlags = [];
+  if (flags.rdUniversal)   activeFlags.push('RD universal (exceto Onipotente)');
+  if (flags.tecReplaceAgi) activeFlags.push('TEC substitui AGI em rea\u00e7\u00f5es');
+  if (feitoIsActive('habil') && (!state.feitoConfig || !(state.feitoConfig.habil || []).length)) {
+    activeFlags.push('\u26a0 Feito H\u00e1bil ativo \u2014 configure o b\u00f4nus em Modificadores Globais');
+  }
+  var flagsHtml = '';
+  if (activeFlags.length > 0) {
+    flagsHtml =
+      '<div class="autos-section">' +
+      '<div class="autos-label">Efeitos de Feitos</div>' +
+      activeFlags.map(function(f) { return '<div class="autos-row">' + f + '</div>'; }).join('') +
+      '</div>';
+  }
+
+  // Alertas de condições ativas
+  var alertsHtml = '';
+  if (alerts.length > 0) {
+    alertsHtml =
+      '<div class="autos-section">' +
+      '<div class="autos-label autos-label-warn">Condi\u00e7\u00f5es Ativas</div>' +
+      alerts.map(function(a) {
+        return '<div class="autos-cond-block">' +
+          '<div class="autos-cond-name">\u26a0 ' + a.name + '</div>' +
+          a.effects.map(function(eff) {
+            return '<div class="autos-cond-effect">' + eff + '</div>';
+          }).join('') +
+          '</div>';
+      }).join('') +
+      '</div>';
+  }
+
+  content.innerHTML =
+    '<div class="autos-grid">' +
+      '<div class="autos-stat"><span class="autos-key">STR</span>'   + statStr('STR') + '</div>' +
+      '<div class="autos-stat"><span class="autos-key">MAG</span>'   + statStr('MAG') + '</div>' +
+      '<div class="autos-stat"><span class="autos-key">TEC</span>'   + statStr('TEC') + '</div>' +
+      '<div class="autos-stat"><span class="autos-key">AGI</span>'   + statStr('AGI') + '</div>' +
+      '<div class="autos-stat"><span class="autos-key">VIT</span>'   + statStr('VIT') + '</div>' +
+      '<div class="autos-stat"><span class="autos-key">LCK</span>'   + statStr('LCK') + '</div>' +
+      '<div class="autos-stat"><span class="autos-key">PV M\u00e1x</span><b>' + state.MaxHP + '</b></div>' +
+      '<div class="autos-stat"><span class="autos-key">PM M\u00e1x</span><b>' + state.EnergyMax + '</b></div>' +
+      '<div class="autos-stat"><span class="autos-key">RD</span><b>' + (state.DmgRed || 0) + '</b>' +
+        (flags.rdUniversal ? '<span class="autos-flag"> (univ.)</span>' : '') + '</div>' +
+      '<div class="autos-stat"><span class="autos-key">Movimento</span>' + movLabel + '</div>' +
+    '</div>' +
+    feitoBonusHtml +
+    flagsHtml +
+    alertsHtml;
 }
 
 // =============================================
@@ -736,6 +951,9 @@ function buildFeitosUI() {
     if (e.target.classList.contains('feat-check')) {
       e.target.closest('.feat-item').classList.toggle('feat-active', e.target.checked);
       syncFeitosToState();
+      recalcState();
+      validateState();
+      render();
       if (window.debouncedAutoSave) window.debouncedAutoSave();
     }
   });
@@ -783,6 +1001,9 @@ function buildConditionsUI() {
     if (e.target.classList.contains('cond-check')) {
       e.target.closest('.cond-item').classList.toggle('cond-active', e.target.checked);
       syncConditionsToState();
+      recalcState();
+      validateState();
+      render();
       if (window.debouncedAutoSave) window.debouncedAutoSave();
     }
   });
@@ -1564,6 +1785,8 @@ function renderAll() {
     renderPortrait();
     renderBackground();
     renderModSummary();
+    buildAutoSummaryPanel();
+    renderAutoSummary();
     if (typeof window.initAutoResizeTextareas === 'function') window.initAutoResizeTextareas();
   } finally {
     _rendering = false;
@@ -1622,7 +1845,8 @@ function snapshot() {
     portrait: { src: state.portrait.src || '' },
     background: JSON.parse(JSON.stringify(state.background || {})),
     conditions: JSON.parse(JSON.stringify(state.conditions || [])),
-    modifiers: JSON.parse(JSON.stringify(state.modifiers || []))
+    modifiers: JSON.parse(JSON.stringify(state.modifiers || [])),
+    feitoConfig: JSON.parse(JSON.stringify(state.feitoConfig || {}))
   };
 }
 
@@ -1672,6 +1896,7 @@ function applySnapshot(data) {
   state.feitos = data.feitos || [];
   state.conditions = data.conditions || [];
   state.modifiers = data.modifiers || [];
+  state.feitoConfig = data.feitoConfig || {};
   state.portrait = data.portrait || { src: '' };
   state.background = data.background || {};
 
@@ -1711,6 +1936,7 @@ function resetFicha() {
   state.spells = []; state.equip = []; state.links = [];
   state.clues = []; state.contacts = [];
   state.feitos = []; state.conditions = []; state.modifiers = [];
+  state.feitoConfig = {};
   state.affinities = {};
   state.portrait = { src: '' };
   state.background = {};
@@ -1752,6 +1978,7 @@ function initApp() {
   buildConditionsUI();
   buildSocialUI();
   buildModifiersUI();
+  buildAutoSummaryPanel();
 }
 initApp();
 
