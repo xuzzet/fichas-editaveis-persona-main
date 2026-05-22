@@ -15,7 +15,7 @@
 #hx-tooltip {
   position: fixed;
   z-index: 9999;
-  max-width: 260px;
+  max-width: 280px;
   padding: 10px 14px;
   background: var(--bg-3);
   border: 1px solid var(--stroke);
@@ -53,6 +53,11 @@
   font-weight: 400;
   line-height: 1.5;
   color: var(--ink);
+}
+
+/* Skill selection ring (SVG circle, toggled via opacity attribute) */
+[id$="-hx-sel"] {
+  transition: opacity 0.18s ease;
 }
 
 /* ========================
@@ -104,6 +109,69 @@
   color: var(--ink);
   margin: 0;
 }
+
+/* Tier history list inside the detail panel */
+.hx-detail-tiers {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+}
+.hx-tier-entry {
+  padding: 6px 10px 6px 11px;
+  border-radius: 5px;
+  border-left: 3px solid transparent;
+}
+.hx-tier-entry.hx-tier-current {
+  border-left-color: var(--accent);
+  background: var(--bg-3);
+}
+.hx-tier-entry.hx-tier-past {
+  opacity: 0.58;
+}
+.hx-tier-entry-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 2px;
+}
+.hx-tier-entry.hx-tier-current .hx-tier-entry-badge {
+  color: var(--accent);
+}
+.hx-tier-entry-desc {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink);
+  margin: 0;
+}
+
+/* Tooltip past-tiers compact history */
+.hx-tt-history {
+  margin-top: 8px;
+  padding-top: 7px;
+  border-top: 1px solid var(--stroke);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.hx-tt-hist-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  opacity: 0.7;
+  margin-bottom: 2px;
+}
+.hx-tt-hist-item {
+  font-size: 10.5px;
+  color: var(--ink-dim);
+  opacity: 0.75;
+  line-height: 1.5;
+}
+
 #social-tier-list svg {
   overflow: visible;
 }

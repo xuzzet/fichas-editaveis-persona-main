@@ -76,6 +76,11 @@ const FEITOS_LIST = [
   { id: 'auxilio_altruista', name: 'Auxílio Altruísta', cat: 'Social', desc: 'Como uma Ação Padrão, você pode sacrificar até 50% do seu PV atual para aumentar o PV Máximo de um alvo adjacente igual à quantidade sacrificada. Alvos dessa habilidade que estiverem com 0 PV só recebem o sacrifício como Cura.', prereq: 'Tier I em Empatia' },
   { id: 'um_em_espirito', name: 'Um em Espírito', cat: 'Social', desc: 'Quando você atingir uma Fraqueza pela primeira vez em uma Sombra ou atingir um Golpe Crítico, você pode Atacar novamente com uma Ação Livre. (O Ataque Extra causado por atingir uma Fraqueza só é ativado uma única vez por combate, mas Golpes Críticos continuam aplicando os Ataques Extras.)', prereq: 'Tier I em Conhecimento ou Disciplina' },
   { id: 'explorador', name: 'Explorador', cat: 'Social', desc: 'Qualquer teste de Disciplina relacionado à ação de Procurar e Investigar no Metaverso; o Narrador tratará seu personagem como permanentemente procurando. Você pode re-rolar qualquer teste relacionado à procura de itens ou aparatos, uma vez por teste.', prereq: 'Tier I em Disciplina' },
+  { id: 'prodigio_auxilio', name: 'Prodígio em Auxílio', cat: 'Social', desc: 'Sempre que utilizar uma magia que conceda buff ou efeitos especiais semelhantes, a duração é aumentada em 1 rodada e o efeito é aumentado equivalente ao seu Tier de Empatia.', prereq: '8 de Magia e Tier I em Empatia' },
+  { id: 'prodigio_recuperacao', name: 'Prodígio em Recuperação', cat: 'Social', desc: 'Sempre que estiver sofrendo um efeito negativo ou status, quando for se recuperar recebe sua MAG ou VIT como porcentagem bônus para a recuperação desse efeito. Sempre que se recuperar de uma penalidade, recebe Vitalidade como PV ou Magia como PM.', prereq: '6 de Magia ou Vitalidade e Tier I em Coragem ou Disciplina' },
+  { id: 'prodigio_cura', name: 'Prodígio em Cura', cat: 'Social', desc: 'Sempre que utilizar uma magia de cura, independente do Tier, pode escolher utilizar a média do dado arredondada para baixo sem precisar rolar os dados. Em troca, o custo da magia de cura é reduzido pela metade. Esse efeito pode ser utilizado uma quantidade de vezes igual à metade da sua MAG por descanso longo.', prereq: '8 de MAG e Tier I em Conhecimento' },
+  { id: 'prodigio_provocar', name: 'Prodígio em Provocar', cat: 'Social', desc: 'Reduz o custo de PM de qualquer magia de status equivalente à sua MAG. Sempre que um alvo inimigo não conseguir se recuperar do efeito negativo, você recebe PM Temporário equivalente à sua MAG. O PM Temporário dura apenas até o fim do combate.', prereq: '8 de Magia e Tier I em Charme' },
+  { id: 'prodigio_aprendizado', name: 'Prodígio em Aprendizado', cat: 'Social', desc: 'Você tem a capacidade de subir 1 Habilidade Social que esteja no Tier 0 para se tornar automaticamente Tier I.', prereq: 'Nível 4 de personagem e Tier II em Disciplina ou Tier II em Conhecimento' },
   // â”€â”€ Combate — Armas â”€â”€
   { id: 'esp_espadas', name: 'Especialização em Espadas', cat: 'Combate', desc: 'Enquanto Empunhar uma Espada, selecione 2 Tipos de Magia para receber Vantagem. Caso seja bem sucedido contra a magia, pode se mover Metade do Movimento com uma Ação Livre. (Não pode ser alocado na sua Fraqueza Elemental)', prereq: 'Tier I em Disciplina' },
   { id: 'esp_corpo_a_corpo', name: 'Especialização em Corpo a Corpo', cat: 'Combate', desc: 'Enquanto estiver Desarmado ou Empunhar qualquer tipo de Manoplas, você ganha +2 Dados em testes de Acerto e aumenta em 1 Passo o seu dado de dano. (Não afeta Magias)', prereq: 'Tier I em Coragem' },
@@ -86,6 +91,8 @@ const FEITOS_LIST = [
   { id: 'esp_escudos_placas', name: 'Especialização em Escudos e Placas', cat: 'Combate', desc: 'Com um Escudo ou Armadura Pesada equipado, como uma Ação Completa, você pode optar por adotar uma postura defensiva e ganhar Resistência a todos os tipos de dano e Soma Novamente seu Vigor como RD até seu próximo turno.', prereq: '6 de Vigor' },
   { id: 'esp_adagas', name: 'Especialização em Adagas', cat: 'Combate', desc: 'Seus ataques com Adagas têm +1 de Alcance, podem ser arremessadas sem Desvantagem e podem ser recuperadas sem necessidade de testes. E soma sua Agilidade como Dano Extra. (Aplica em Ataque Básico e Magias)', prereq: '6 de Agilidade' },
   { id: 'fisico_gladiador', name: 'Físico do Gladiador', cat: 'Combate', desc: 'Uma Vez por Combate — Quando você declarar uma Magia Física que pode aplicar um efeito de Status, você causa Automaticamente o efeito, funcionando tanto em Benéficos & Maligno. E adiciona sua Força como Dados de Dano Extra.', prereq: '4 de Força' },
+  { id: 'prodigio_ataque', name: 'Prodígio em Ataque', cat: 'Combate', desc: 'Enquanto empunhar uma arma corpo a corpo, sempre que utilizar uma magia, pode utilizar a arma empunhada para atacar com uma ação livre, caso haja um alvo em seu alcance.', prereq: '8 de Técnica e Tier I em Disciplina' },
+  { id: 'prodigio_defesa', name: 'Prodígio em Defesa', cat: 'Combate', desc: 'Você se torna capaz de utilizar sua TEC em testes para reagir a ataques no lugar de sua Agilidade.', prereq: '8 de Técnica e Tier I em Disciplina' },
   // â”€â”€ Persona â”€â”€
   { id: 'transe_monge_fogo', name: 'Transe do Monge de Fogo', cat: 'Persona', desc: 'Quando você causa dano com uma Magia de Fogo, você pode Incendiar o espaço ocupado pelo(s) alvo(s) pelas próximas Duas rodadas. Espaços incendiados causam Magia como dano de Fogo contra qualquer Sombra que terminar seu turno nesse espaço ou passar por ele durante seu movimento; caso o alvo estiver Queimando, recebe o Dobro de Dano. (Cada Sombra só pode tomar dano de cada espaço incendiado uma vez por rodada.)', prereq: 'Persona possuir Tipo Fogo' },
   { id: 'toque_rainha_gelo', name: 'Toque da Rainha de Gelo', cat: 'Persona', desc: 'Quando você Derrotar um inimigo usando uma Magia de Gelo, cause Congelado em um alvo adjacente Automaticamente e caso possua Buffs ativos, aumente sua duração em +2 Rodadas.\nCongelado: Alvos Congelados tem metade de seu movimento e recebem Dobro de Dano do próximo Dano Físico ou Raio utilizado contra ele.', prereq: 'Persona possuir Tipo Gelo' },
@@ -111,6 +118,8 @@ const FEITOS_LIST = [
   { id: 'volatil', name: 'Volátil', cat: 'Atributos', desc: 'Suas magias que atingem mais de um alvo podem acertar um alvo a mais, por rank. (Só pode ser escolhido uma vez a cada quatro níveis)', prereq: '4 de Magia' },
   { id: 'milagre', name: 'Milagre', cat: 'Atributos', desc: 'Uma vez por combate, se seu PV estiver acima de 1 e você receber dano que reduza seu PV para 0 ou menos, role SORd8. Se qualquer um dos seus dados resultar em 5 ou mais, você sobrevive com 1 PV. (Só pode ser escolhido uma vez)', prereq: '3 de Sorte' },
   { id: 'mira_certeira', name: 'Mira Certeira', cat: 'Atributos', desc: 'Você ganha 1 Carga de Sorte a mais no começo de cada combate, por rank. Isso pode exceder seu limite de Cargas. (Só pode ser escolhido quatro vezes)', prereq: '4 de Sorte' },
+  { id: 'prodigio_corrida', name: 'Prodígio em Corrida', cat: 'Atributos', desc: 'O movimento padrão do personagem é dobrado. Quando se movimenta em direção a um alvo inimigo, o movimento gasto se torna Vida Temporária que dura até o final do seu próximo turno. Agora também é possível se movimentar em paredes e superfícies extremas sem necessidade de testes.', prereq: '8 de Agilidade e Tier I em Disciplina' },
+  { id: 'prodigio_protecao', name: 'Prodígio em Proteção', cat: 'Atributos', desc: 'Sua Redução de Dano passiva passa a reduzir todo tipo de dano que não seja do tipo Onipotente.', prereq: '8 de Vitalidade e Tier I em Coragem' },
   // â”€â”€ Convicção â”€â”€
   { id: 'teu_proprio_ser', name: 'Teu Próprio Ser', cat: 'Convicção', desc: 'Você pode alterar a Convicção da sua Persona inicial. (Só pode ser escolhido uma vez a cada quatro níveis)', prereq: 'CNv. 4' },
   { id: 'perseveranca', name: 'Perseverança', cat: 'Convicção', desc: 'Cada vez que você escolher esse Feito, escolha uma Persona e uma de suas Fraquezas. A Persona perde a Fraqueza selecionada. (Só pode ser escolhido uma vez a cada cinco níveis)', prereq: 'CNv. 10' },
@@ -134,28 +143,28 @@ const CONDITIONS_LIST = [
 
 const SOCIAL_SKILL_META = {
   KNOPts: {name:'Conhecimento', titles:['Preguiçoso','Ciente','Sabido','Estudado','Enciclopédico','Erudito'], desc:[
-    'Tier 0 — Preguiçoso: Nenhum benefício. A habilidade ainda não foi desenvolvida o suficiente para gerar efeitos.',
+    'Título: Preguiçoso.',
     'Tier I — Ciente: uma vez por cena, revela uma Fraqueza de uma Sombra que você possa ver.',
-    'Tier II — Sabido: uma vez por combate, ganhe Vantagem contra um ataque que exija teste de esquiva.',
-    'Tier III — Estudado: bônus permanente de +1 MAG e +1 TEC, sua escolha.',
-    'Tier IV — Enciclopédico: uma vez por Combate, pode conjurar uma magia sem gastar Energia.',
+    'Tier II — Sabido: Essa habilidade pode ser utilizada igual ao seu Tier de Conhecimento. Quando um alvo que você possa ver declara um ataque utilizando uma [Magia], pode gastar sua reação para rolar um teste de (MAG vs MAG), se for bem sucedido impede o uso da magia inimiga.',
+    'Tier III — Estudado: bônus permanente de +1 MAG e +1 TEC.',
+    'Tier IV — Enciclopédico: uma vez por Combate, pode conjurar uma magia sem gastar Energia e suas [Magias] somam (Metade do Bônus total) da habilidade social como (Dano Bônus).',
     'Tier V — Erudito: crie uma característica especial relacionado a Conhecimento e uma vez por descanso longo pode recuperar Metade de seus Pontos de Magia.'
   ]},
   DISPts: {name:'Disciplina', titles:['Desatento','Decente','Persistente','Minucioso','Magistral','Transcendente'], desc:[
-    'Tier 0 — Desatento: Nenhum benefício. A habilidade ainda não foi desenvolvida o suficiente para gerar efeitos.',
-    'Tier I — Decente: Com sua força de vontade ou treinos leves e pesados, você ganha +10 de PV e +10 de Mana.',
+    'Tier 0 — Desatento.',
+    'Tier I — Recebe permanentemente [+10 de PV] e [+10 de PM].',
     'Tier II — Persistente: passa a receber (+2 de PM) por nível e uma vez por rodada pode reduzir em (-2) o teste de acerto de um Inimigo que você possa ver, pode ser utilizado quantidade de vezes igual sua TEC e recupera 1 uso por descanso longo.',
     'Tier III — Minucioso: concede Vantagem em testes relacionados a Perceber, Investigar e Focar. Se estiver sob condição mental o efeito dessa habilidade não funcionará.',
     'Tier IV — Magistral: Soma o Tier em testes de Ataque como acerto bônus.',
     'Tier V — Transcendente: uma vez por combate, pode escolher causar um (Ataque Crítico) automático, pode ser utilizado quantidade de vezes igual metade de sua TEC e recupera 1 uso por descanso longo.'
   ]},
   EMPpts: {name:'Empatia', titles:['Indiferente','Inofensivo','Gentil','Generoso','Altruísta','Angelical'], desc:[
-    'Tier 0 — Indiferente: Nenhum benefício. A habilidade ainda não foi desenvolvida o suficiente para gerar efeitos.',
+    'Tier 0 — Indiferente.',
     'Tier I — Inofensivo: uma vez por combate, pode conceder um sucesso automático em teste de resistência contra Status Mental de um aliado que possa ouvir você.',
-    'Tier II — Gentil: uma vez por descanso longo, remove todas Condições e Status Mentais que esteja afetando você (ação livre).',
+    'Tier II — Gentil: uma vez por descanso longo, remove toda e qualquer Condições Negativa, Penalidades e Status Mentais que esteja afetando você (ação livre).',
     'Tier III — Generoso: uma vez por combate pode escolher, aumentar a duração de Buff\'s em aliados em (+3 Rodadas) ou copiar os mesmos efeitos para um outro aliado que você possa ver.',
     'Tier IV — Altruísta: enquanto estiver no combate, seus aliados recebem seu (Tier de Empatia) como bônus em testes para resistir a condições negativas, caso seja em (Porcentagem %), para cada Tier aumenta a chance de seu aliado superar o teste em [5%].',
-    'Tier V — Angelical: Se torna (Imune) a condições negativas enquanto estiver adjacente a um aliado e recebe a Reação Elemental (Refletir) ao elemento que o Aliado próximo possui como fraqueza. Se o aliado for afetado por uma condição negativa os efeitos dessa habilidade são retirados.'
+    'Tier V — Angelical: Se torna (Imune) a condições negativas enquanto estiver adjacente a um aliado e recebe a Reação Elemental (Refletir) ao elemento que o Aliado próximo possui como fraqueza. Se o aliado for afetado por uma condição negativa os efeitos dessa habilidade são retiradas.'
   ]},
   EXPPts: {name:'Expressão', titles:['Monótono','Rudimentar','Eloquente','Inspirador','Tocante','Fascinante'], desc:[
     'Tier 0 — Monótono: Nenhum benefício. A habilidade ainda não foi desenvolvida o suficiente para gerar efeitos.',
@@ -558,6 +567,9 @@ function renderSocial() {
   }
 
   remainingEl.textContent = Math.max(0, INITIAL_SOCIAL_POINTS - sum);
+
+  // Refresh the detail panel if a skill is currently selected
+  if (window._hxRefreshPanel) window._hxRefreshPanel();
 }
 
 function renderModSummary() {
@@ -914,7 +926,7 @@ function buildSocialUI() {
   // -- LAYER 7: Labels at fixed outer positions --
   skills.forEach(function(s) {
     var meta = SOCIAL_SKILL_META[s.id];
-    var g = mk('g', { class: 'hx-tip' });
+    var g = mk('g', { id: s.id + '-hx-label-g', class: 'hx-tip' });
 
     var nameEl = mk('text', {
       x: s.lx.toFixed(2), y: (s.ly - 16).toFixed(2),
@@ -948,19 +960,12 @@ function buildSocialUI() {
     svg.appendChild(g);
   });
 
-  // -- LAYER 8: Invisible hit targets for mouse/touch interaction --
-  // Tooltip element (shared, appended once to body)
-  var ttEl = document.getElementById('hx-tooltip');
-  if (!ttEl) {
-    ttEl = document.createElement('div');
-    ttEl.id = 'hx-tooltip';
-    document.body.appendChild(ttEl);
-  }
+  // -- LAYER 8: Click targets for skill selection --
 
   // Detail panel (below the SVG inside container)
   var detailEl = document.createElement('div');
   detailEl.id = 'hx-detail';
-  detailEl.innerHTML = '<p class="hx-detail-empty">Passe o mouse ou toque em uma habilidade para ver os detalhes.</p>';
+  detailEl.innerHTML = '<p class="hx-detail-empty">Selecione uma habilidade social no hexagrama para ver seus detalhes.</p>';
 
   var ROMAN_HX = ['0', 'I', 'II', 'III', 'IV', 'V'];
 
@@ -970,106 +975,145 @@ function buildSocialUI() {
     var pts  = inp ? (parseInt(inp.value, 10) || 0) : 0;
     // Same formula used everywhere else in the system
     var tier = Math.min(5, Math.floor(pts / 5));
-    var title = meta.titles[tier];
-    var desc  = meta.desc[tier];
-    if (!title) {
-      console.warn('[HX] Título ausente para', skillId, 'tier', tier, '— usando fallback.');
-      title = meta.titles[meta.titles.length - 1] || skillId;
-    }
-    if (!desc) {
-      console.warn('[HX] Descrição ausente para', skillId, 'tier', tier, '— usando fallback.');
-      desc = 'Descrição não disponível para este tier.';
+    var title = meta.titles[tier] || meta.titles[meta.titles.length - 1] || skillId;
+    var desc  = meta.desc[tier] || 'Descrição não disponível para este tier.';
+    // Collect all unlocked tiers (0 through current) for history display
+    var unlockedTiers = [];
+    for (var t = 0; t <= tier; t++) {
+      unlockedTiers.push({
+        tier: t,
+        roman: ROMAN_HX[t] || String(t),
+        title: meta.titles[t] || '',
+        desc: meta.desc[t] || '',
+        isCurrent: (t === tier)
+      });
     }
     return {
       name:   meta.name,
       tier:   tier,
       roman:  ROMAN_HX[tier] || String(tier),
       title:  title,
-      desc:   desc
+      desc:   desc,
+      unlockedTiers: unlockedTiers
     };
   }
 
-  function renderTooltip(info, x, y) {
-    ttEl.innerHTML =
-      '<div class="hx-tt-name">' + info.name + '</div>' +
-      '<div class="hx-tt-badge">TIER ' + info.roman + ' — ' + info.title + '</div>' +
-      '<div class="hx-tt-desc">'  + info.desc  + '</div>';
-    var tx = x + 18;
-    var ty = y - 12;
-    if (tx + 270 > window.innerWidth)  tx = x - 270;
-    if (ty + 130 > window.innerHeight) ty = y - 130;
-    ttEl.style.left = tx + 'px';
-    ttEl.style.top  = ty + 'px';
-    ttEl.classList.add('hx-tt-visible');
-  }
-
   function renderPanel(info) {
+    var tiersHtml = (info.unlockedTiers || [{ tier: info.tier, roman: info.roman, title: info.title, desc: info.desc, isCurrent: true }]).map(function(t) {
+      var cls = t.isCurrent ? 'hx-tier-entry hx-tier-current' : 'hx-tier-entry hx-tier-past';
+      return '<div class="' + cls + '">' +
+        '<div class="hx-tier-entry-badge">Tier ' + t.roman + ' — ' + t.title.toUpperCase() + '</div>' +
+        '<p class="hx-tier-entry-desc">' + t.desc + '</p>' +
+      '</div>';
+    }).join('');
     detailEl.innerHTML =
       '<div class="hx-detail-header">' +
         '<span class="hx-detail-name">' + info.name.toUpperCase() + '</span>' +
         '<span class="hx-detail-tier">TIER ' + info.roman + ' — ' + info.title.toUpperCase() + '</span>' +
       '</div>' +
-      '<p class="hx-detail-desc">' + info.desc + '</p>';
+      '<div class="hx-detail-tiers">' + tiersHtml + '</div>';
   }
 
   function resetPanel() {
-    detailEl.innerHTML = '<p class="hx-detail-empty">Passe o mouse ou toque em uma habilidade para ver os detalhes.</p>';
+    detailEl.innerHTML = '<p class="hx-detail-empty">Selecione uma habilidade social no hexagrama para ver seus detalhes.</p>';
   }
 
+  // Track which skill is currently selected
+  var selectedSkillId = null;
+
+  // Per-skill selection ring (subtle highlight, drawn before hit targets)
   skills.forEach(function(s) {
-    // Static hit circle centred on the label area
+    var selRing = mk('circle', {
+      id: s.id + '-hx-sel',
+      cx: s.lx.toFixed(2), cy: s.ly.toFixed(2),
+      r: '48',
+      fill: 'var(--accent)',
+      'fill-opacity': '0.08',
+      stroke: 'var(--accent)',
+      'stroke-width': '2',
+      opacity: '0',
+      'pointer-events': 'none'
+    });
+    svg.appendChild(selRing);
+  });
+
+  function hxSelect(skillId) {
+    // Deselect all rings
+    skills.forEach(function(sk) {
+      var r = document.getElementById(sk.id + '-hx-sel');
+      if (r) r.setAttribute('opacity', '0');
+    });
+    selectedSkillId = skillId;
+    if (skillId) {
+      var r = document.getElementById(skillId + '-hx-sel');
+      if (r) r.setAttribute('opacity', '1');
+      renderPanel(getSkillInfo(skillId));
+    } else {
+      resetPanel();
+    }
+  }
+
+  // Expose refresh so renderSocial can update the panel when points change
+  window._hxRefreshPanel = function() {
+    if (selectedSkillId) renderPanel(getSkillInfo(selectedSkillId));
+  };
+
+  skills.forEach(function(s) {
     var hitCirc = mk('circle', {
+      id: s.id + '-hx-hit',
       cx: s.lx.toFixed(2), cy: s.ly.toFixed(2),
       r: '42', fill: 'transparent', cursor: 'pointer'
     });
     svg.appendChild(hitCirc);
 
     var halo = document.getElementById(s.id + '-hx-halo');
+    var selRing = document.getElementById(s.id + '-hx-sel');
 
-    function activate(e) {
-      var info = getSkillInfo(s.id);
-      renderPanel(info);
-      if (e && e.type === 'mousemove') {
-        renderTooltip(info, e.clientX, e.clientY);
-      } else if (e && (e.type === 'mouseenter' || e.type === 'mouseover')) {
-        renderTooltip(info, e.clientX, e.clientY);
-      }
-    }
-
-    function deactivate() {
-      ttEl.classList.remove('hx-tt-visible');
-      resetPanel();
-    }
-
-    function moveTooltip(e) {
-      if (ttEl.classList.contains('hx-tt-visible')) {
-        var tx = e.clientX + 18;
-        var ty = e.clientY - 12;
-        if (tx + 270 > window.innerWidth)  tx = e.clientX - 270;
-        if (ty + 130 > window.innerHeight) ty = e.clientY - 130;
-        ttEl.style.left = tx + 'px';
-        ttEl.style.top  = ty + 'px';
-      }
-    }
-
+    // Hover: light ring preview (no panel change)
     [hitCirc, halo].forEach(function(el) {
       if (!el) return;
-      el.addEventListener('mouseenter', activate);
-      el.addEventListener('mouseleave', deactivate);
-      el.addEventListener('mousemove',  moveTooltip);
-      el.addEventListener('touchstart', function(e) {
-        var info = getSkillInfo(s.id);
-        renderPanel(info);
+      el.addEventListener('mouseenter', function() {
+        if (selectedSkillId !== s.id && selRing) selRing.setAttribute('opacity', '0.35');
+      });
+      el.addEventListener('mouseleave', function() {
+        if (selectedSkillId !== s.id && selRing) selRing.setAttribute('opacity', '0');
+      });
+      el.addEventListener('click', function(e) {
         e.stopPropagation();
-      }, { passive: true });
+        if (selectedSkillId === s.id) {
+          hxSelect(null);
+        } else {
+          hxSelect(s.id);
+        }
+      });
     });
   });
 
-  // Tap on empty SVG area resets the panel (mobile)
-  svg.addEventListener('touchstart', resetPanel, { passive: true });
+  // Click on SVG background deselects
+  svg.addEventListener('click', function(e) {
+    var tid = e.target && e.target.getAttribute && e.target.getAttribute('id');
+    if (!tid || tid === 'hx-progress-fill' || tid === 'hx-progress-stroke') {
+      hxSelect(null);
+    }
+  });
 
   container.appendChild(svg);
   container.appendChild(detailEl);
+
+  // Re-center selection rings and hit circles on actual label bounding boxes
+  skills.forEach(function(s) {
+    var labelG = document.getElementById(s.id + '-hx-label-g');
+    var ring   = document.getElementById(s.id + '-hx-sel');
+    var hit    = document.getElementById(s.id + '-hx-hit');
+    if (!labelG) return;
+    try {
+      var box = labelG.getBBox();
+      var cx  = (box.x + box.width  / 2).toFixed(2);
+      var cy  = (box.y + box.height / 2).toFixed(2);
+      if (ring) { ring.setAttribute('cx', cx); ring.setAttribute('cy', cy); }
+      if (hit)  { hit.setAttribute('cx',  cx); hit.setAttribute('cy',  cy); }
+    } catch(e) { /* getBBox unavailable (hidden tab) — keep original position */ }
+  });
 }
 
 // =============================================
