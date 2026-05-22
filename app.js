@@ -195,6 +195,104 @@ const SOCIAL_IDS = ['KNOPts','DISPts','EMPpts','EXPPts','COUPts','CHAPts'];
 const INITIAL_SOCIAL_POINTS = 7;
 
 // =============================================
+// EFEITOS AUTOMÁTICOS DAS HABILIDADES SOCIAIS
+// =============================================
+//
+// Estrutura por habilidade → por tier:
+//   auto:   [{ alvo, tipo, valor, label }]  — aplicado automaticamente pelo motor
+//   manual: ['descrição do lembrete']       — exibe como lembrete, não automatizável
+//
+// Tiers são ACUMULATIVOS. computeSocialModifiers() coleta todos os tiers
+// de 1 até o tier atual de cada habilidade.
+//
+const SOCIAL_EFFECTS = {
+  KNOPts: [  // Conhecimento
+    // Tier 0 — sem efeito mecânico
+    { auto: [], manual: [] },
+    // Tier I — Ciente
+    { auto: [], manual: ['Uma vez por cena: revela uma Fraqueza de uma Sombra visível.'] },
+    // Tier II — Sabido
+    { auto: [], manual: ['Pode usar essa habilidade igual ao Tier de Conhecimento.', 'Reação: teste MAG vs MAG para cancelar Magia inimiga declarada.'] },
+    // Tier III — Estudado
+    { auto: [{ alvo: 'MAG', tipo: 'flat', valor: 1, label: '+1 MAG (Conhecimento III)' }, { alvo: 'TEC', tipo: 'flat', valor: 1, label: '+1 TEC (Conhecimento III)' }], manual: [] },
+    // Tier IV — Enciclopédico
+    { auto: [], manual: ['Uma vez por Combate: conjura uma magia sem gastar PM.', 'Magias somam metade do bônus total de Conhecimento como Dano Bônus.'] },
+    // Tier V — Erudito
+    { auto: [], manual: ['Crie uma característica especial relacionada a Conhecimento.', 'Uma vez por descanso longo: recupera metade dos PM.'] }
+  ],
+  DISPts: [  // Disciplina
+    // Tier 0
+    { auto: [], manual: [] },
+    // Tier I — Decente
+    { auto: [{ alvo: 'HP', tipo: 'flat', valor: 10, label: '+10 PV (Disciplina I)' }, { alvo: 'PM', tipo: 'flat', valor: 10, label: '+10 PM (Disciplina I)' }], manual: [] },
+    // Tier II — Persistente
+    { auto: [], manual: ['Recebe +2 de PM por nível.', 'Uma vez por rodada: reduz em -2 o teste de acerto de um inimigo visível (usa TEC, recupera 1 uso por descanso longo).'] },
+    // Tier III — Minucioso
+    { auto: [], manual: ['Vantagem em testes de Perceber, Investigar e Focar (exceto sob condição mental).'] },
+    // Tier IV — Magistral
+    { auto: [], manual: ['Soma o Tier de Disciplina como acerto bônus em testes de Ataque.'] },
+    // Tier V — Transcendente
+    { auto: [], manual: ['Uma vez por combate: causa Ataque Crítico automático (usa metade da TEC, recupera 1 por descanso longo).'] }
+  ],
+  EMPpts: [  // Empatia
+    // Tier 0
+    { auto: [], manual: [] },
+    // Tier I — Inofensivo
+    { auto: [], manual: ['Uma vez por combate: concede sucesso automático em resistência a Status Mental de um aliado que ouça você.'] },
+    // Tier II — Gentil
+    { auto: [], manual: ['Uma vez por descanso longo: remove todas as Condições Negativas, Penalidades e Status Mentais de você mesmo (Ação Livre).'] },
+    // Tier III — Generoso
+    { auto: [], manual: ['Uma vez por combate: aumenta duração de Buffs em aliados em +3 Rodadas, OU copia os mesmos efeitos para outro aliado visível.'] },
+    // Tier IV — Altruísta
+    { auto: [], manual: ['Aliados recebem Tier de Empatia como bônus em testes contra condições negativas (+5% por Tier).'] },
+    // Tier V — Angelical
+    { auto: [], manual: ['Imune a condições negativas enquanto adjacente a um aliado.', 'Reação Elemental: Refletir o elemento fraqueza do aliado próximo.'] }
+  ],
+  EXPPts: [  // Expressão
+    // Tier 0
+    { auto: [], manual: [] },
+    // Tier I — Rudimentar
+    { auto: [], manual: ['Ação de Interromper: concede +1 Margem Crítica a todos os aliados sem gastar Cargas de Sorte (usa Tier vezes).'] },
+    // Tier II — Eloquente
+    { auto: [], manual: ['Ação de Interromper: concede Vantagem em esquiva a um aliado visível até fim do próximo turno (usa Tier vezes).'] },
+    // Tier III — Inspirador
+    { auto: [], manual: ['Uma vez por combate: marca inimigo visível com "Debochar" — desvantagem em testes contra condições por 1 Cena.'] },
+    // Tier IV — Tocante
+    { auto: [], manual: ['Ao iniciar combate: escolhe um aliado "Ajudante" (+2 Margem Crítica), que uma vez por combate não pode errar ataques por 2 rodadas.'] },
+    // Tier V — Fascinante
+    { auto: [], manual: ['Uma vez por descanso longo: +2 em todos os atributos de combate de todos os aliados por 1 Cena (pode superar limite de 12).'] }
+  ],
+  COUPts: [  // Coragem
+    // Tier 0
+    { auto: [], manual: [] },
+    // Tier I — Comum
+    { auto: [], manual: ['Ao declarar ataque: pode adicionar Redução de Dano ao cálculo de dano (usa Tier vezes).'] },
+    // Tier II — Determinado
+    { auto: [{ alvo: 'HP', tipo: 'flat', valor: 25, label: '+25 PV (Coragem II)' }, { alvo: 'VIT', tipo: 'flat', valor: 1, label: '+1 VIT (Coragem II)' }], manual: ['Uma vez por combate: replica efeitos negativos sofridos para um inimigo visível.'] },
+    // Tier III — Firme
+    { auto: [{ alvo: 'STR', tipo: 'flat', valor: 1, label: '+1 STR (Coragem III)' }, { alvo: 'VIT', tipo: 'flat', valor: 1, label: '+1 VIT (Coragem III)' }], manual: ['Ao sofrer efeito de Medo: +Tier de Coragem como bônus para resistir (+5% por Tier).'] },
+    // Tier IV — Destemido
+    { auto: [], manual: ['Ao receber Dano Elemental (exceto Fraqueza): próximo ataque ganha +Tier de Coragem em Dados de Dano Bônus.'] },
+    // Tier V — Fodão
+    { auto: [], manual: ['Imune a Pavor e Medo.', 'Recebe nova Reação Elemental (escolha: Resistir, Refletir, Absorver ou Anular).'] }
+  ],
+  CHAPts: [  // Charme
+    // Tier 0
+    { auto: [], manual: [] },
+    // Tier I — Existente
+    { auto: [], manual: ['Aumenta em 5% a dificuldade para superar Condição ou Status de um alvo visível (usa Tier vezes).'] },
+    // Tier II — Confiante
+    { auto: [{ alvo: 'MAG', tipo: 'flat', valor: 1, label: '+1 MAG (Charme II)' }], manual: ['Em testes de Charme: adiciona o Tier como bônus extra.'] },
+    // Tier III — Suave
+    { auto: [], manual: ['Magias de Stats custam apenas metade do PM.'] },
+    // Tier IV — Popular
+    { auto: [], manual: ['Reação (Ação de Interromper): teste Charme vs Conhecimento — se inimigo falhar, redireciona ataque dele para outro alvo.'] },
+    // Tier V — Debonair
+    { auto: [{ alvo: 'MAG', tipo: 'flat', valor: 2, label: '+2 MAG (Charme V)' }], manual: ['Condições aplicadas por você: duração +3 Rodadas.', 'Testes para superar condições suas: desvantagem.', 'Alvos com suas condições: Acerto & Esquiva reduzidos pelo Tier.'] }
+  ]
+};
+
+// =============================================
 // HEXAGRAMA — LAYOUT & ANIMAÇÃO (module-scope)
 // =============================================
 
@@ -513,6 +611,82 @@ function computeConditionAlerts() {
 }
 
 /**
+ * Calcula o tier de uma habilidade social a partir de seus pontos.
+ * Fórmula: min(5, floor(pts / 5))
+ */
+function calcSocialTier(pts) {
+  return Math.min(5, Math.floor(Math.max(0, pts || 0) / 5));
+}
+
+/**
+ * Retorna modificadores automáticos derivados de todas as habilidades sociais.
+ * Os tiers são acumulativos: tier atual inclui todos os tiers anteriores.
+ * Retorna array no mesmo formato de state.modifiers.
+ */
+function computeSocialModifiers() {
+  var mods = [];
+  SOCIAL_IDS.forEach(function(skillId) {
+    var pts  = state[skillId] || 0;
+    var tier = calcSocialTier(pts);
+    var effects = SOCIAL_EFFECTS[skillId];
+    if (!effects) return;
+    // Acumula do tier 0 até o tier atual
+    for (var t = 0; t <= tier; t++) {
+      var entry = effects[t];
+      if (!entry || !entry.auto) continue;
+      entry.auto.forEach(function(eff) {
+        mods.push({
+          nome:  eff.label || (SOCIAL_SKILL_META[skillId].name + ' T' + t),
+          tipo:  eff.tipo  || 'flat',
+          valor: eff.valor || 0,
+          alvo:  eff.alvo,
+          ativo: true
+        });
+      });
+    }
+  });
+  return mods;
+}
+
+/**
+ * Retorna todos os efeitos desbloqueados (automáticos + manuais) de todas as
+ * habilidades sociais, organizados por habilidade e tier.
+ * Usado apenas para exibição — não afeta cálculos.
+ */
+function computeSocialEffects() {
+  var result = [];
+  var ROMAN = ['0', 'I', 'II', 'III', 'IV', 'V'];
+  SOCIAL_IDS.forEach(function(skillId) {
+    var pts  = state[skillId] || 0;
+    var tier = calcSocialTier(pts);
+    if (tier === 0) {
+      var e0 = SOCIAL_EFFECTS[skillId] && SOCIAL_EFFECTS[skillId][0];
+      var hasContent = e0 && ((e0.auto && e0.auto.length) || (e0.manual && e0.manual.length));
+      if (!hasContent) return; // sem nada a mostrar no tier 0
+    }
+    var meta = SOCIAL_SKILL_META[skillId];
+    var skillEntry = { id: skillId, name: meta.name, tier: tier, tierRoman: ROMAN[tier], tiers: [] };
+    for (var t = 1; t <= tier; t++) {
+      var effects = SOCIAL_EFFECTS[skillId][t];
+      if (!effects) continue;
+      var hasAuto   = effects.auto   && effects.auto.length   > 0;
+      var hasManual = effects.manual && effects.manual.length > 0;
+      if (!hasAuto && !hasManual) continue;
+      skillEntry.tiers.push({
+        tier:     t,
+        roman:    ROMAN[t],
+        title:    meta.titles[t] || '',
+        auto:     effects.auto   || [],
+        manual:   effects.manual || [],
+        isCurrent: (t === tier)
+      });
+    }
+    if (skillEntry.tiers.length > 0) result.push(skillEntry);
+  });
+  return result;
+}
+
+/**
  * Recalcula HP/PM máximos e valores de badges a partir do state.
  * Escreve diretamente em state.MaxHP, state.EnergyMax, state._computed.
  */
@@ -536,9 +710,10 @@ function recalcState() {
     HP: baseHP,
     PM: basePM
   };
-  // Combina modificadores do jogador + modificadores automáticos de feitos
-  var feitoMods = computeFeitoModifiers();
-  var allMods = (state.modifiers || []).concat(feitoMods);
+  // Combina modificadores do jogador + modificadores automáticos de feitos + habilidades sociais
+  var feitoMods  = computeFeitoModifiers();
+  var socialMods = computeSocialModifiers();
+  var allMods = (state.modifiers || []).concat(feitoMods).concat(socialMods);
   var modded = applyModifiers(baseVals, allMods);
 
   state.MaxHP = modded.HP;
@@ -547,8 +722,10 @@ function recalcState() {
     baseVals: baseVals,
     modded: modded,
     feitoMods: feitoMods,
+    socialMods: socialMods,
     movement: computeMovement(modded),
     conditionAlerts: computeConditionAlerts(),
+    socialEffects: computeSocialEffects(),
     flags: {
       rdUniversal:   feitoIsActive('prodigio_protecao'),
       tecReplaceAgi: feitoIsActive('prodigio_defesa')
@@ -782,6 +959,39 @@ function renderAutoSummary() {
       '</div>';
   }
 
+  // Bônus automáticos de habilidades sociais
+  var socialMods = comp.socialMods || [];
+  var socialEffectsHtml = '';
+  if (socialMods.length > 0) {
+    socialEffectsHtml =
+      '<div class="autos-section">' +
+      '<div class="autos-label autos-label-social">B\u00f4nus de Habilidades Sociais</div>' +
+      socialMods.map(function(mod) {
+        var sign = mod.valor >= 0 ? '+' : '';
+        return '<div class="autos-row autos-row-social">\u2b50 ' + mod.nome + ': ' + sign + mod.valor + ' ' + mod.alvo + '</div>';
+      }).join('') +
+      '</div>';
+  }
+
+  // Lembretes manuais de habilidades sociais desbloqueadas
+  var socialEffects = comp.socialEffects || [];
+  var socialManualHtml = '';
+  var manualItems = [];
+  socialEffects.forEach(function(skill) {
+    skill.tiers.forEach(function(t) {
+      t.manual.forEach(function(m) {
+        manualItems.push('<div class="autos-social-reminder"><span class="autos-social-badge">' + skill.name + ' ' + t.roman + '</span> ' + m + '</div>');
+      });
+    });
+  });
+  if (manualItems.length > 0) {
+    socialManualHtml =
+      '<div class="autos-section">' +
+      '<div class="autos-label autos-label-social">Lembretes Sociais</div>' +
+      manualItems.join('') +
+      '</div>';
+  }
+
   content.innerHTML =
     '<div class="autos-grid">' +
       '<div class="autos-stat"><span class="autos-key">STR</span>'   + statStr('STR') + '</div>' +
@@ -798,7 +1008,9 @@ function renderAutoSummary() {
     '</div>' +
     feitoBonusHtml +
     flagsHtml +
-    alertsHtml;
+    alertsHtml +
+    socialEffectsHtml +
+    socialManualHtml;
 }
 
 // =============================================
@@ -1468,7 +1680,7 @@ function renderInventoryStatus() {
   if (weight > cap) {
     fill.classList.add('inv-sobrecarregado');
     statusText.classList.add('inv-sobrecarregado');
-    statusText.textContent = 'âš  Sobrecarregado';
+    statusText.textContent = '⚠ Sobrecarregado';
     fill.style.width = '100%';
   } else if (weight >= cap * 0.8) {
     fill.classList.add('inv-pesado');
@@ -1491,7 +1703,7 @@ function addInventoryItem(data, targetLocal) {
   if (!tbody) return;
 
   var tr = document.createElement('tr');
-  var moveLabel = (local === 'equipado') ? 'â†’ Mochila' : 'â† Equipar';
+  var moveLabel = (local === 'equipado') ? '↓ Mochila' : '↑ Equipar';
   tr.dataset.local = local;
   tr.innerHTML = '<td><input class="eq-nome" placeholder="Nome do item"/></td>' +
     '<td><input class="eq-peso" type="number" min="0" step="0.1" value="0" placeholder="0"/></td>' +
@@ -2045,6 +2257,18 @@ textareaObserver.observe(document.body, { childList: true, subtree: true });
   });
 });
 
+// Habilidades sociais: mudança de pontos também dispara recalc (tiers afetam atributos)
+SOCIAL_IDS.forEach(function(key) {
+  var el = ids[key];
+  if (!el) return;
+  el.addEventListener('input', function() {
+    if (_rendering) return;
+    var partial = {};
+    partial[key] = Number(el.value) || 0;
+    setState(partial);
+  });
+});
+
 // HP/PM máximos: atualiza state sem recalc (o recalc sobrescreveria)
 ['MaxHP','EnergyMax'].forEach(function(key) {
   var el = ids[key];
@@ -2071,7 +2295,8 @@ textareaObserver.observe(document.body, { childList: true, subtree: true });
 
 // Todos os outros campos simples: atualiza state sem recalc
 FIELD_IDS.forEach(function(key) {
-  if (RECALC_FIELDS.has(key)) return; // já wired acima
+  if (RECALC_FIELDS.has(key)) return; // já wired acima (atributos de combate)
+  if (SOCIAL_IDS.indexOf(key) >= 0) return; // já wired acima (habilidades sociais)
   if (['MaxHP','CurrentHP','EnergyMax','CurrentPM'].indexOf(key) >= 0) return;
   var el = ids[key];
   if (!el) return;
