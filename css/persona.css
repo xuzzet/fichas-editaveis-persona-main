@@ -147,9 +147,22 @@
 }
 
 .af-icon {
-  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   line-height: 1;
   user-select: none;
+  font-size: 20px;
+}
+
+.af-icon-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+  /* Subtle filter so icons blend with dark/light themes */
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.35));
 }
 
 .af-name {

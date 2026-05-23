@@ -295,9 +295,16 @@ export function renderBackground() {
 // =============================================
 
 var AF_ICONS = {
-  'Físico': '⚔️', 'Fogo': '🔥', 'Gelo': '❄️', 'Vento': '🌀',
-  'Raio': '⚡', 'Nuclear': '☢', 'PSY': '🔮', 'Luz': '✨',
-  'Trevas': '🌑', 'Onipotente': '💫'
+  'Físico':    './Elements/Physical.png',
+  'Fogo':       './Elements/Fire.png',
+  'Gelo':       './Elements/Ice.png',
+  'Vento':      './Elements/Wind.png',
+  'Raio':       './Elements/Electric.png',
+  'Nuclear':    './Elements/Nuclar.png',
+  'PSY':        './Elements/Psi.png',
+  'Luz':        './Elements/Bless.png',
+  'Trevas':     './Elements/Curse.png',
+  'Onipotente': './Elements/Almighty.png'
 };
 
 var AF_REL_CLASS = {
@@ -328,7 +335,16 @@ export function buildAffinityTable() {
 
     var icon = document.createElement('div');
     icon.className = 'af-icon';
-    icon.textContent = AF_ICONS[el] || '◆';
+    var iconSrc = AF_ICONS[el];
+    if (iconSrc) {
+      var img = document.createElement('img');
+      img.src = iconSrc;
+      img.alt = el;
+      img.className = 'af-icon-img';
+      icon.appendChild(img);
+    } else {
+      icon.textContent = '◆';
+    }
 
     var name = document.createElement('div');
     name.className = 'af-name';
