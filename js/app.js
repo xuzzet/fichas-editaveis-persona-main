@@ -108,8 +108,10 @@ function resetFicha() {
   state.CurrentPM = state.EnergyMax;
   validateState();
 
-  var afBody = document.getElementById('af-body');
-  if (afBody) afBody.innerHTML = '';
+  var afGrid = document.getElementById('af-grid');
+  if (afGrid) afGrid.innerHTML = '';
+  var afSum = document.getElementById('af-summary');
+  if (afSum) afSum.innerHTML = '';
   buildAffinityTable();
 
   renderAll();
