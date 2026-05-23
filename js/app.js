@@ -16,7 +16,8 @@ import {
   renderTables, initInventoryButtons,
   addInventoryItem, addSpell, addLink, addClue, addCtt,
   syncEquipToState, syncSpellsToState, syncLinksToState,
-  syncCluesToState, syncContactsToState, renderInventoryStatus
+  syncCluesToState, syncContactsToState, renderInventoryStatus,
+  initLinkFilters, renderLinkSummary
 } from './inventory.js';
 import { buildFeitosUI, renderFeitos } from './feats.js';
 import { buildConditionsUI, renderConditions } from './conditions.js';
@@ -199,6 +200,7 @@ function initApp() {
   try { buildModifiersUI(); } catch(e) { console.error('[initApp] buildModifiersUI:', e); }
   try { buildAutoSummaryPanel(); } catch(e) { console.error('[initApp] buildAutoSummaryPanel:', e); }
   try { initInventoryButtons(); } catch(e) { console.error('[initApp] initInventoryButtons:', e); }
+  try { initLinkFilters(); } catch(e) { console.error('[initApp] initLinkFilters:', e); }
   try { initPortrait(); } catch(e) { console.error('[initApp] initPortrait:', e); }
   try { initImportExport(); } catch(e) { console.error('[initApp] initImportExport:', e); }
 }

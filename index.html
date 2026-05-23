@@ -406,15 +406,57 @@
 
     <!-- VIEW: VÍNCULOS -->
     <div class="view" id="vinculos">
-      <section class="card">
-        <div class="section-title"><div class="bar"></div><h2>Vínculos (Arcana)</h2></div>
-        <div class="actions"><button class="mini" id="add-link">+ Adicionar</button></div>
-        <div class="hint">Registre NPC, Arcana e Rank (1–10), com observações.</div>
-        <table id="tbl-link">
-          <thead><tr><th>Nome</th><th>Arcana</th><th>Rank</th><th>Observações</th><th></th></tr></thead>
-          <tbody></tbody>
-        </table>
+
+      <!-- Painel de resumo -->
+      <section class="card link-summary-card" id="link-summary-panel">
+        <div class="link-summary-stats">
+          <div class="link-stat-block">
+            <span class="link-stat-value" id="lsumm-total">0</span>
+            <span class="link-stat-label">Vínculos</span>
+          </div>
+          <div class="link-stat-block">
+            <span class="link-stat-value" id="lsumm-active">0</span>
+            <span class="link-stat-label">Ativos</span>
+          </div>
+          <div class="link-stat-block">
+            <span class="link-stat-value" id="lsumm-maxrank">—</span>
+            <span class="link-stat-label">Rank Máx.</span>
+          </div>
+          <div class="link-stat-block link-stat-arcanas">
+            <span class="link-stat-label">Arcanas</span>
+            <span class="link-stat-value link-arcana-chips" id="lsumm-arcanas">—</span>
+          </div>
+        </div>
       </section>
+
+      <!-- Barra de filtros / busca -->
+      <section class="card link-filter-card">
+        <div class="link-filter-bar">
+          <input type="text"  id="link-search"         class="link-filter-input" placeholder="&#128269; Buscar por nome…"/>
+          <select id="link-filter-arcana" class="link-filter-select">
+            <option value="">Todas as Arcanas</option>
+          </select>
+          <select id="link-filter-status" class="link-filter-select">
+            <option value="">Todos os Status</option>
+            <option value="Ativo">Ativo</option>
+            <option value="Pausado">Pausado</option>
+            <option value="Concluído">Concluído</option>
+            <option value="Bloqueado">Bloqueado</option>
+            <option value="Rompido">Rompido</option>
+          </select>
+          <select id="link-sort" class="link-filter-select">
+            <option value="none">Ordenar…</option>
+            <option value="rank-desc">Rank ↓</option>
+            <option value="rank-asc">Rank ↑</option>
+            <option value="name-asc">Nome A–Z</option>
+          </select>
+          <button class="mini" id="add-link">+ Vínculo</button>
+        </div>
+      </section>
+
+      <!-- Cards — container principal (id preservado para MutationObserver) -->
+      <div id="tbl-link" class="link-card-grid"></div>
+
     </div>
 
     <!-- VIEW: ANOTAÇÕES -->
