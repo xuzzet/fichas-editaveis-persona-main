@@ -127,7 +127,7 @@ export function addInventoryItem(data, targetLocal) {
         '<input class="eq-peso" type="number" min="0" step="0.1" value="0"/></label>' +
       '<label class="eq-stat"><span class="eq-stat-label">Qtd</span>' +
         '<input class="eq-qtd" type="number" min="1" step="1" value="1"/></label>' +
-      '<span class="eq-total-display">= 0 kg</span>' +
+      '<span class="eq-total-display">= 0</span>' +
     '</div>' +
     '<textarea class="eq-ef" rows="2" placeholder="Efeito / Notas (opcional)"></textarea>';
 
@@ -141,7 +141,7 @@ export function addInventoryItem(data, targetLocal) {
   function updateTotal() {
     var w = Number(card.querySelector('.eq-peso').value) || 0;
     var q = Number(card.querySelector('.eq-qtd').value) || 1;
-    card.querySelector('.eq-total-display').textContent = '= ' + Math.round(w * q * 100) / 100 + ' kg';
+    card.querySelector('.eq-total-display').textContent = '= ' + Math.round(w * q * 100) / 100;
   }
   updateTotal();
 
