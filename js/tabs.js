@@ -6,28 +6,43 @@
 export function initTabs() {
   var tabs = Array.from(document.querySelectorAll('.tab'));
   var views = Array.from(document.querySelectorAll('.view'));
-  if (!tabs.length || !views.length) return;
+
+  if (!tabs.length || !views.length) {
+    console.warn('[tabs] Abas ou views não encontradas no DOM.');
+    return;
+  }
+
+  function activateTab(viewId) {
+    tabs.forEach(function(t) {
+      t.classList.toggle('active', t.dataset.view === viewId);
+    });
+    views.forEach(function(v) {
+      v.classList.toggle('active', v.id === viewId);
+    });
+    // Auto-resize textareas que ficaram visíveis
+    requestAnimationFrame(function() {
+      if (typeof window.initAutoResizeTextareas === 'function') {
+        window.initAutoResizeTextareas();
+      }
+    });
+  }
 
   tabs.forEach(function(tab) {
     tab.addEventListener('click', function() {
-      var target = tab.dataset.target;
-      tabs.forEach(function(t) { t.classList.remove('active'); });
-      views.forEach(function(v) { v.classList.remove('active'); });
-      tab.classList.add('active');
-      var view = document.getElementById(target);
-      if (view) view.classList.add('active');
-
-      // Após mudar de aba, inicializar auto-resize para os novos textareas visíveis
-      requestAnimationFrame(function() {
-        if (typeof window.initAutoResizeTextareas === 'function') {
-          window.initAutoResizeTextareas();
-        }
-      });
+      var viewId = tab.dataset.view;
+      if (!viewId) return;
+      if (!document.getElementById(viewId)) {
+        console.warn('[tabs] View não encontrada: ' + viewId);
+        return;
+      }
+      activateTab(viewId);
     });
   });
 
-  // Ativar primeira aba por padrão
-  if (tabs[0] && !tabs.some(function(t) { return t.classList.contains('active'); })) {
-    tabs[0].click();
+  // Ativar a aba que já tem .active no HTML, ou a primeira
+  var activeTab = document.querySelector('.tab.active');
+  var firstTab = activeTab || tabs[0];
+  if (firstTab && firstTab.dataset.view) {
+    activateTab(firstTab.dataset.view);
   }
 }

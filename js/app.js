@@ -185,18 +185,20 @@ function initPortrait() {
 // =============================================
 
 function initApp() {
-  initTheme();
-  initTabs();
-  initArcanaSelects();
-  buildAffinityTable();
-  buildFeitosUI();
-  buildConditionsUI();
-  buildSocialUI();
-  buildModifiersUI();
-  buildAutoSummaryPanel();
-  initInventoryButtons();
-  initPortrait();
-  initImportExport();
+  // Tabs e tema são críticos — inicializar primeiro
+  try { initTheme(); } catch(e) { console.error('[initApp] initTheme:', e); }
+  try { initTabs(); } catch(e) { console.error('[initApp] initTabs:', e); }
+
+  try { initArcanaSelects(); } catch(e) { console.error('[initApp] initArcanaSelects:', e); }
+  try { buildAffinityTable(); } catch(e) { console.error('[initApp] buildAffinityTable:', e); }
+  try { buildFeitosUI(); } catch(e) { console.error('[initApp] buildFeitosUI:', e); }
+  try { buildConditionsUI(); } catch(e) { console.error('[initApp] buildConditionsUI:', e); }
+  try { buildSocialUI(); } catch(e) { console.error('[initApp] buildSocialUI:', e); }
+  try { buildModifiersUI(); } catch(e) { console.error('[initApp] buildModifiersUI:', e); }
+  try { buildAutoSummaryPanel(); } catch(e) { console.error('[initApp] buildAutoSummaryPanel:', e); }
+  try { initInventoryButtons(); } catch(e) { console.error('[initApp] initInventoryButtons:', e); }
+  try { initPortrait(); } catch(e) { console.error('[initApp] initPortrait:', e); }
+  try { initImportExport(); } catch(e) { console.error('[initApp] initImportExport:', e); }
 }
 initApp();
 
