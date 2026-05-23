@@ -59,12 +59,12 @@ Após uma refatoração completa, o código está organizado em **15 módulos ES
 | Aba | Descrição |
 |---|---|
 | **Acesso Rápido** | Painel principal: atributos de combate com sliders, HP/PM atual e máximo, habilidades sociais com sistema de tiers, aspectos, equipamento rápido, retrato do personagem e botões de ação. |
-| **Persona** | Nome, Arcana e nível da Persona. Tabela de afinidades elementais (10 elementos × 6 relações). Grid de cards de magias & técnicas com filtros por nome, categoria e elemento, badge colorido por elemento, 6 campos de stat por card e seção colapsável de observações. |
+| **Persona** | Nome, Arcana e nível da Persona. Tabela de afinidades elementais (10 elementos × 6 relações) com ícones PNG por elemento. Grid de cards de magias & técnicas com filtros por nome, categoria e elemento, badge colorido por elemento, 6 campos de stat por card e seção colapsável de observações. |
 | **Feitos** | 45+ feitos organizados em categorias (Geral, Social, Combate, Persona, Atributos, Convicção). Cada feito exibe descrição completa, pré-requisitos e aplica seus efeitos automáticos ao ativar. |
-| **Inventário** | Gerenciamento completo de itens com separação **Equipados / Mochila**, peso por item, quantidade, cálculo automático de capacidade e barra visual de sobrecarga. |
-| **Modificadores** | Buffs e debuffs globais (flat ou percentual) sobre qualquer atributo, com toggle ativo/inativo e resumo visual. 9 condições de status pré-definidas com descrição mecânica detalhada. |
-| **Vínculos** | Registro de vínculos de Arcana: NPC, Arcana, rank (1–10) e observações. |
-| **Anotações** | Diário de sessão, objetivos, pistas/âncoras com status (Aberta / Em andamento / Resolvida) e registro de contatos/locais. |
+| **Inventário** | Gerenciamento completo de itens com separação **Equipados / Mochila** em cards visuais. Cada card exibe nome, peso, quantidade, total calculado e notas. Barra de carga com estados Normal / Pesado / Sobrecarregado. |
+| **Modificadores** | Buffs e debuffs globais (flat ou percentual) sobre qualquer atributo em cards com toggle ativo/inativo e badge de estado colorido. Resumo ativo exibido acima da lista. 9 condições de status pré-definidas com descrição mecânica detalhada. |
+| **Vínculos** | Painel de Social Links/Confidentes: painel de resumo (total, ativos, rank máximo, Arcanas presentes), barra de filtros com busca por nome, filtro por Arcana/Status e ordenação por Rank/Nome. Cada vínculo é um card com pips de rank animados, badge de status colorido (Ativo/Pausado/Concluído/Bloqueado/Rompido), campos de relação, descrição, benefício mecânico e observações. |
+| **Anotações** | Duo-grid Diário/Objetivos. Pistas & Âncoras em cards com status colorido por borda (Aberta / Em andamento / Resolvida / Falsa pista). Contatos & Locais em cards com tipo de entidade (NPC/Local/Clube/Comércio). |
 | **Lore** | Upload de retrato com modal de zoom. Histórico detalhado do personagem (origem, personalidade, aparência, motivação e 20+ campos narrativos). |
 
 ### Recursos Transversais
@@ -117,7 +117,10 @@ python -m http.server 8080
 ```
 fichas-editaveis-persona-main/
 │
-├── index.html                  # Estrutura da aplicação — 8 abas, formulários, tabelas, modais
+├── index.html                  # Estrutura da aplicação — 8 abas, formulários, cards, modais
+│
+├── Elements/                   # Ícones PNG dos elementos (Physical, Fire, Ice, Wind, Electric,
+│                               #   Psi, Nuclar, Bless, Curse, Almighty)
 │
 ├── css/                        # Módulos CSS (carregados via css/main.css)
 │   ├── main.css                # Orquestrador: @import de todos os módulos
@@ -132,10 +135,12 @@ fichas-editaveis-persona-main/
 │   ├── social-skills.css       # Hexagrama de habilidades sociais
 │   ├── spells.css              # Cards de magias & técnicas e filtros
 │   ├── feats.css               # Lista de feitos com checkboxes
-│   ├── inventory.css           # Barra de capacidade, tabelas de equipamento
-│   ├── modifiers.css           # Tabela de modificadores globais
+│   ├── inventory.css           # Barra de capacidade, cards de item (Equipados/Mochila)
+│   ├── modifiers.css           # Cards de modificadores com badge ativo/inativo
+│   ├── links.css               # Cards de vínculos, pips de rank, painel resumo, filtros
+│   ├── notes.css               # Duo-grid Diário/Objetivos, cards de pistas e contatos
 │   ├── conditions.css          # Lista de condições com checkboxes
-│   ├── persona.css             # Resumo automático (painel autos-*)
+│   ├── persona.css             # Afinidades com ícones PNG, resumo automático
 │   ├── quick-access.css        # Customizações da aba Acesso Rápido
 │   └── responsive.css          # @media mobile, touch e print
 │
@@ -145,9 +150,9 @@ fichas-editaveis-persona-main/
     ├── utils.js                # Utilitários: $, $$, clampInt, debounce
     ├── state.js                # Estado centralizado e field ID sets
     ├── calculations.js         # Cálculos puros: HP, PM, modificadores, feitos, social, condições
-    ├── ui.js                   # Cache DOM, renderFields, renderBadges, afinidades, toast, resumo
+    ├── ui.js                   # Cache DOM, renderFields, renderBadges, afinidades (PNG), toast, resumo
     ├── social-skills.js        # Painel HX (radar animado), buildSocialUI, renderSocial
-    ├── inventory.js            # Tabelas de inventário, peso, magias, vínculos, pistas, contatos
+    ├── inventory.js            # Cards de inventário, peso, magias, vínculos, pistas, contatos
     ├── feats.js                # buildFeitosUI, renderFeitos, syncFeitosToState
     ├── conditions.js           # buildConditionsUI, renderConditions, syncConditionsToState
     ├── modifiers.js            # buildModifiersUI, renderModifiers, renderModSummary
@@ -346,7 +351,8 @@ Fontes de modificadores combinadas em `recalcState()`:
   "spells":       [ { "nome": "...", "tipo": "Fogo", "custo": "8 PM", "efeito": "..." } ],
   "feitos":       [ { "id": "atleta", "ativo": true } ],
   "equip":        [ { "nome": "...", "peso": 1.5, "qtd": 1, "efeito": "...", "local": "equipado" } ],
-  "links":        [ { "nome": "...", "arcana": "O Mago", "rank": 3, "obs": "..." } ],
+  "links":        [ { "nome": "...", "arcana": "O Mago", "rank": 3, "status": "Ativo",
+                       "relacao": "Colega de turma", "desc": "...", "beneficio": "...", "obs": "..." } ],
   "notes":        { "diary": "...", "goals": "...", "clues": [], "contacts": [] },
   "portrait":     { "src": "data:image/..." },
   "background":   { "bgOrigem": "...", "bgPersonalidade": "..." },
@@ -363,7 +369,7 @@ Fontes de modificadores combinadas em `recalcState()`:
 | Tecnologia | Versão | Uso |
 |---|---|---|
 | **HTML5** | — | Estrutura semântica da aplicação |
-| **CSS3** | — | Arquitetura modular em 18 arquivos sob `/css/`, custom properties para temas, responsividade, animações |
+| **CSS3** | — | Arquitetura modular em 20 arquivos sob `/css/`, custom properties para temas, responsividade, animações |
 | **JavaScript** | ES Modules (nativo) | Lógica de estado, cálculos, renderização, persistência |
 | [**pdf-lib**](https://pdf-lib.js.org/) | 1.17.1 | Preenchimento de PDFs modelo (CDN) |
 | [**html2canvas**](https://html2canvas.hertzen.com/) | 1.4.1 | Captura visual em PNG (CDN) |
