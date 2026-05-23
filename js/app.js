@@ -9,7 +9,8 @@ import { recalcState, validateState } from './calculations.js';
 import {
   ids, render, renderFields, renderBadges, renderAffinities, renderPortrait,
   renderBackground, buildAffinityTable, showToast, buildAutoSummaryPanel,
-  renderAutoSummary, initArcanaSelects, autoResizeTextarea, initAutoResizeTextareas
+  renderAutoSummary, initArcanaSelects, autoResizeTextarea, initAutoResizeTextareas,
+  initLoreCollapse
 } from './ui.js';
 import { renderSocial, buildSocialUI } from './social-skills.js';
 import {
@@ -201,6 +202,7 @@ function initApp() {
   try { buildAutoSummaryPanel(); } catch(e) { console.error('[initApp] buildAutoSummaryPanel:', e); }
   try { initInventoryButtons(); } catch(e) { console.error('[initApp] initInventoryButtons:', e); }
   try { initLinkFilters(); } catch(e) { console.error('[initApp] initLinkFilters:', e); }
+  try { initLoreCollapse(); } catch(e) { console.error('[initApp] initLoreCollapse:', e); }
   try { initPortrait(); } catch(e) { console.error('[initApp] initPortrait:', e); }
   try { initImportExport(); } catch(e) { console.error('[initApp] initImportExport:', e); }
 }

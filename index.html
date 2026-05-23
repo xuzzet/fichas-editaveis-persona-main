@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
@@ -225,7 +225,9 @@
 
     <!-- VIEW: BACKGROUND -->
     <div class="view" id="background">
-      <section class="card">
+
+      <!-- Retrato -->
+      <section class="card lore-portrait-section">
         <div class="section-title"><div class="bar"></div><h2>Retrato do Personagem</h2></div>
         <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
           <div>
@@ -240,59 +242,293 @@
           <button id="portraitModalClose" style="position:absolute;top:24px;right:32px;font-size:22px;padding:10px 18px;border-radius:12px;background:var(--accent);color:#222;font-weight:900;cursor:pointer;">Fechar</button>
         </div>
       </section>
-      <section class="card">
-        <div class="section-title"><div class="bar"></div><h2>Histórico e Detalhes</h2></div>
-        <div class="grid two">
-          <div>
-            <label>Cidade Natal</label><textarea id="bgHometown" rows="1" placeholder="Ex: São Paulo, interior, estrangeiro..."></textarea>
-            <label>Pais/Responsáveis</label><textarea id="bgParents" rows="1" placeholder="Ex: Mãe solteira, avós, tutores..."></textarea>
-            <label>Eventos Notáveis</label><textarea id="bgEvents" rows="1" placeholder="Ex: Mudança, acidente, prêmio, trauma..."></textarea>
-            <label>Ocupação/Hobbies</label><textarea id="bgOccHobbies" rows="1" placeholder="Ex: Estudante, atleta, músico, gamer..."></textarea>
-            <label>Educação Formal</label><textarea id="bgEducation" rows="1" placeholder="Ex: Ensino médio, faculdade, curso técnico..."></textarea>
-            <label>Trabalho</label><textarea id="bgJob" rows="1" placeholder="Ex: Estagiário, vendedor, autônomo..."></textarea>
-            <label>Experiências Passadas</label><textarea id="bgPastExp" rows="1" placeholder="Ex: Viagens, empregos, voluntariado..."></textarea>
-            <label>Hobbies</label><textarea id="bgHobbies" rows="1" placeholder="Ex: Leitura, esportes, coleções..."></textarea>
-            <label>Pessoal</label><textarea id="bgPersonal" rows="1" placeholder="Ex: Reservado, extrovertido, tímido..."></textarea>
-            <label>Medos</label><textarea id="bgFears" rows="1" placeholder="Ex: Altura, escuro, rejeição..."></textarea>
-            <label>Ambições</label><textarea id="bgAmbitions" rows="1" placeholder="Ex: Ser famoso, ajudar pessoas..."></textarea>
-            <label>Sonho</label><textarea id="bgDream" rows="1" placeholder="Ex: Viajar o mundo, publicar um livro..."></textarea>
-            <label>Filosofia/Preferências</label><textarea id="bgPhilosophy" rows="1" placeholder="Ex: Otimismo, minimalismo, espiritualidade..."></textarea>
-          </div>
-          <div>
-            <label>Comida Favorita</label><textarea id="bgFood" rows="1" placeholder="Ex: Sushi, pizza, churrasco..."></textarea>
-            <label>Música</label><textarea id="bgMusic" rows="1" placeholder="Ex: Rock, pop, MPB, clássica..."></textarea>
-            <label>Televisão</label><textarea id="bgTV" rows="1" placeholder="Ex: Séries, novelas, reality show..."></textarea>
-            <label>Literatura</label><textarea id="bgLiterature" rows="1" placeholder="Ex: Fantasia, romance, mangá..."></textarea>
-            <label>Economia</label><textarea id="bgEconomic" rows="1" placeholder="Ex: Classe média, dificuldades..."></textarea>
-            <label>Situação Financeira</label><textarea id="bgFinancial" rows="1" placeholder="Ex: Estável, endividado, confortável..."></textarea>
-            <label>Moradia</label><textarea id="bgHousing" rows="1" placeholder="Ex: Apartamento, casa, república..."></textarea>
-            <label>Vida Social</label><textarea id="bgSocial" rows="1" placeholder="Ex: Muitos amigos, poucos contatos..."></textarea>
-            <label>Relacionamentos</label><textarea id="bgRelationships" rows="1" placeholder="Ex: Solteiro, namorando, família próxima..."></textarea>
-            <label>Idiomas</label><textarea id="bgLanguages" rows="1" placeholder="Ex: Português, inglês, japonês..."></textarea>
-            <label>Aliados</label><textarea id="bgAllies" rows="1" placeholder="Ex: Amigos, colegas, mentores..."></textarea>
-            <label>Rivais</label><textarea id="bgRivals" rows="1" placeholder="Ex: Concorrentes, inimigos, ex..."></textarea>
-            <label>Fama</label><textarea id="bgFame" rows="1" placeholder="Ex: Conhecido na escola, anônimo..."></textarea>
-          </div>
-        </div>
-      </section>
-      <section class="card">
-        <div class="section-title"><div class="bar"></div><h2>Características Físicas</h2></div>
-        <div class="grid two">
-          <div>
-            <label>Altura/Peso</label><textarea id="bgHeightWeight" rows="1" placeholder="Ex: 1,75m / 68kg"></textarea>
-            <label>Cabelo</label><textarea id="bgHair" rows="1" placeholder="Ex: Preto, curto, cacheado..."></textarea>
-            <label>Olhos</label><textarea id="bgEyes" rows="1" placeholder="Ex: Castanhos, verdes, grandes..."></textarea>
-            <label>Piercings/Tatuagens</label><textarea id="bgPiercingTattoo" rows="1" placeholder="Ex: Tatuagem no braço, piercing no nariz..."></textarea>
-          </div>
-          <div>
-            <label>Cicatrizes</label><textarea id="bgScars" rows="1" placeholder="Ex: Corte na sobrancelha, queimadura..."></textarea>
-            <label>Vestuário</label><textarea id="bgClothing" rows="1" placeholder="Ex: Jaqueta, tênis, estilo casual..."></textarea>
-            <label>Constituição</label><textarea id="bgBuild" rows="1" placeholder="Ex: Forte, magro, atlético..."></textarea>
-          </div>
-        </div>
-      </section>
-    </div>
 
+      <!-- Bloco 1: Identidade Narrativa (full width) -->
+      <section class="card lore-block lore-block--full">
+        <div class="lore-block-header">
+          <div class="lore-block-icon">&#x1F3AD;</div>
+          <h2 class="lore-block-title">Identidade Narrativa</h2>
+        </div>
+        <div class="lore-grid-2">
+          <div class="lore-field lore-field--span2">
+            <label>Conceito em Uma Frase</label>
+            <textarea id="bgConceito" rows="2" placeholder="Ex: Um g&#234;nio incompreendido que esconde sua dor com humor negro&hellip;"></textarea>
+          </div>
+          <div class="lore-field">
+            <label>Arqu&#233;tipo</label>
+            <input id="bgArquetipo" placeholder="Ex: O Her&#243;i, O S&#225;bio, O Rebelde&hellip;">
+          </div>
+          <div class="lore-field">
+            <label>Tema / Leitmotif</label>
+            <input id="bgTema" placeholder="Ex: Aceita&#231;&#227;o, Reden&#231;&#227;o, Identidade&hellip;">
+          </div>
+          <div class="lore-field lore-field--span2">
+            <label>Frase Marcante</label>
+            <textarea id="bgFrase" rows="2" placeholder="Ex: &apos;N&#227;o importa o que aconte&#231;a, eu vou seguir em frente.&apos;"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- Blocos 2 & 3: Aparencia + Personalidade -->
+      <div class="lore-duo">
+
+        <!-- Bloco 2: Aparencia -->
+        <section class="card lore-block">
+          <div class="lore-block-header">
+            <div class="lore-block-icon">&#x1F464;</div>
+            <h2 class="lore-block-title">Apar&#234;ncia</h2>
+          </div>
+          <div class="lore-field-list">
+            <div class="lore-field">
+              <label>Altura / Peso</label>
+              <textarea id="bgHeightWeight" rows="1" placeholder="Ex: 1,75 m / 68 kg"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Constitui&#231;&#227;o</label>
+              <textarea id="bgBuild" rows="1" placeholder="Ex: Forte, magro, atl&#233;tico&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Cabelo</label>
+              <textarea id="bgHair" rows="1" placeholder="Ex: Preto, curto, cacheado&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Olhos</label>
+              <textarea id="bgEyes" rows="1" placeholder="Ex: Castanhos, verdes, grandes&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Vestu&#225;rio</label>
+              <textarea id="bgClothing" rows="2" placeholder="Ex: Jaqueta de couro, t&#234;nis brancos, estilo casual&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Cicatrizes</label>
+              <textarea id="bgScars" rows="1" placeholder="Ex: Corte na sobrancelha, queimadura no bra&#231;o&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Piercings / Tatuagens</label>
+              <textarea id="bgPiercingTattoo" rows="1" placeholder="Ex: Tatuagem no bra&#231;o, piercing no nariz&hellip;"></textarea>
+            </div>
+          </div>
+        </section>
+
+        <!-- Bloco 3: Personalidade -->
+        <section class="card lore-block">
+          <div class="lore-block-header">
+            <div class="lore-block-icon">&#x1F9E0;</div>
+            <h2 class="lore-block-title">Personalidade</h2>
+          </div>
+          <div class="lore-field-list">
+            <div class="lore-field">
+              <label>Tra&#231;os Gerais</label>
+              <textarea id="bgPersonal" rows="2" placeholder="Ex: Reservado, anal&#237;tico, com senso de humor seco&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Filosofia / Valores</label>
+              <textarea id="bgPhilosophy" rows="2" placeholder="Ex: Acredita que a verdade sempre prevalece&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Medos</label>
+              <textarea id="bgFears" rows="1" placeholder="Ex: Altura, rejei&#231;&#227;o, perder quem ama&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Ambi&#231;&#245;es</label>
+              <textarea id="bgAmbitions" rows="1" placeholder="Ex: Provar seu valor, proteger a fam&#237;lia&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Sonho</label>
+              <textarea id="bgDream" rows="1" placeholder="Ex: Viajar o mundo, publicar um livro&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Hobbies</label>
+              <textarea id="bgHobbies" rows="1" placeholder="Ex: Leitura, esportes, cole&#231;&#245;es&hellip;"></textarea>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- .lore-duo -->
+
+      <!-- Bloco 4: Historia (full width, colapsavel) -->
+      <section class="card lore-block lore-block--full">
+        <button class="lore-collapse-btn" data-target="hist-body" aria-expanded="true">
+          <div class="lore-block-header">
+            <div class="lore-block-icon">&#x1F4D6;</div>
+            <h2 class="lore-block-title">Hist&#243;ria</h2>
+          </div>
+          <span class="lore-collapse-arrow">&#9650;</span>
+        </button>
+        <div class="lore-collapsible" id="hist-body">
+          <div class="lore-grid-2">
+            <div class="lore-field">
+              <label>Cidade Natal</label>
+              <textarea id="bgHometown" rows="1" placeholder="Ex: S&#227;o Paulo, interior, estrangeiro&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Pais / Respons&#225;veis</label>
+              <textarea id="bgParents" rows="1" placeholder="Ex: M&#227;e solteira, av&#243;s, tutores&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Educa&#231;&#227;o Formal</label>
+              <textarea id="bgEducation" rows="1" placeholder="Ex: Ensino m&#233;dio, faculdade, curso t&#233;cnico&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Trabalho / Ocupa&#231;&#227;o</label>
+              <textarea id="bgJob" rows="1" placeholder="Ex: Estagi&#225;rio, vendedor, aut&#244;nomo&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Situa&#231;&#227;o Econ&#244;mica</label>
+              <textarea id="bgEconomic" rows="1" placeholder="Ex: Classe m&#233;dia, dificuldades&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Situa&#231;&#227;o Financeira</label>
+              <textarea id="bgFinancial" rows="1" placeholder="Ex: Est&#225;vel, endividado, confort&#225;vel&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Moradia</label>
+              <textarea id="bgHousing" rows="1" placeholder="Ex: Apartamento, casa, rep&#250;blica&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Idiomas</label>
+              <textarea id="bgLanguages" rows="1" placeholder="Ex: Portugu&#234;s, ingl&#234;s, japon&#234;s&hellip;"></textarea>
+            </div>
+            <div class="lore-field lore-field--span2">
+              <label>Eventos Not&#225;veis</label>
+              <textarea id="bgEvents" rows="2" placeholder="Ex: Mudan&#231;a, acidente, pr&#234;mio, perda marcante&hellip;"></textarea>
+            </div>
+            <div class="lore-field lore-field--span2">
+              <label>Experi&#234;ncias Passadas</label>
+              <textarea id="bgPastExp" rows="2" placeholder="Ex: Viagens, empregos, volunt&#225;riado, aventuras&hellip;"></textarea>
+            </div>
+            <div class="lore-field lore-field--span2">
+              <label>Ocupa&#231;&#227;o / Hobbies Anteriores</label>
+              <textarea id="bgOccHobbies" rows="1" placeholder="Ex: Atleta amador, monitor escolar&hellip;"></textarea>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Blocos 5 & 6: Relacoes + Gostos -->
+      <div class="lore-duo">
+
+        <!-- Bloco 5: Relacoes Importantes -->
+        <section class="card lore-block">
+          <div class="lore-block-header">
+            <div class="lore-block-icon">&#x1F91D;</div>
+            <h2 class="lore-block-title">Rela&#231;&#245;es Importantes</h2>
+          </div>
+          <div class="lore-field-list">
+            <div class="lore-field">
+              <label>Aliados / Amigos</label>
+              <textarea id="bgAllies" rows="2" placeholder="Ex: Melhor amigo desde inf&#226;ncia, mentor no trabalho&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Rivais / Inimigos</label>
+              <textarea id="bgRivals" rows="2" placeholder="Ex: Concorrentes, ex-parceiros, antagonistas&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Relacionamentos Afetivos</label>
+              <textarea id="bgRelationships" rows="1" placeholder="Ex: Solteiro, namorando, fam&#237;lia pr&#243;xima&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Vida Social</label>
+              <textarea id="bgSocial" rows="1" placeholder="Ex: Muitos amigos, poucos contatos pr&#243;ximos&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Fama / Reputa&#231;&#227;o</label>
+              <textarea id="bgFame" rows="1" placeholder="Ex: Conhecido na escola, an&#244;nimo&hellip;"></textarea>
+            </div>
+          </div>
+        </section>
+
+        <!-- Bloco 6: Gostos & Cultura -->
+        <section class="card lore-block">
+          <div class="lore-block-header">
+            <div class="lore-block-icon">&#x1F3B5;</div>
+            <h2 class="lore-block-title">Gostos &amp; Cultura</h2>
+          </div>
+          <div class="lore-field-list">
+            <div class="lore-field">
+              <label>Comida Favorita</label>
+              <textarea id="bgFood" rows="1" placeholder="Ex: Sushi, pizza, churrasco&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>M&#250;sica</label>
+              <textarea id="bgMusic" rows="1" placeholder="Ex: Rock, pop, MPB, cl&#225;ssica&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Televis&#227;o / Streaming</label>
+              <textarea id="bgTV" rows="1" placeholder="Ex: S&#233;ries, novelas, reality show&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Literatura</label>
+              <textarea id="bgLiterature" rows="1" placeholder="Ex: Fantasia, romance, mang&#225;&hellip;"></textarea>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- .lore-duo -->
+
+      <!-- Blocos 7 & 8: Segredos + Evolucao -->
+      <div class="lore-duo">
+
+        <!-- Bloco 7: Segredos & Gatilhos (colapsavel) -->
+        <section class="card lore-block lore-block--sensitive">
+          <button class="lore-collapse-btn" data-target="seg-body" aria-expanded="true">
+            <div class="lore-block-header">
+              <div class="lore-block-icon">&#x1F512;</div>
+              <h2 class="lore-block-title">Segredos &amp; Gatilhos</h2>
+            </div>
+            <span class="lore-collapse-arrow">&#9650;</span>
+          </button>
+          <div class="lore-collapsible" id="seg-body">
+            <div class="lore-field-list">
+              <div class="lore-field">
+                <label>Segredos</label>
+                <textarea id="bgSegredos" rows="2" placeholder="Ex: Algo que ningu&#233;m sabe, vergonha guardada&hellip;"></textarea>
+              </div>
+              <div class="lore-field">
+                <label>Culpa</label>
+                <textarea id="bgCulpa" rows="2" placeholder="Ex: Algo que fez ou deixou de fazer&hellip;"></textarea>
+              </div>
+              <div class="lore-field">
+                <label>Traumas</label>
+                <textarea id="bgTraumas" rows="2" placeholder="Ex: Experi&#234;ncias que moldaram negativamente&hellip;"></textarea>
+              </div>
+              <div class="lore-field">
+                <label>Gatilhos Emocionais</label>
+                <textarea id="bgGatilhos" rows="2" placeholder="Ex: O que faz o personagem reagir de forma intensa&hellip;"></textarea>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Bloco 8: Evolucao do Personagem -->
+        <section class="card lore-block">
+          <div class="lore-block-header">
+            <div class="lore-block-icon">&#x1F331;</div>
+            <h2 class="lore-block-title">Evolu&#231;&#227;o do Personagem</h2>
+          </div>
+          <div class="lore-field-list">
+            <div class="lore-field">
+              <label>Como era antes</label>
+              <textarea id="bgEraAntes" rows="2" placeholder="Ex: T&#237;mido e inseguro, sem acreditar em si mesmo&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Como &#233; agora</label>
+              <textarea id="bgAgora" rows="2" placeholder="Ex: Mais confiante, mas ainda guarda suas d&#250;vidas&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Grandes Mudan&#231;as</label>
+              <textarea id="bgMudancas" rows="2" placeholder="Ex: Eventos que o transformaram profundamente&hellip;"></textarea>
+            </div>
+            <div class="lore-field">
+              <label>Decis&#245;es Marcantes</label>
+              <textarea id="bgDecisoes" rows="2" placeholder="Ex: Escolhas dif&#237;ceis que definiram seu caminho&hellip;"></textarea>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- .lore-duo -->
+
+    </div>
     <!-- VIEW: PERSONA -->
   <div class="view" id="persona">
       <section class="card">

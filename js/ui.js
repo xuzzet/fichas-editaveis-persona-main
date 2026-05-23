@@ -290,6 +290,19 @@ export function renderBackground() {
   });
 }
 
+export function initLoreCollapse() {
+  document.querySelectorAll('.lore-collapse-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var targetId = btn.getAttribute('data-target');
+      var body = document.getElementById(targetId);
+      if (!body) return;
+      var expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+      body.classList.toggle('lore-collapsed', expanded);
+    });
+  });
+}
+
 // =============================================
 // AFINIDADES
 // =============================================
