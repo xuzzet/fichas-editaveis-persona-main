@@ -34,8 +34,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
   if (portraitZoomBtn && portraitModal && portraitModalImg && portraitModalClose) {
     portraitZoomBtn.addEventListener('click', function() {
-      if (portraitImgSrc) {
-        portraitModalImg.src = portraitImgSrc;
+      // Prefer src from DOM (works after loading from localStorage) then fall back to the
+      // closure variable set by the file picker.
+      var imgEl = portraitPreview ? portraitPreview.querySelector('img') : null;
+      var src = (imgEl && imgEl.src) || portraitImgSrc;
+      if (src) {
+        portraitModalImg.src = src;
         portraitModal.style.display = 'flex';
       }
     });
@@ -1022,7 +1026,7 @@ var themeMap = {
   padrao: 'theme-padrao', roxo: 'theme-roxo', claro: 'theme-claro',
   vermelho: 'theme-vermelho', degrade: 'theme-degrade',
   corinthians: 'theme-corinthians', rosa: 'theme-rosa',
-  kamenrider: 'theme-kamenrider'
+  kamenrider: 'theme-kamenrider', amarelo: 'theme-amarelo'
 };
 function applyTheme(theme) {
   Object.values(themeMap).forEach(function(cls) { document.body.classList.remove(cls); });
@@ -2345,7 +2349,11 @@ if (saveBtn) saveBtn.addEventListener("click", function() {
     showToast("\u2713 Ficha salva com sucesso", 'success');
   } catch (e) {
     console.error("[Salvar] Erro ao salvar ficha:", e);
-    showToast("Erro ao salvar a ficha", 'error');
+    if (e && (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED' || (e.code && e.code === 22))) {
+      showToast("Espa\u00e7o insuficiente no navegador (retrato muito grande?)", 'error', 5000);
+    } else {
+      showToast("Erro ao salvar a ficha", 'error');
+    }
   }
 });
 
@@ -2572,8 +2580,13 @@ function autoSave() {
     localStorage.setItem("ficha-yby-p3r-skin", json);
     showSaveStatus('Salvo \u2714', 2000);
   } catch (e) {
-    console.warn("[Auto-save] Erro ao salvar:", e);
-    showSaveStatus('Erro ao salvar', 3000);
+    if (e && (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED' || (e.code && e.code === 22))) {
+      console.warn("[Auto-save] localStorage cheio (retrato muito grande?):", e);
+      showSaveStatus('Espa\u00e7o insuficiente', 4000);
+    } else {
+      console.warn("[Auto-save] Erro ao salvar:", e);
+      showSaveStatus('Erro ao salvar', 3000);
+    }
   } finally {
     _saving = false;
   }

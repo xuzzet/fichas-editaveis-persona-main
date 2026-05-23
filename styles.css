@@ -235,12 +235,7 @@
   transition: opacity 0.28s ease;
 }
 
-/* Feedback visual para erro de campo obrigatório */
-.input-error {
-  border: 2px solid var(--danger) !important;
-  background: rgba(232, 84, 110, 0.08) !important;
-  box-shadow: 0 0 0 2px var(--danger);
-}
+/* Feedback visual para erro de campo obrigatório (regra definida em "Form Feedback" abaixo) */
 body.theme-padrao {
   --ink: #e2eef8;
   --ink-dim: #8ea8c2;
@@ -647,6 +642,7 @@ html {
 /* ===== Form Feedback ===== */
 .input-error {
   border-color: var(--danger) !important;
+  background: color-mix(in srgb, var(--danger) 8%, var(--bg)) !important;
   box-shadow:
     0 0 0 3px rgba(232, 84, 110, 0.18),
     inset 0 0 0 1px rgba(232, 84, 110, 0.25) !important;
@@ -1251,8 +1247,8 @@ td {
   width: 100%;
   padding: 8px 10px;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid color-mix(in srgb, var(--stroke) 60%, transparent);
+  background: color-mix(in srgb, var(--bg-3) 50%, transparent);
   color: var(--ink);
   font-size: 14px;
   line-height: 1.2;
@@ -1982,18 +1978,18 @@ button:active {
   padding: 2px 8px;
   margin-right: 4px;
   cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--stroke);
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--ink-dim, #aaa);
+  background: var(--bg-2);
+  color: var(--ink-dim);
   transition:
     background 0.2s,
     color 0.2s;
 }
 
 .eq-move-btn:hover {
-  background: var(--accent, #00e5ff);
-  color: #000;
+  background: var(--accent);
+  color: var(--bg);
 }
 
 /* =============================================
