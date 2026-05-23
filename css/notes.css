@@ -5,15 +5,29 @@
 .notes-duo-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: var(--space-4);
   margin-bottom: 0;
+  align-items: start;
+}
+
+/* Cards do par Diário / Objetivos: layout coluna para espaçamento interno */
+.notes-card--diario,
+.notes-card--objetivos {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Textarea mínimo igual nos dois cards — sem flex:1 para não esticar */
+.notes-card--diario .notes-big-textarea,
+.notes-card--objetivos .notes-big-textarea {
+  min-height: 160px;
 }
 
 .notes-big-textarea {
   width: 100%;
   min-height: 160px;
   resize: vertical;
-  margin-top: 8px;
+  margin-top: var(--space-2);
   box-sizing: border-box;
 }
 
@@ -21,8 +35,8 @@
 .clue-list-wrap {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 10px;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
 }
 
 .clue-card {
@@ -30,10 +44,10 @@
   border: 1px solid var(--stroke);
   border-left: 3px solid var(--stroke);
   border-radius: 10px;
-  padding: 12px 14px;
+  padding: var(--space-3) var(--space-4);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-2);
   transition: border-color 0.2s;
 }
 
@@ -55,7 +69,7 @@
 .clue-card-top {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .cl-t {
@@ -92,9 +106,9 @@
   background: var(--bg-2);
   border: 1px solid var(--stroke);
   border-radius: 6px;
-  padding: 6px 8px;
+  padding: var(--space-2) var(--space-2);
   resize: vertical;
-  min-height: 36px;
+  min-height: 48px;
   color: var(--ink);
   width: 100%;
   box-sizing: border-box;
@@ -104,18 +118,18 @@
 .ctt-list-wrap {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 10px;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
 }
 
 .ctt-card {
   background: var(--bg-3);
   border: 1px solid var(--stroke);
   border-radius: 10px;
-  padding: 12px 14px;
+  padding: var(--space-3) var(--space-4);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-2);
   transition: border-color 0.2s;
 }
 
@@ -126,7 +140,7 @@
 .ctt-card-top {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .ct-n {
@@ -162,9 +176,9 @@
   background: var(--bg-2);
   border: 1px solid var(--stroke);
   border-radius: 6px;
-  padding: 6px 8px;
+  padding: var(--space-2) var(--space-2);
   resize: vertical;
-  min-height: 36px;
+  min-height: 48px;
   color: var(--ink);
   width: 100%;
   box-sizing: border-box;
@@ -173,5 +187,6 @@
 @media (max-width: 600px) {
   .notes-duo-grid {
     grid-template-columns: 1fr;
+    gap: var(--space-3);
   }
 }

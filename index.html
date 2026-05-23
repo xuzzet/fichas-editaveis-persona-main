@@ -229,18 +229,12 @@
       <!-- Retrato -->
       <section class="card lore-portrait-section">
         <div class="section-title"><div class="bar"></div><h2>Retrato do Personagem</h2></div>
-        <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
-          <div>
-            <input type="file" id="portraitInput" accept="image/*" style="display:none">
-            <button class="mini" id="portraitBtn">Selecionar Imagem</button>
-            <button class="mini" id="portraitZoomBtn" style="margin-left:8px;">Ampliar Imagem</button>
-            <div id="portraitPreview" style="margin-top:10px;"></div>
-          </div>
+        <div class="portrait-controls">
+          <input type="file" id="portraitInput" accept="image/*" style="display:none">
+          <button class="mini" id="portraitBtn">Selecionar Imagem</button>
+          <button class="mini" id="portraitZoomBtn">Ampliar Imagem</button>
         </div>
-        <div id="portraitModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;">
-          <img id="portraitModalImg" src="" alt="Retrato Ampliado" style="max-width:90vw;max-height:90vh;border-radius:18px;border:3px solid var(--accent);box-shadow:0 0 40px #000;" />
-          <button id="portraitModalClose" style="position:absolute;top:24px;right:32px;font-size:22px;padding:10px 18px;border-radius:12px;background:var(--accent);color:#222;font-weight:900;cursor:pointer;">Fechar</button>
-        </div>
+        <div id="portraitPreview" class="portrait-preview"></div>
       </section>
 
       <!-- Bloco 1: Identidade Narrativa (full width) -->
@@ -273,7 +267,7 @@
       <div class="lore-duo">
 
         <!-- Bloco 2: Aparencia -->
-        <section class="card lore-block">
+        <section class="card lore-block lore-card--aparencia">
           <div class="lore-block-header">
             <div class="lore-block-icon">&#x1F464;</div>
             <h2 class="lore-block-title">Apar&#234;ncia</h2>
@@ -311,7 +305,7 @@
         </section>
 
         <!-- Bloco 3: Personalidade -->
-        <section class="card lore-block">
+        <section class="card lore-block lore-card--personalidade">
           <div class="lore-block-header">
             <div class="lore-block-icon">&#x1F9E0;</div>
             <h2 class="lore-block-title">Personalidade</h2>
@@ -699,11 +693,11 @@
     <div class="view" id="notes">
 
       <div class="notes-duo-grid">
-        <section class="card">
+        <section class="card notes-card--diario">
           <div class="section-title"><div class="bar"></div><h2>Diário</h2></div>
           <textarea id="NotesDiary" class="notes-big-textarea" placeholder="Resumo das sessões, momentos marcantes, pensamentos do personagem..."></textarea>
         </section>
-        <section class="card">
+        <section class="card notes-card--objetivos">
           <div class="section-title"><div class="bar"></div><h2>Objetivos</h2></div>
           <textarea id="NotesGoals" class="notes-big-textarea" placeholder="Curto prazo (semana), médio (bimestre), longo (ano)."></textarea>
         </section>
@@ -743,6 +737,15 @@
     </div>
 
     </div>
+
+  <!-- Modal de retrato — fora de qualquer .card para não herdar transform -->
+  <div id="portraitModal" class="portrait-modal" aria-hidden="true">
+    <div class="portrait-modal__backdrop"></div>
+    <div class="portrait-modal__content">
+      <button id="portraitModalClose" class="portrait-modal__close" type="button" aria-label="Fechar">&#x2715;</button>
+      <img id="portraitModalImg" class="portrait-modal__img" src="" alt="Retrato ampliado">
+    </div>
+  </div>
 
   <!-- Scripts do app -->
   <script type="module" src="./js/app.js"></script>

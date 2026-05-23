@@ -4,9 +4,9 @@
 .hud {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-4);
   border-bottom: 1px solid color-mix(in srgb, var(--stroke) 50%, transparent);
 }
 .slash {
@@ -20,7 +20,7 @@
 
 .grid {
   display: grid;
-  gap: 20px;
+  gap: var(--space-5);
 }
 
 @media (max-width: 600px) {
@@ -43,12 +43,12 @@
 
 .row {
   display: grid;
-  gap: 14px;
+  gap: var(--space-4);
   min-width: 0;
 }
 
 .row + .row {
-  margin-top: 6px;
+  margin-top: var(--space-3);
 }
 
 @media (min-width: 640px) {
@@ -81,7 +81,7 @@
 .row4 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
+  gap: var(--space-4);
   min-width: 0;
 }
 
@@ -101,7 +101,7 @@
   display: grid;
   grid-template-columns: 110px 1fr 68px;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-3);
   min-width: 0;
 }
 .stat b {
@@ -112,7 +112,7 @@
 
 .der {
   display: grid;
-  gap: 12px;
+  gap: var(--space-3);
   grid-template-columns: repeat(2, 1fr);
   min-width: 0;
 }
@@ -128,7 +128,7 @@
 
 /* Uniformizar espaçamento entre cards em todas as views */
 .view .card {
-  margin-bottom: 24px;
+  margin-bottom: var(--space-5);
 }
 .view .card:last-child {
   margin-bottom: 0;
@@ -136,7 +136,7 @@
 
 @media (max-width: 600px) {
   .view .card {
-    margin-bottom: 16px;
+    margin-bottom: var(--space-4);
   }
 }
 

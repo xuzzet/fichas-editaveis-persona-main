@@ -20,4 +20,12 @@
   --mobile-font: 15px;
   --tooltip-bg: #1a1a28ee;
   --tooltip-color: #e2eef8;
+
+  /* ── Espaçamento ── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
 }

@@ -275,7 +275,6 @@ export function renderPortrait() {
     var img = document.createElement('img');
     img.src = state.portrait.src;
     img.alt = 'Retrato';
-    img.style.cssText = 'max-width:180px;max-height:220px;border-radius:12px;border:2px solid var(--accent);';
     prev.appendChild(img);
   } else {
     prev.innerHTML = '';

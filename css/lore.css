@@ -6,13 +6,27 @@
 .lore-duo {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 18px;
+  gap: var(--space-4);
   margin-bottom: 0;
+  align-items: start;
+}
+
+/* Cards do par Aparência / Personalidade: layout coluna para espaçamento interno */
+.lore-card--aparencia,
+.lore-card--personalidade {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Field-list cresce apenas pelo próprio conteúdo — sem flex:1 */
+.lore-card--aparencia .lore-field-list,
+.lore-card--personalidade .lore-field-list {
+  flex: 0 1 auto;
 }
 
 /* Bloco base (herda .card do tema) */
 .lore-block {
-  padding: 20px 22px 18px;
+  padding: var(--space-4);
 }
 
 /* Bloco que ocupa largura total */
@@ -24,8 +38,8 @@
 .lore-block-header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 16px;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
 }
 
 .lore-block-icon {
@@ -49,7 +63,7 @@
 .lore-grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px 18px;
+  gap: var(--space-3) var(--space-4);
 }
 
 /* Campo span-2: ocupa as duas colunas */
@@ -61,14 +75,14 @@
 .lore-field-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 /* Campo individual */
 .lore-field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
 }
 
 .lore-field label {
@@ -83,12 +97,12 @@
 .lore-field input[type="text"],
 .lore-field input:not([type]) {
   resize: vertical;
-  min-height: 32px;
+  min-height: 48px;
   background: var(--bg-2);
   border: 1px solid var(--stroke);
   border-radius: 7px;
   color: var(--ink);
-  padding: 6px 10px;
+  padding: var(--space-2) var(--space-2);
   font-size: 0.87rem;
   transition: border-color 0.15s;
 }
@@ -142,7 +156,7 @@
     opacity 0.2s ease;
   max-height: 2000px;
   opacity: 1;
-  margin-top: 14px;
+  margin-top: var(--space-4);
 }
 
 .lore-collapsible.lore-collapsed {
@@ -153,6 +167,101 @@
 
 /* Seção de retrato */
 .lore-portrait-section {
+}
+
+.portrait-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-top: var(--space-3);
+}
+
+.portrait-preview {
+  margin-top: var(--space-3);
+}
+
+.portrait-preview img {
+  max-width: 180px;
+  max-height: 220px;
+  border-radius: 12px;
+  border: 2px solid var(--accent);
+  display: block;
+  cursor: zoom-in;
+}
+
+/* ── Modal de ampliação do retrato ── */
+.portrait-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+}
+
+.portrait-modal.is-open {
+  display: flex;
+}
+
+.portrait-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  cursor: pointer;
+}
+
+.portrait-modal__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: min(92vw, 900px);
+  max-height: 92vh;
+}
+
+.portrait-modal__img {
+  max-width: 100%;
+  max-height: 86vh;
+  object-fit: contain;
+  border-radius: 16px;
+  border: 2px solid var(--stroke);
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.7);
+  display: block;
+  cursor: default;
+}
+
+.portrait-modal__close {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  z-index: 2;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.15s;
+}
+
+.portrait-modal__close:hover {
+  opacity: 0.8;
+}
+
+/* Bloquear scroll do fundo enquanto modal está aberto */
+body.modal-open {
+  overflow: hidden;
 }
 
 /* ── Responsivo ── */

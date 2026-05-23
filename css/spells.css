@@ -6,14 +6,14 @@
 .spell-filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 12px;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
 }
 
 .spell-search-input {
   flex: 1 1 160px;
   min-width: 120px;
-  padding: 5px 10px;
+  padding: var(--space-2) var(--space-3);
   border-radius: 6px;
   border: 1px solid var(--stroke);
   background: var(--bg-2);
@@ -29,7 +29,7 @@
 .spell-filter-select {
   flex: 0 1 160px;
   min-width: 100px;
-  padding: 5px 8px;
+  padding: var(--space-2) var(--space-2);
   border-radius: 6px;
   border: 1px solid var(--stroke);
   background: var(--bg-2);
@@ -46,8 +46,8 @@
 .spell-header-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 14px;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
 }
 
 .spell-count {
@@ -60,8 +60,8 @@
 .spell-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 14px;
-  margin-bottom: 8px;
+  gap: var(--space-4);
+  margin-bottom: var(--space-2);
 }
 
 /* ── Card ── */
@@ -83,7 +83,7 @@
 
 /* ── Header do card ── */
 .spell-card-header {
-  padding: 10px 12px 8px;
+  padding: var(--space-3) var(--space-4) var(--space-2);
   background: var(--bg-3);
   border-bottom: 1px solid var(--stroke);
 }
@@ -91,8 +91,8 @@
 .spell-card-name-row {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 7px;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
 }
 
 .spell-name-input {
@@ -120,25 +120,25 @@
 
 .spell-card-actions {
   display: flex;
-  gap: 3px;
+  gap: var(--space-1);
   flex-shrink: 0;
 }
 .spell-card-actions .mini {
-  padding: 2px 6px;
+  padding: var(--space-1) var(--space-2);
   font-size: 11px;
-  min-width: 24px;
+  min-width: 28px;
 }
 
 /* ── Badges ── */
 .spell-card-badges {
   display: flex;
-  gap: 6px;
+  gap: var(--space-2);
   flex-wrap: wrap;
 }
 
 .spell-cat-select,
 .spell-el-select {
-  padding: 3px 7px;
+  padding: var(--space-1) var(--space-2);
   border-radius: 5px;
   font-size: 10px;
   font-weight: 700;
@@ -211,8 +211,8 @@
 .spell-stat {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 6px 8px;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-2);
   background: var(--bg-2);
 }
 
@@ -247,10 +247,10 @@
 
 /* ── Efeito/Descrição ── */
 .spell-card-desc {
-  padding: 8px 12px;
+  padding: var(--space-2) var(--space-3);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
   flex: 1;
 }
 
@@ -269,9 +269,10 @@
   color: var(--ink);
   font-size: 12.5px;
   line-height: 1.55;
-  padding: 6px 8px;
+  padding: var(--space-2) var(--space-2);
   resize: vertical;
   width: 100%;
+  min-height: 80px;
   outline: none;
   transition: border-color 0.15s;
   font-family: inherit;

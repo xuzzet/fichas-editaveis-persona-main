@@ -2,6 +2,24 @@
    RESPONSIVO — MEDIA QUERIES GERAIS
    ============================================= */
 
+/* ── Tablet/medium – grids para coluna única ── */
+@media (max-width: 720px) {
+  .spell-grid,
+  .link-card-grid,
+  #conditions-list {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+  .af-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-2);
+  }
+  .actions,
+  .row-actions {
+    gap: var(--space-2);
+  }
+}
+
 /* ── Mobile base ── */
 @media (max-width: 600px) {
   .wrap {
@@ -14,7 +32,7 @@
   .panel,
   .brand {
     border-radius: var(--mobile-radius);
-    padding: 10px;
+    padding: 14px;
   }
   .tabs {
     gap: 6px;
@@ -53,10 +71,10 @@
   .row3,
   .der {
     grid-template-columns: 1fr !important;
-    gap: 10px;
+    gap: 12px;
   }
   .grid {
-    gap: 10px;
+    gap: 12px;
   }
   .stat {
     grid-template-columns: 1fr;
@@ -70,10 +88,10 @@
   }
   th,
   td {
-    padding: 8px 8px;
+    padding: 10px 10px;
   }
   .row-actions {
-    gap: 4px;
+    gap: 6px;
   }
 }
 
