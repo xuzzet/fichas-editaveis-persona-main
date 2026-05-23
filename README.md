@@ -59,7 +59,7 @@ Após uma refatoração completa, o código está organizado em **15 módulos ES
 | Aba | Descrição |
 |---|---|
 | **Acesso Rápido** | Painel principal: atributos de combate com sliders, HP/PM atual e máximo, habilidades sociais com sistema de tiers, aspectos, equipamento rápido, retrato do personagem e botões de ação. |
-| **Persona** | Nome, Arcana e nível da Persona. Tabela de afinidades elementais (10 elementos × 6 relações). Deck de magias e técnicas com tipo elemental, custo, efeito e reordenação por drag (↑↓). |
+| **Persona** | Nome, Arcana e nível da Persona. Tabela de afinidades elementais (10 elementos × 6 relações). Grid de cards de magias & técnicas com filtros por nome, categoria e elemento, badge colorido por elemento, 6 campos de stat por card e seção colapsável de observações. |
 | **Feitos** | 45+ feitos organizados em categorias (Geral, Social, Combate, Persona, Atributos, Convicção). Cada feito exibe descrição completa, pré-requisitos e aplica seus efeitos automáticos ao ativar. |
 | **Inventário** | Gerenciamento completo de itens com separação **Equipados / Mochila**, peso por item, quantidade, cálculo automático de capacidade e barra visual de sobrecarga. |
 | **Modificadores** | Buffs e debuffs globais (flat ou percentual) sobre qualquer atributo, com toggle ativo/inativo e resumo visual. 9 condições de status pré-definidas com descrição mecânica detalhada. |
@@ -118,8 +118,26 @@ python -m http.server 8080
 fichas-editaveis-persona-main/
 │
 ├── index.html                  # Estrutura da aplicação — 8 abas, formulários, tabelas, modais
-├── styles.css                  # Estilos globais, 9 temas, responsividade, animações
-├── theme-amarelo-fix.css        # Overrides específicos do tema Amarelo
+│
+├── css/                        # Módulos CSS (carregados via css/main.css)
+│   ├── main.css                # Orquestrador: @import de todos os módulos
+│   ├── variables.css           # Custom properties globais (:root)
+│   ├── reset.css               # Box-sizing, scrollbar, smooth-scroll
+│   ├── base.css                # html/body, wrap, tooltip, toast, form feedback
+│   ├── layout.css              # hud, grid, row*, stat, der, view
+│   ├── components.css          # brand, card, section-title, badge, panel, botões
+│   ├── forms.css               # label, inputs, select, textarea, range slider
+│   ├── tabs.css                # Menu de navegação por abas
+│   ├── themes.css              # 9 temas de cor (CSS custom properties por classe body)
+│   ├── social-skills.css       # Hexagrama de habilidades sociais
+│   ├── spells.css              # Cards de magias & técnicas e filtros
+│   ├── feats.css               # Lista de feitos com checkboxes
+│   ├── inventory.css           # Barra de capacidade, tabelas de equipamento
+│   ├── modifiers.css           # Tabela de modificadores globais
+│   ├── conditions.css          # Lista de condições com checkboxes
+│   ├── persona.css             # Resumo automático (painel autos-*)
+│   ├── quick-access.css        # Customizações da aba Acesso Rápido
+│   └── responsive.css          # @media mobile, touch e print
 │
 └── js/                         # Módulos ES nativos
     ├── app.js                  # Entry point — inicialização, renderAll, setState, auto-save
@@ -345,7 +363,7 @@ Fontes de modificadores combinadas em `recalcState()`:
 | Tecnologia | Versão | Uso |
 |---|---|---|
 | **HTML5** | — | Estrutura semântica da aplicação |
-| **CSS3** | — | Custom properties para temas, responsividade, animações |
+| **CSS3** | — | Arquitetura modular em 18 arquivos sob `/css/`, custom properties para temas, responsividade, animações |
 | **JavaScript** | ES Modules (nativo) | Lógica de estado, cálculos, renderização, persistência |
 | [**pdf-lib**](https://pdf-lib.js.org/) | 1.17.1 | Preenchimento de PDFs modelo (CDN) |
 | [**html2canvas**](https://html2canvas.hertzen.com/) | 1.4.1 | Captura visual em PNG (CDN) |
@@ -368,7 +386,7 @@ Os dados ficam armazenados apenas no `localStorage` do seu navegador e nunca sã
 A ficha é migrada automaticamente. Itens do inventário legado recebem peso 0 e são alocados na seção correta (Equipados ou Mochila) com base no tipo original.
 
 **Como criar um novo tema?**  
-Adicione uma classe `.theme-nomedotema` no CSS definindo as custom properties (`--bg-1`, `--bg-2`, `--accent`, `--ink`, `--accent-alt`, etc.) e registre o mapeamento em `js/themes.js` dentro do objeto `themeMap`.
+Adicione uma classe `.theme-nomedotema` em `css/themes.css` definindo as custom properties (`--bg`, `--bg-2`, `--bg-3`, `--stroke`, `--accent`, `--accent-2`, `--ink`, `--ink-dim`, `--danger`, `--ok`) e registre o mapeamento em `js/themes.js` dentro do objeto `themeMap`.
 
 ---
 
