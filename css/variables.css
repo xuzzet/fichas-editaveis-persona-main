@@ -1,0 +1,23 @@
+/* =============================================
+   VARIÁVEIS CSS GLOBAIS
+   Persona 3 Reload — Skin (padrão)
+   ============================================= */
+:root {
+  --ink: #e2eef8;
+  --ink-dim: #8ea8c2;
+  --bg: #060b18;
+  --bg-2: #0c1729;
+  --bg-3: #12203a;
+  --stroke: #1e3352;
+  --accent: #4ba8e6;
+  --accent-2: #7cc4f0;
+  --danger: #e8546e;
+  --ok: #56c87a;
+  --tooltip-border: #4ba8e6;
+  --radius: 12px;
+  --mobile-padding: 10px;
+  --mobile-radius: 12px;
+  --mobile-font: 15px;
+  --tooltip-bg: #1a1a28ee;
+  --tooltip-color: #e2eef8;
+}

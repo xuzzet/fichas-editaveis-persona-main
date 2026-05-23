@@ -1,0 +1,226 @@
+/* =============================================
+   HABILIDADES SOCIAIS — HEXAGRAMA
+   ============================================= */
+#social-tier-list {
+  text-align: center;
+  user-select: none;
+  padding: 16px 0 8px;
+}
+
+/* ── Tooltip ── */
+#hx-tooltip {
+  position: fixed;
+  z-index: 9999;
+  max-width: 280px;
+  padding: 10px 14px;
+  background: var(--bg-3);
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.16s ease,
+    transform 0.16s ease;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+#hx-tooltip.hx-tt-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.hx-tt-name {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 3px;
+}
+.hx-tt-badge {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 7px;
+}
+.hx-tt-desc {
+  font-size: 11.5px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+/* Skill selection ring */
+[id$="-hx-sel"] {
+  transition: opacity 0.18s ease;
+}
+
+/* ── Painel de detalhe ── */
+#hx-detail {
+  margin: 10px auto 2px;
+  max-width: 580px;
+  min-height: 48px;
+  padding: 10px 16px;
+  background: var(--bg-3);
+  border: 1px solid var(--stroke);
+  border-radius: 8px;
+  text-align: left;
+  transition: background 0.18s ease;
+}
+.hx-detail-empty {
+  font-size: 12px;
+  color: var(--ink-dim);
+  font-style: italic;
+  text-align: center;
+  margin: 0;
+  padding: 4px 0;
+}
+.hx-detail-header {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.hx-detail-name {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.hx-detail-tier {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.hx-detail-desc {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink);
+  margin: 0;
+}
+.hx-detail-tiers {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+}
+.hx-tier-entry {
+  padding: 6px 10px 6px 11px;
+  border-radius: 5px;
+  border-left: 3px solid transparent;
+}
+.hx-tier-entry.hx-tier-current {
+  border-left-color: var(--accent);
+  background: var(--bg-3);
+}
+.hx-tier-entry.hx-tier-past {
+  opacity: 0.58;
+}
+.hx-tier-entry-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: 2px;
+}
+.hx-tier-entry.hx-tier-current .hx-tier-entry-badge {
+  color: var(--accent);
+}
+.hx-tier-entry-desc {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink);
+  margin: 0;
+}
+
+/* Tooltip past-tiers */
+.hx-tt-history {
+  margin-top: 8px;
+  padding-top: 7px;
+  border-top: 1px solid var(--stroke);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.hx-tt-hist-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  opacity: 0.7;
+  margin-bottom: 2px;
+}
+.hx-tt-hist-item {
+  font-size: 10.5px;
+  color: var(--ink-dim);
+  opacity: 0.75;
+  line-height: 1.5;
+}
+
+#social-tier-list svg {
+  overflow: visible;
+}
+#social-tier-list svg text {
+  font-family: "Barlow Condensed", Inter, sans-serif;
+  pointer-events: none;
+}
+
+/* Tip group hover */
+.hx-tip {
+  cursor: default;
+}
+.hx-tip .hx-tip-halo {
+  transition: opacity 0.25s ease;
+}
+.hx-tip:hover .hx-tip-halo {
+  opacity: 0.36;
+}
+.hx-tip .hx-tip-diamond {
+  transition: opacity 0.22s ease;
+}
+.hx-tip:hover .hx-tip-diamond {
+  opacity: 1;
+}
+
+/* Animations */
+@keyframes hxTierFlash {
+  0% {
+    opacity: 0.1;
+  }
+  55% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.hx-tier-flash {
+  animation: hxTierFlash 0.42s ease-out;
+}
+
+@keyframes hxFillPulse {
+  0% {
+    opacity: 0.3;
+  }
+  45% {
+    opacity: 0.75;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.hx-fill-pulse {
+  animation: hxFillPulse 0.45s ease-out;
+}
+
+[id$="-hx-tier"],
+[id$="-hx-title"] {
+  transition: opacity 0.28s ease;
+}

@@ -1,0 +1,99 @@
+/* =============================================
+   TABS — MENU DE NAVEGAÇÃO
+   ============================================= */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 20px;
+  padding: 6px 2px;
+  background: color-mix(in srgb, var(--bg-2) 80%, transparent);
+  border-radius: 14px;
+  border: 1px solid var(--stroke);
+  position: relative !important;
+  z-index: 9999 !important;
+  pointer-events: auto !important;
+}
+.tabs::before {
+  content: none;
+}
+
+.tab {
+  position: relative;
+  z-index: 3;
+  cursor: pointer;
+  color: var(--ink-dim);
+  background: transparent;
+  border: 2px solid transparent;
+  padding: 11px 18px 10px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-family: "Rodin", "New Rodin", "Barlow Condensed", Inter, sans-serif;
+  clip-path: none;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+  font-size: 12px;
+  border-radius: 10px;
+  background-image: none;
+  pointer-events: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  user-select: none !important;
+}
+.tab::after {
+  content: none;
+}
+.tab::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--accent);
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.tab:hover {
+  border-color: transparent;
+  background: var(--bg-3);
+  color: var(--ink);
+}
+.tab.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--bg);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 35%, transparent);
+  background-image: none;
+}
+.tab.active::before {
+  opacity: 1;
+}
+.tab.active::after {
+  opacity: 0;
+}
+
+.view {
+  display: none !important;
+}
+.view.active {
+  display: block !important;
+}
+
+@media (max-width: 720px) {
+  .tabs::before {
+    content: none;
+  }
+  .tab::before {
+    width: 4px;
+  }
+}

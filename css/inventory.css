@@ -1,0 +1,151 @@
+/* =============================================
+   INVENTÁRIO — PESO, CARGA, TABELAS
+   ============================================= */
+.inv-capacity-wrap {
+  margin: 12px 0 8px;
+}
+
+.inv-capacity-bar {
+  width: 100%;
+  height: 22px;
+  background: var(--bg-2, #1a1a2e);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+}
+
+.inv-capacity-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 8px;
+  transition:
+    width 0.4s ease,
+    background 0.4s ease;
+  background: var(--accent, #00e5ff);
+}
+
+.inv-capacity-fill.inv-normal {
+  background: var(--accent, #00e5ff);
+}
+
+.inv-capacity-fill.inv-pesado {
+  background: #f0a500;
+}
+
+.inv-capacity-fill.inv-sobrecarregado {
+  background: #e53935;
+  animation: inv-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes inv-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.inv-capacity-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+#inv-weight-text {
+  color: var(--ink, #eee);
+}
+
+.inv-status {
+  padding: 2px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.inv-status.inv-normal {
+  background: rgba(0, 229, 255, 0.15);
+  color: var(--accent, #00e5ff);
+}
+
+.inv-status.inv-pesado {
+  background: rgba(240, 165, 0, 0.18);
+  color: #f0a500;
+}
+
+.inv-status.inv-sobrecarregado {
+  background: rgba(229, 57, 53, 0.18);
+  color: #e53935;
+}
+
+/* Tabelas de inventário */
+#tbl-eq-equipado,
+#tbl-eq-mochila {
+  width: 100%;
+}
+
+#tbl-eq-equipado th,
+#tbl-eq-mochila th {
+  text-align: left;
+}
+
+#tbl-eq-equipado input.eq-peso,
+#tbl-eq-mochila input.eq-peso,
+#tbl-eq-equipado input.eq-qtd,
+#tbl-eq-mochila input.eq-qtd {
+  width: 64px;
+  text-align: center;
+}
+
+.eq-move-btn {
+  font-size: 11px;
+  padding: 2px 8px;
+  margin-right: 4px;
+  cursor: pointer;
+  border: 1px solid var(--stroke);
+  border-radius: 4px;
+  background: var(--bg-2);
+  color: var(--ink-dim);
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.eq-move-btn:hover {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* =============================================
+   EQUIPAMENTO ATIVO — SUBSEÇÕES
+   ============================================= */
+.equip-bloco {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--stroke, rgba(255, 255, 255, 0.07));
+}
+
+.equip-bloco:first-child {
+  padding-top: 0;
+}
+
+.equip-bloco:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.equip-bloco-titulo {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent, #00e5ff);
+  margin-bottom: 8px;
+  line-height: 1;
+}

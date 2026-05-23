@@ -1,0 +1,75 @@
+/* =============================================
+   CONDIÇÕES — LISTA COM CHECKBOXES
+   ============================================= */
+#conditions-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.cond-item {
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  background: var(--bg);
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+.cond-item:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--stroke));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+.cond-item.cond-active {
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 8%, var(--bg));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--danger) 15%, transparent);
+}
+
+.cond-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+.cond-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--danger);
+  cursor: pointer;
+  flex-shrink: 0;
+  border-radius: 4px;
+  transition: transform 0.15s ease;
+}
+.cond-label input[type="checkbox"]:hover {
+  transform: scale(1.1);
+}
+
+.cond-name {
+  color: var(--ink);
+  transition: color 0.2s ease;
+}
+.cond-item.cond-active .cond-name {
+  color: var(--danger);
+}
+
+.cond-desc-text {
+  font-size: 12px;
+  color: var(--ink-dim);
+  line-height: 1.45;
+}
+
+@media (max-width: 600px) {
+  #conditions-list {
+    grid-template-columns: 1fr;
+  }
+}

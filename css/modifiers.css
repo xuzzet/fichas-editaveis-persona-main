@@ -1,0 +1,51 @@
+/* =============================================
+   MODIFICADORES GLOBAIS
+   ============================================= */
+#tbl-mod {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#tbl-mod thead th {
+  text-align: left;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+#tbl-mod tbody tr {
+  border-bottom: 1px solid var(--stroke);
+  transition: background 0.15s;
+}
+
+#tbl-mod tbody tr:hover {
+  background: rgba(46, 164, 255, 0.06);
+}
+
+#tbl-mod td {
+  padding: 6px 8px;
+  vertical-align: middle;
+}
+
+#tbl-mod .mod-nome {
+  width: 100%;
+  min-width: 100px;
+}
+
+#tbl-mod .mod-tipo {
+  min-width: 100px;
+}
+
+#tbl-mod .mod-alvo {
+  min-width: 70px;
+}
+
+#tbl-mod .mod-ativo {
+  width: 20px;
+  height: 20px;
+}
+
+#mod-summary {
+  font-size: 13px;
+  color: var(--accent);
+  font-weight: 600;
+}

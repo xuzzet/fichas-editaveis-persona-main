@@ -1,0 +1,103 @@
+/* =============================================
+   FEITOS — LISTA COM CHECKBOXES
+   ============================================= */
+#feitos-list {
+  margin-top: 12px;
+}
+
+.feat-group {
+  margin-bottom: 20px;
+}
+
+.feat-cat-title {
+  font-size: 14px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin: 0 0 12px 0;
+  padding: 8px 14px;
+  background: color-mix(in srgb, var(--accent) 8%, var(--bg));
+  border-radius: 8px;
+  border-left: 4px solid var(--accent);
+  font-family: "Barlow Condensed", Inter, sans-serif;
+}
+
+.feat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 10px;
+}
+
+.feat-item {
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  background: var(--bg);
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+.feat-item:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--stroke));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+.feat-item.feat-active {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--bg));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 15%, transparent);
+}
+
+.feat-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+.feat-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
+  flex-shrink: 0;
+  border-radius: 4px;
+  transition: transform 0.15s ease;
+}
+.feat-label input[type="checkbox"]:hover {
+  transform: scale(1.1);
+}
+
+.feat-name {
+  color: var(--ink);
+  transition: color 0.2s ease;
+}
+.feat-item.feat-active .feat-name {
+  color: var(--accent);
+}
+
+.feat-desc-text {
+  font-size: 12px;
+  color: var(--ink-dim);
+  line-height: 1.45;
+}
+
+.feat-prereq {
+  font-size: 11px;
+  color: var(--accent-2);
+  margin-top: 4px;
+  font-style: italic;
+}
+
+@media (max-width: 720px) {
+  .feat-grid {
+    grid-template-columns: 1fr;
+  }
+}

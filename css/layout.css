@@ -1,0 +1,152 @@
+/* =============================================
+   LAYOUT — GRADE, LINHAS, STAT, VIEW, HUD
+   ============================================= */
+.hud {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid color-mix(in srgb, var(--stroke) 50%, transparent);
+}
+.slash {
+  width: 12px;
+  height: 58px;
+  border-radius: 2px;
+  background: var(--accent);
+  transform: skewX(-18deg);
+  box-shadow: none;
+}
+
+.grid {
+  display: grid;
+  gap: 20px;
+}
+
+@media (max-width: 600px) {
+  .grid {
+    gap: 10px;
+  }
+}
+
+@media (min-width: 980px) {
+  .grid.two {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .grid.two {
+    grid-template-columns: 1fr;
+  }
+}
+
+.row {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.row + .row {
+  margin-top: 6px;
+}
+
+@media (min-width: 640px) {
+  .row2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .row2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 960px) {
+  .row3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .row3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =============================================
+   LAYOUT — ROW4 (4 colunas)
+   ============================================= */
+.row4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  min-width: 0;
+}
+
+@media (max-width: 800px) {
+  .row4 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .row4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stat {
+  display: grid;
+  grid-template-columns: 110px 1fr 68px;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.stat b {
+  font-family: "Barlow Condensed";
+  letter-spacing: 0.14em;
+  font-size: 18px;
+}
+
+.der {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, 1fr);
+  min-width: 0;
+}
+
+.view {
+  display: none;
+  min-width: 0;
+}
+.view.active {
+  display: block;
+  min-width: 0;
+}
+
+/* Uniformizar espaçamento entre cards em todas as views */
+.view .card {
+  margin-bottom: 24px;
+}
+.view .card:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 600px) {
+  .view .card {
+    margin-bottom: 16px;
+  }
+}
+
+/* When cards are direct children of a .grid, prefer the grid's gap */
+.view .grid > .card {
+  margin-bottom: 0;
+}
+
+@media (max-width: 600px) {
+  .view .grid > .card {
+    margin-bottom: 0;
+  }
+}

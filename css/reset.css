@@ -1,0 +1,27 @@
+/* =============================================
+   RESET — BOX-SIZING, SCROLLBAR, SMOOTH SCROLL
+   ============================================= */
+* {
+  box-sizing: border-box;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--stroke);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}

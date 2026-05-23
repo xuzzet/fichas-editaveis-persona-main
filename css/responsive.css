@@ -1,0 +1,195 @@
+/* =============================================
+   RESPONSIVO — MEDIA QUERIES GERAIS
+   ============================================= */
+
+/* ── Mobile base ── */
+@media (max-width: 600px) {
+  .wrap {
+    padding: var(--mobile-padding);
+  }
+  body {
+    font-size: var(--mobile-font);
+  }
+  .card,
+  .panel,
+  .brand {
+    border-radius: var(--mobile-radius);
+    padding: 10px;
+  }
+  .tabs {
+    gap: 6px;
+    flex-wrap: wrap;
+    font-size: 13px;
+  }
+  .tab {
+    padding: 10px 12px 9px;
+    font-size: 13px;
+    min-width: 90px;
+  }
+  .section-title h2 {
+    font-size: 13px;
+  }
+  .bar {
+    width: 60px;
+    height: 10px;
+  }
+  input,
+  select,
+  textarea {
+    font-size: 14px;
+    padding: 10px 10px;
+    border-radius: 10px;
+  }
+  button {
+    font-size: 13px;
+    padding: 10px 12px;
+    border-radius: 10px;
+  }
+  .value {
+    font-size: 32px;
+  }
+  .grid.two,
+  .row2,
+  .row3,
+  .der {
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+  }
+  .grid {
+    gap: 10px;
+  }
+  .stat {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  table {
+    font-size: 13px;
+    display: block;
+    overflow-x: auto;
+    width: 100%;
+  }
+  th,
+  td {
+    padding: 8px 8px;
+  }
+  .row-actions {
+    gap: 4px;
+  }
+}
+
+/* ── Touch device optimizations ── */
+@media (hover: none) and (pointer: coarse) {
+  button {
+    padding: 14px 18px;
+    min-height: 44px;
+    transition:
+      background 0.2s ease,
+      transform 0.15s ease,
+      border-color 0.25s ease;
+  }
+  button:active {
+    background: var(--bg-3);
+    transform: scale(0.98);
+  }
+  input,
+  select,
+  textarea {
+    min-height: 44px;
+    font-size: 16px;
+  }
+  label {
+    font-size: 13px;
+  }
+  .toast {
+    bottom: 16px;
+    left: 12px;
+    right: 12px;
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+}
+
+/* ── Print ── */
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+
+  .montserrat-300 {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 300;
+  }
+  .montserrat-400 {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 400;
+  }
+  .montserrat-500 {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 500;
+  }
+  .montserrat-600 {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 600;
+  }
+  .montserrat-700 {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 700;
+  }
+  .montserrat-800 {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 800;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+  .tabs,
+  .hud .slash,
+  .actions button:not(#print) {
+    display: none !important;
+  }
+  .brand {
+    border: none;
+    clip-path: none;
+    background: #fff;
+    box-shadow: none;
+  }
+  .brand h1,
+  .brand .sub {
+    color: #000;
+  }
+  .wrap {
+    width: auto;
+    padding: 0;
+  }
+  .view.active {
+    column-count: 2;
+    column-gap: 12mm;
+  }
+  .card {
+    background: #fff;
+    color: #000;
+    border: 1px solid #999;
+    box-shadow: none;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  input,
+  select,
+  textarea {
+    border: 1px solid #777;
+    background: #fff;
+    color: #000;
+  }
+  .panel {
+    background: #fff;
+    border-color: #777;
+  }
+  .value.pv,
+  .value.en {
+    color: #000;
+    text-shadow: none;
+  }
+}

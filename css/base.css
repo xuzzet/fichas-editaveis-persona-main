@@ -1,0 +1,161 @@
+/* =============================================
+   BASE — HTML, BODY, WRAP, TOOLTIP, TOAST
+   ============================================= */
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  color: var(--ink);
+  background-color: var(--bg);
+  background-image: none;
+  font:
+    500 16px/1.45 "Montserrat",
+    Inter,
+    "Noto Sans JP",
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: contain;
+}
+
+/* Feedback visual para botões */
+.btn-feedback {
+  transition:
+    background 0.2s,
+    box-shadow 0.2s,
+    border-color 0.2s,
+    color 0.2s;
+}
+.btn-feedback:hover,
+.btn-feedback:focus {
+  background: var(--bg-3);
+  box-shadow: 0 0 0 2px var(--accent);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.wrap {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 22px;
+}
+
+/* Tooltip */
+.tooltip {
+  border-bottom: 1px dotted var(--accent);
+  cursor: help;
+  font-size: 13px;
+  margin-left: 4px;
+  color: var(--accent);
+  position: relative;
+}
+.tooltip[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  left: 0;
+  top: 120%;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-color);
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--tooltip-border);
+  white-space: pre-line;
+  font-size: 13px;
+  z-index: 100;
+  box-shadow: 0 2px 8px #0005;
+}
+
+/* Expandable textarea */
+.expandable {
+  min-height: 48px;
+  max-height: none;
+  resize: none;
+  transition: none;
+}
+.expandable.expanded {
+  min-height: 160px;
+}
+.expand-btn {
+  padding: 4px 8px;
+  font-size: 13px;
+  line-height: 1;
+}
+
+/* ===== Toast Notification System ===== */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(150px);
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  z-index: 10000;
+  pointer-events: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  animation: slideUp 0.3s ease forwards;
+}
+@keyframes slideUp {
+  to {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+.toast.out {
+  animation: slideDown 0.3s ease forwards;
+}
+@keyframes slideDown {
+  to {
+    transform: translateX(-50%) translateY(150px);
+  }
+}
+.toast.success {
+  background: rgba(86, 200, 122, 0.1);
+  border: 2px solid rgba(86, 200, 122, 0.35);
+  color: var(--ok);
+}
+.toast.error {
+  background: rgba(232, 84, 110, 0.1);
+  border: 2px solid rgba(232, 84, 110, 0.35);
+  color: var(--danger);
+}
+.toast.info {
+  background: rgba(75, 168, 230, 0.1);
+  border: 2px solid rgba(75, 168, 230, 0.35);
+  color: var(--accent-2);
+}
+
+/* ===== Form Feedback ===== */
+.input-error {
+  border-color: var(--danger) !important;
+  background: color-mix(in srgb, var(--danger) 8%, var(--bg)) !important;
+  box-shadow:
+    0 0 0 3px rgba(232, 84, 110, 0.18),
+    inset 0 0 0 1px rgba(232, 84, 110, 0.25) !important;
+  animation: errorPulse 0.6s ease;
+}
+@keyframes errorPulse {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-2px);
+  }
+  75% {
+    transform: translateX(2px);
+  }
+}
+.field-required-indicator {
+  color: var(--danger);
+  font-weight: 900;
+  font-size: 14px;
+}
