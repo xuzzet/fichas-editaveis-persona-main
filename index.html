@@ -308,23 +308,51 @@
       </section>
 
       <section class="card">
-        <div class="section-title"><div class="bar"></div><h2>Magias & Técnicas</h2></div>
-        <div class="actions"><button class="mini" id="add-spell">+ Adicionar</button></div>
-  <div class="hint">MAGIA/TÉCNICA: Nome | EFEITO: Efeito | ALVO: Alvo | TIPO: Tipo | NÍVEL: Nível | PM: PM</div>
-        <table id="tbl-spell">
-          <thead>
-            <tr>
-              <th style="width:20%">MAGIA/TÉCNICA</th>
-              <th style="width:12%">ALVO</th>
-              <th style="width:12%">TIPO</th>
-              <th style="width:32%">EFEITO</th>
-              <th style="width:8%">NÍVEL</th>
-              <th style="width:8%">PM</th>
-              <th style="width:8%"> </th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+        <div class="section-title"><div class="bar"></div><h2>Magias &amp; Técnicas</h2></div>
+
+        <!-- Filtros -->
+        <div class="spell-filters" id="spell-filters">
+          <input type="text" id="spell-search" class="spell-search-input" placeholder="Buscar por nome…">
+          <select id="spell-filter-cat" class="spell-filter-select">
+            <option value="">Todas as categorias</option>
+            <option>Magia Ofensiva</option>
+            <option>Magia de Cura</option>
+            <option>Magia de Suporte</option>
+            <option>Magia de Status</option>
+            <option>Técnica Física</option>
+            <option>Técnica Especial</option>
+            <option>Passiva</option>
+          </select>
+          <select id="spell-filter-el" class="spell-filter-select">
+            <option value="">Todos os elementos</option>
+            <option>Físico</option>
+            <option>Fogo</option>
+            <option>Gelo</option>
+            <option>Vento</option>
+            <option>Raio</option>
+            <option>Nuclear</option>
+            <option>PSY</option>
+            <option>Luz</option>
+            <option>Trevas</option>
+            <option>Suporte</option>
+            <option>Controle</option>
+          </select>
+          <button class="mini" id="spell-filter-clear" title="Limpar filtros">✕ Limpar</button>
+        </div>
+
+        <!-- Cabeçalho de ações -->
+        <div class="spell-header-actions">
+          <button class="mini" id="add-spell">+ Nova Magia / Técnica</button>
+          <span class="spell-count" id="spell-count"></span>
+        </div>
+
+        <!-- Grid de cards -->
+        <div id="spell-grid" class="spell-grid"></div>
+
+        <!-- Estado vazio -->
+        <div class="spell-empty" id="spell-empty">
+          <p>Nenhuma magia ou técnica adicionada ainda.<br>Clique em <strong>+ Nova Magia / Técnica</strong> para começar.</p>
+        </div>
       </section>
 
       <section class="card">

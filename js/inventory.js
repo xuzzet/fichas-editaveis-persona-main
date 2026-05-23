@@ -13,7 +13,7 @@ import { clampInt } from './utils.js';
 
 export var eqBodyEquipado = document.querySelector('#tbl-eq-equipado tbody');
 export var eqBodyMochila  = document.querySelector('#tbl-eq-mochila tbody');
-export var spellBody      = document.querySelector('#tbl-spell tbody');
+export var spellBody      = document.querySelector('#spell-grid');
 export var linkBody       = document.querySelector('#tbl-link tbody');
 export var clueBody       = document.querySelector('#tbl-clue tbody');
 export var cttBody        = document.querySelector('#tbl-ctt tbody');
@@ -203,56 +203,207 @@ export function syncEquipToState() {
 }
 
 // =============================================
+// MAGIAS — HELPERS INTERNOS
+// =============================================
+
+var SPELL_CATEGORIES = [
+  '', 'Magia Ofensiva', 'Magia de Cura', 'Magia de Suporte',
+  'Magia de Status', 'Técnica Física', 'Técnica Especial', 'Passiva'
+];
+
+var SPELL_ELEMENTS = [
+  'Físico','Fogo','Gelo','Vento','Raio','Nuclear','PSY','Luz','Trevas','Suporte','Controle'
+];
+
+function _updateSpellCount() {
+  var countEl = document.getElementById('spell-count');
+  if (!countEl || !spellBody) return;
+  var all = spellBody.querySelectorAll('.spell-card');
+  var visible = Array.from(all).filter(function(c) { return c.style.display !== 'none'; });
+  var t = all.length;
+  countEl.textContent = t === 0 ? '' :
+    (visible.length < t ? visible.length + ' / ' + t : t) + ' magia' + (t !== 1 ? 's' : '');
+}
+
+function _updateSpellEmpty() {
+  var emptyEl = document.getElementById('spell-empty');
+  if (!emptyEl || !spellBody) return;
+  emptyEl.style.display = spellBody.querySelectorAll('.spell-card').length === 0 ? '' : 'none';
+}
+
+// =============================================
 // MAGIAS
 // =============================================
 
-export function moveSpellRow(tr, direction) {
-  if (!tr || !spellBody) return;
-  var rows = Array.from(spellBody.querySelectorAll('tr'));
-  var idx = rows.indexOf(tr);
+export function moveSpellRow(el, direction) {
+  if (!el || !spellBody) return;
+  var cards = Array.from(spellBody.querySelectorAll('.spell-card'));
+  var idx = cards.indexOf(el);
   if (idx === -1) return;
-  if (direction === 'up' && idx > 0) spellBody.insertBefore(tr, rows[idx - 1]);
-  else if (direction === 'down' && idx < rows.length - 1) spellBody.insertBefore(tr, rows[idx + 2]);
+  if (direction === 'up' && idx > 0) spellBody.insertBefore(el, cards[idx - 1]);
+  else if (direction === 'down' && idx < cards.length - 1) spellBody.insertBefore(el, cards[idx + 2]);
   syncSpellsToState();
 }
 
 export function addSpell(data) {
-  data = data || { nome: "", tipo: "Físico", custo: "", efeito: "" };
+  data = data || {};
   if (!spellBody) return;
-  var tr = document.createElement("tr");
-  tr.innerHTML = '<td><textarea class="sp-n" rows="1" placeholder="Magia/Técnica" style="width:100%;resize:vertical"></textarea></td>' +
-    '<td><input class="sp-c" placeholder="Alvo"/></td>' +
-    '<td><select class="sp-t"></select></td>' +
-    '<td><textarea class="sp-e" rows="2" placeholder="Efeito" style="width:100%;resize:vertical"></textarea></td>' +
-    '<td><input class="sp-tier" placeholder="Nível"/></td>' +
-    '<td><input class="sp-uses" placeholder="PM"/></td>' +
-    '<td class="row-actions"><button class="mini up" title="Mover para cima">\u2191</button><button class="mini down" title="Mover para baixo">\u2193</button><button class="mini del">X</button></td>';
-  spellBody.appendChild(tr);
-  var tsel = tr.querySelector('.sp-t');
-  ["Físico","Fogo","Gelo","Vento","Raio","Nuclear","PSY","Luz","Trevas","Suporte","Controle"].forEach(function(t) { var o = document.createElement('option'); o.textContent = t; tsel.appendChild(o); });
-  var nameEl = tr.querySelector('.sp-n');
-  if (nameEl) nameEl.value = data.nome || "";
-  tsel.value = data.tipo || "Físico";
-  tr.querySelector('.sp-c').value = data.custo || "";
-  tr.querySelector('.sp-e').value = data.efeito || "";
-  if (data.tier != null) tr.querySelector('.sp-tier').value = data.tier;
-  if (data.uses != null) tr.querySelector('.sp-uses').value = data.uses;
-  tr.querySelector('.del').addEventListener('click', function() { tr.remove(); syncSpellsToState(); });
-  tr.querySelector('.up').addEventListener('click', function() { moveSpellRow(tr, 'up'); });
-  tr.querySelector('.down').addEventListener('click', function() { moveSpellRow(tr, 'down'); });
+
+  var card = document.createElement('div');
+  card.className = 'spell-card';
+
+  // Build static HTML (no user-data interpolation — values set via .value below)
+  var catOpts = SPELL_CATEGORIES.map(function(c) {
+    return '<option value="' + c + '">' + (c || '— Categoria —') + '</option>';
+  }).join('');
+  var elOpts = SPELL_ELEMENTS.map(function(e) {
+    return '<option value="' + e + '">' + e + '</option>';
+  }).join('');
+
+  card.innerHTML =
+    '<div class="spell-card-header">' +
+      '<div class="spell-card-name-row">' +
+        '<input class="sp-n spell-name-input" placeholder="Nome da Magia / Técnica">' +
+        '<div class="spell-card-actions">' +
+          '<button type="button" class="mini up" title="Mover para cima">↑</button>' +
+          '<button type="button" class="mini down" title="Mover para baixo">↓</button>' +
+          '<button type="button" class="mini del" title="Remover">✕</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="spell-card-badges">' +
+        '<select class="sp-cat spell-cat-select">' + catOpts + '</select>' +
+        '<select class="sp-t spell-el-select">' + elOpts + '</select>' +
+      '</div>' +
+    '</div>' +
+    '<div class="spell-card-stats">' +
+      '<label class="spell-stat"><span class="spell-stat-label">PM</span>' +
+        '<input class="sp-uses spell-stat-input" placeholder="—"></label>' +
+      '<label class="spell-stat"><span class="spell-stat-label">Ação</span>' +
+        '<input class="sp-acao spell-stat-input" placeholder="—"></label>' +
+      '<label class="spell-stat"><span class="spell-stat-label">Alcance</span>' +
+        '<input class="sp-alcance spell-stat-input" placeholder="—"></label>' +
+      '<label class="spell-stat"><span class="spell-stat-label">Alvo</span>' +
+        '<input class="sp-c spell-stat-input" placeholder="—"></label>' +
+      '<label class="spell-stat"><span class="spell-stat-label">Duração</span>' +
+        '<input class="sp-duracao spell-stat-input" placeholder="—"></label>' +
+      '<label class="spell-stat"><span class="spell-stat-label">Nível</span>' +
+        '<input class="sp-tier spell-stat-input" placeholder="—"></label>' +
+    '</div>' +
+    '<div class="spell-card-desc">' +
+      '<label class="spell-desc-label">Efeito / Descrição</label>' +
+      '<textarea class="sp-e spell-desc-textarea" rows="2" placeholder="Descreva o efeito…"></textarea>' +
+    '</div>' +
+    '<div class="spell-card-obs-wrap">' +
+      '<button type="button" class="spell-obs-toggle">Observações <span class="spell-obs-arrow">▾</span></button>' +
+      '<textarea class="sp-obs spell-obs-textarea" rows="1" placeholder="Notas adicionais…"></textarea>' +
+    '</div>';
+
+  // Set values safely (avoids XSS from interpolating data into innerHTML)
+  card.querySelector('.sp-n').value          = data.nome    || '';
+  card.querySelector('.sp-t').value          = data.tipo    || 'Físico';
+  card.querySelector('.sp-cat').value        = data.cat     || '';
+  card.querySelector('.sp-uses').value       = data.uses    || '';
+  card.querySelector('.sp-acao').value       = data.acao    || '';
+  card.querySelector('.sp-alcance').value    = data.alcance || '';
+  card.querySelector('.sp-c').value          = data.custo   || '';
+  card.querySelector('.sp-duracao').value    = data.duracao || '';
+  card.querySelector('.sp-tier').value       = data.tier    || '';
+  card.querySelector('.sp-e').value          = data.efeito  || '';
+  card.querySelector('.sp-obs').value        = data.obs     || '';
+
+  // Sync element badge colour via data attribute
+  function _refreshEl() { card.dataset.element = card.querySelector('.sp-t').value; }
+  card.querySelector('.sp-t').addEventListener('change', _refreshEl);
+  _refreshEl();
+
+  spellBody.appendChild(card);
+
+  // Obs toggle (hidden by default unless obs already has content)
+  var obsWrap   = card.querySelector('.spell-obs-wrap');
+  var obsTA     = card.querySelector('.sp-obs');
+  var obsArrow  = card.querySelector('.spell-obs-arrow');
+  if (!data.obs) {
+    obsTA.style.display = 'none';
+  } else {
+    card.classList.add('spell-obs-open');
+    obsArrow.textContent = '▴';
+  }
+  card.querySelector('.spell-obs-toggle').addEventListener('click', function() {
+    var open = card.classList.toggle('spell-obs-open');
+    obsTA.style.display  = open ? '' : 'none';
+    obsArrow.textContent = open ? '▴' : '▾';
+  });
+
+  // Sync state on any field change
+  card.addEventListener('input',  syncSpellsToState);
+  card.addEventListener('change', syncSpellsToState);
+
+  // Remove
+  card.querySelector('.del').addEventListener('click', function() {
+    card.remove();
+    syncSpellsToState();
+    _updateSpellCount();
+    _updateSpellEmpty();
+  });
+
+  // Reorder
+  card.querySelector('.up').addEventListener('click',   function() { moveSpellRow(card, 'up'); });
+  card.querySelector('.down').addEventListener('click', function() { moveSpellRow(card, 'down'); });
+
+  _updateSpellCount();
+  _updateSpellEmpty();
 }
 
 export function syncSpellsToState() {
-  state.spells = spellBody ? Array.from(spellBody.querySelectorAll('tr')).map(function(tr) {
+  state.spells = spellBody ? Array.from(spellBody.querySelectorAll('.spell-card')).map(function(card) {
     return {
-      nome: (tr.querySelector('.sp-n') || {}).value || '',
-      tipo: tr.querySelector('.sp-t').value,
-      custo: tr.querySelector('.sp-c').value,
-      efeito: (tr.querySelector('.sp-e') || {}).value || '',
-      tier: (tr.querySelector('.sp-tier') || {}).value || '',
-      uses: (tr.querySelector('.sp-uses') || {}).value || ''
+      nome:    (card.querySelector('.sp-n')       || {}).value || '',
+      tipo:    (card.querySelector('.sp-t')       || {}).value || 'Físico',
+      cat:     (card.querySelector('.sp-cat')     || {}).value || '',
+      custo:   (card.querySelector('.sp-c')       || {}).value || '',
+      efeito:  (card.querySelector('.sp-e')       || {}).value || '',
+      tier:    (card.querySelector('.sp-tier')    || {}).value || '',
+      uses:    (card.querySelector('.sp-uses')    || {}).value || '',
+      acao:    (card.querySelector('.sp-acao')    || {}).value || '',
+      alcance: (card.querySelector('.sp-alcance') || {}).value || '',
+      duracao: (card.querySelector('.sp-duracao') || {}).value || '',
+      obs:     (card.querySelector('.sp-obs')     || {}).value || ''
     };
   }) : [];
+}
+
+export function initSpellFilters() {
+  var searchEl  = document.getElementById('spell-search');
+  var catEl     = document.getElementById('spell-filter-cat');
+  var elEl      = document.getElementById('spell-filter-el');
+  var clearBtn  = document.getElementById('spell-filter-clear');
+
+  function applyFilters() {
+    if (!spellBody) return;
+    var q   = searchEl ? searchEl.value.trim().toLowerCase() : '';
+    var cat = catEl    ? catEl.value : '';
+    var el  = elEl     ? elEl.value  : '';
+    Array.from(spellBody.querySelectorAll('.spell-card')).forEach(function(card) {
+      var name    = ((card.querySelector('.sp-n')   || {}).value || '').toLowerCase();
+      var cardCat = (card.querySelector('.sp-cat')  || {}).value || '';
+      var cardEl  = (card.querySelector('.sp-t')    || {}).value || '';
+      var show = (!q || name.includes(q)) &&
+                 (!cat || cardCat === cat) &&
+                 (!el  || cardEl  === el);
+      card.style.display = show ? '' : 'none';
+    });
+    _updateSpellCount();
+  }
+
+  if (searchEl) searchEl.addEventListener('input',  applyFilters);
+  if (catEl)    catEl.addEventListener('change',    applyFilters);
+  if (elEl)     elEl.addEventListener('change',     applyFilters);
+  if (clearBtn) clearBtn.addEventListener('click', function() {
+    if (searchEl) searchEl.value = '';
+    if (catEl)    catEl.value    = '';
+    if (elEl)     elEl.value     = '';
+    applyFilters();
+  });
 }
 
 // =============================================
@@ -390,7 +541,13 @@ export function initInventoryButtons() {
   });
 
   var addSpellBtn = document.querySelector('#add-spell');
-  if (addSpellBtn) addSpellBtn.addEventListener('click', function() { addSpell(); syncSpellsToState(); });
+  if (addSpellBtn) addSpellBtn.addEventListener('click', function() {
+    addSpell();
+    syncSpellsToState();
+  });
+
+  initSpellFilters();
+  _updateSpellEmpty();
 
   var addLinkBtn = document.querySelector('#add-link');
   if (addLinkBtn) addLinkBtn.addEventListener('click', function() { addLink(); syncLinksToState(); });
