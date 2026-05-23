@@ -366,40 +366,37 @@
   <div class="view" id="equip">
 
       <!-- Capacidade de Carga -->
-      <section class="card">
-        <div class="section-title"><div class="bar"></div><h2>Capacidade de Carga</h2></div>
+      <section class="card inv-cap-card">
+        <div class="section-title"><div class="bar"></div><h2>Carga</h2></div>
+        <div class="inv-cap-header">
+          <div class="inv-cap-numbers">
+            <span id="inv-weight-text" class="inv-cap-value">0 / 0</span>
+            <span class="inv-cap-unit">kg</span>
+          </div>
+          <span id="inv-status-text" class="inv-status inv-normal">Normal</span>
+        </div>
         <div class="inv-capacity-wrap">
           <div class="inv-capacity-bar">
             <div class="inv-capacity-fill" id="inv-capacity-fill"></div>
           </div>
-          <div class="inv-capacity-info">
-            <span id="inv-weight-text">Peso: 0 / 0</span>
-            <span id="inv-status-text" class="inv-status inv-normal">Normal</span>
-          </div>
         </div>
-        <div class="hint">Capacidade = (FOR × 5) + VIT</div>
+        <p class="hint">Capacidade = (FOR × 5) + VIT</p>
       </section>
 
       <!-- Equipados -->
       <section class="card">
         <div class="section-title"><div class="bar"></div><h2>Equipados</h2></div>
+        <p class="hint">Itens em uso ativo durante o combate ou exploração.</p>
         <div class="actions"><button class="mini" id="add-eq-equipado">+ Equipar Item</button></div>
-        <div class="hint">Itens que estão sendo usados ativamente.</div>
-        <table id="tbl-eq-equipado">
-          <thead><tr><th>Nome</th><th>Peso</th><th>Qtd</th><th>Efeito/Notas</th><th></th></tr></thead>
-          <tbody></tbody>
-        </table>
+        <div id="tbl-eq-equipado" class="eq-card-list"></div>
       </section>
 
       <!-- Mochila -->
       <section class="card">
         <div class="section-title"><div class="bar"></div><h2>Mochila</h2></div>
+        <p class="hint">Itens carregados, mas não equipados ativamente.</p>
         <div class="actions"><button class="mini" id="add-eq-mochila">+ Guardar Item</button></div>
-        <div class="hint">Itens carregados, mas não equipados.</div>
-        <table id="tbl-eq-mochila">
-          <thead><tr><th>Nome</th><th>Peso</th><th>Qtd</th><th>Efeito/Notas</th><th></th></tr></thead>
-          <tbody></tbody>
-        </table>
+        <div id="tbl-eq-mochila" class="eq-card-list"></div>
       </section>
 
     </div>
@@ -422,52 +419,42 @@
 
     <!-- VIEW: ANOTAÇÕES -->
     <div class="view" id="notes">
-      <section class="card">
-        <div class="section-title"><div class="bar"></div><h2>Anotações — Diário & Objetivos</h2></div>
-        <div class="row row2">
-          <div>
-            <label>Diário</label>
-            <textarea id="NotesDiary" placeholder="Resumo das sessões, momentos marcantes, pensamentos do personagem..."></textarea>
-          </div>
-          <div>
-            <label>Objetivos</label>
-            <textarea id="NotesGoals" placeholder="Curto prazo (semana), médio (bimestre), longo (ano)."></textarea>
-          </div>
-        </div>
-      </section>
+
+      <div class="notes-duo-grid">
+        <section class="card">
+          <div class="section-title"><div class="bar"></div><h2>Diário</h2></div>
+          <textarea id="NotesDiary" class="notes-big-textarea" placeholder="Resumo das sessões, momentos marcantes, pensamentos do personagem..."></textarea>
+        </section>
+        <section class="card">
+          <div class="section-title"><div class="bar"></div><h2>Objetivos</h2></div>
+          <textarea id="NotesGoals" class="notes-big-textarea" placeholder="Curto prazo (semana), médio (bimestre), longo (ano)."></textarea>
+        </section>
+      </div>
 
       <section class="card">
-        <div class="section-title"><div class="bar"></div><h2>Pistas / Âncoras</h2></div>
-        <div class="actions"><button class="mini" id="add-clue">+ Adicionar Pista</button></div>
-        <table id="tbl-clue">
-          <thead><tr><th>Título</th><th>Descrição</th><th>Evidência</th><th>Status</th><th></th></tr></thead>
-          <tbody></tbody>
-        </table>
+        <div class="section-title"><div class="bar"></div><h2>Pistas & Âncoras</h2></div>
+        <p class="hint">Registre pistas investigativas, âncoras narrativas e pendências de missão.</p>
+        <div class="actions"><button class="mini" id="add-clue">+ Adicionar</button></div>
+        <div id="tbl-clue" class="clue-list-wrap"></div>
       </section>
 
       <section class="card">
         <div class="section-title"><div class="bar"></div><h2>Contatos & Locais</h2></div>
-        <div class="actions"><button class="mini" id="add-ctt">+ Adicionar Contato/Local</button></div>
-        <table id="tbl-ctt">
-          <thead><tr><th>Nome</th><th>Tipo</th><th>Observações</th><th></th></tr></thead>
-          <tbody></tbody>
-        </table>
+        <p class="hint">NPCs relevantes, locais importantes e organizações conhecidas.</p>
+        <div class="actions"><button class="mini" id="add-ctt">+ Adicionar</button></div>
+        <div id="tbl-ctt" class="ctt-list-wrap"></div>
       </section>
+
     </div>
 
     <!-- VIEW: MODIFICADORES GLOBAIS -->
     <div class="view" id="modificadores">
       <section class="card">
         <div class="section-title"><div class="bar"></div><h2>Modificadores Globais</h2></div>
+        <p class="hint"><strong>Flat</strong> soma direto ao atributo; <strong>Percentual</strong> aplica % sobre o valor base. Ative ou desative sem perder os dados.</p>
+        <div id="mod-summary" class="mod-summary-bar" style="display:none;"></div>
         <div class="actions"><button class="mini" id="add-mod">+ Modificador</button></div>
-        <div class="hint">Adicione buffs ou debuffs que afetam os atributos do personagem. Flat soma direto; Percentual aplica % sobre o valor base. Ative/desative conforme necessário.</div>
-        <div id="mod-summary" class="hint" style="margin-top:8px;display:none;"></div>
-        <table id="tbl-mod">
-          <thead>
-            <tr><th>Nome</th><th>Tipo</th><th>Valor</th><th>Alvo</th><th>Ativo</th><th></th></tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+        <div id="tbl-mod"><div class="mod-list"></div></div>
       </section>
 
       <section class="card">

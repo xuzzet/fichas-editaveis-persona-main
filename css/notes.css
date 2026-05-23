@@ -1,0 +1,177 @@
+/* =============================================
+   ANOTAÇÕES — DIÁRIO, PISTAS, CONTATOS
+   ============================================= */
+
+.notes-duo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 0;
+}
+
+.notes-big-textarea {
+  width: 100%;
+  min-height: 160px;
+  resize: vertical;
+  margin-top: 8px;
+  box-sizing: border-box;
+}
+
+/* ── Clue cards ── */
+.clue-list-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.clue-card {
+  background: var(--bg-3);
+  border: 1px solid var(--stroke);
+  border-left: 3px solid var(--stroke);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.2s;
+}
+
+.clue--aberta {
+  border-left-color: var(--accent);
+}
+.clue--andamento {
+  border-left-color: #f0a500;
+}
+.clue--resolvida {
+  border-left-color: var(--ok);
+  opacity: 0.75;
+}
+.clue--falsa {
+  border-left-color: var(--danger);
+  opacity: 0.5;
+}
+
+.clue-card-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cl-t {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 700;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--stroke);
+  color: var(--ink);
+  padding: 2px 0;
+  min-width: 0;
+}
+
+.cl-t:focus {
+  border-bottom-color: var(--accent);
+  outline: none;
+}
+
+.cl-s {
+  font-size: 11px;
+  font-weight: 700;
+  font-family: "Barlow Condensed", sans-serif;
+  padding: 3px 6px;
+  border-radius: 5px;
+  border: 1px solid var(--stroke);
+  background: var(--bg-2);
+  color: var(--ink);
+}
+
+.clue-card .cl-d,
+.clue-card .cl-e {
+  font-size: 12.5px;
+  background: var(--bg-2);
+  border: 1px solid var(--stroke);
+  border-radius: 6px;
+  padding: 6px 8px;
+  resize: vertical;
+  min-height: 36px;
+  color: var(--ink);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ── Contact cards ── */
+.ctt-list-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.ctt-card {
+  background: var(--bg-3);
+  border: 1px solid var(--stroke);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.2s;
+}
+
+.ctt-card:hover {
+  border-color: var(--accent-2);
+}
+
+.ctt-card-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ct-n {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 700;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--stroke);
+  color: var(--ink);
+  padding: 2px 0;
+  min-width: 0;
+}
+
+.ct-n:focus {
+  border-bottom-color: var(--accent);
+  outline: none;
+}
+
+.ct-t {
+  font-size: 11px;
+  font-weight: 700;
+  font-family: "Barlow Condensed", sans-serif;
+  padding: 3px 6px;
+  border-radius: 5px;
+  border: 1px solid var(--stroke);
+  background: var(--bg-2);
+  color: var(--ink);
+}
+
+.ctt-card .ct-o {
+  font-size: 12.5px;
+  background: var(--bg-2);
+  border: 1px solid var(--stroke);
+  border-radius: 6px;
+  padding: 6px 8px;
+  resize: vertical;
+  min-height: 36px;
+  color: var(--ink);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  .notes-duo-grid {
+    grid-template-columns: 1fr;
+  }
+}

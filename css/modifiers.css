@@ -1,49 +1,147 @@
 /* =============================================
-   MODIFICADORES GLOBAIS
+   MODIFICADORES GLOBAIS — CARD LAYOUT
    ============================================= */
-#tbl-mod {
-  width: 100%;
-  border-collapse: collapse;
+
+/* Inner container inside #tbl-mod */
+.mod-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
 }
 
-#tbl-mod thead th {
-  text-align: left;
-  font-weight: 800;
-  text-transform: uppercase;
+.mod-card {
+  background: var(--bg-3);
+  border: 1px solid var(--stroke);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition:
+    border-color 0.2s,
+    opacity 0.2s;
 }
 
-#tbl-mod tbody tr {
+.mod-card--active {
+  border-color: var(--accent);
+  background: rgba(75, 168, 230, 0.04);
+}
+
+.mod-card--inactive {
+  opacity: 0.5;
+}
+
+.mod-card-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mod-nome {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 700;
+  background: transparent;
+  border: none;
   border-bottom: 1px solid var(--stroke);
-  transition: background 0.15s;
+  color: var(--ink);
+  padding: 2px 0;
+  min-width: 0;
 }
 
-#tbl-mod tbody tr:hover {
-  background: rgba(46, 164, 255, 0.06);
+.mod-nome:focus {
+  border-bottom-color: var(--accent);
+  outline: none;
 }
 
-#tbl-mod td {
-  padding: 6px 8px;
-  vertical-align: middle;
+.mod-card-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
-#tbl-mod .mod-nome {
-  width: 100%;
-  min-width: 100px;
+.mod-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
 }
 
-#tbl-mod .mod-tipo {
-  min-width: 100px;
+.mod-toggle-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+  cursor: pointer;
 }
 
-#tbl-mod .mod-alvo {
-  min-width: 70px;
+.mod-status-badge {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-family: "Barlow Condensed", sans-serif;
+  white-space: nowrap;
 }
 
-#tbl-mod .mod-ativo {
-  width: 20px;
-  height: 20px;
+.mod-card--active .mod-status-badge {
+  background: rgba(75, 168, 230, 0.18);
+  color: var(--accent);
+  border: 1px solid rgba(75, 168, 230, 0.35);
 }
 
+.mod-card--inactive .mod-status-badge {
+  background: var(--bg-2);
+  color: var(--ink-dim);
+  border: 1px solid var(--stroke);
+}
+
+.mod-card-fields {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.mod-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 80px;
+}
+
+.mod-field-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-dim);
+  font-family: "Barlow Condensed", sans-serif;
+}
+
+.mod-field select,
+.mod-field input[type="number"] {
+  padding: 4px 6px;
+  font-size: 13px;
+}
+
+/* Summary bar */
+.mod-summary-bar {
+  background: var(--bg-2);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+/* Legacy alias */
 #mod-summary {
   font-size: 13px;
   color: var(--accent);

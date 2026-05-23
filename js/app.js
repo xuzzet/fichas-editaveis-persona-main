@@ -492,8 +492,8 @@ document.addEventListener('change', function() { if (!_rendering) debouncedAutoS
 var autoSaveTableIds = ['tbl-eq-equipado','tbl-eq-mochila','tbl-link','tbl-clue','tbl-ctt','tbl-mod'];
 var tableObserver = new MutationObserver(function() { setTimeout(debouncedAutoSave, 100); });
 autoSaveTableIds.forEach(function(id) {
-  var tbody = document.querySelector('#' + id + ' tbody');
-  if (tbody) tableObserver.observe(tbody, { childList: true, subtree: true });
+  var el = document.getElementById(id);
+  if (el) tableObserver.observe(el, { childList: true, subtree: true });
 });
 var spellGrid = document.getElementById('spell-grid');
 if (spellGrid) tableObserver.observe(spellGrid, { childList: true, subtree: true });

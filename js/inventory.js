@@ -1,4 +1,4 @@
-// =============================================
+﻿// =============================================
 // INVENTÁRIO E TABELAS DINÂMICAS
 // Depende de: state.js, constants.js, utils.js
 // =============================================
@@ -11,12 +11,12 @@ import { clampInt } from './utils.js';
 // REFERÊNCIAS AOS TBODIES DAS TABELAS
 // =============================================
 
-export var eqBodyEquipado = document.querySelector('#tbl-eq-equipado tbody');
-export var eqBodyMochila  = document.querySelector('#tbl-eq-mochila tbody');
+export var eqBodyEquipado = document.querySelector('#tbl-eq-equipado');
+export var eqBodyMochila  = document.querySelector('#tbl-eq-mochila');
 export var spellBody      = document.querySelector('#spell-grid');
 export var linkBody       = document.querySelector('#tbl-link tbody');
-export var clueBody       = document.querySelector('#tbl-clue tbody');
-export var cttBody        = document.querySelector('#tbl-ctt tbody');
+export var clueBody       = document.querySelector('#tbl-clue');
+export var cttBody        = document.querySelector('#tbl-ctt');
 
 // =============================================
 // SISTEMA DE PESO DO INVENTÁRIO
@@ -101,52 +101,70 @@ export function migrateEquipItem(item) {
 }
 
 /**
- * Adiciona um item ao inventário (em uma das duas tbodies).
+ * Adiciona um item ao inventário como card visual.
  */
 export function addInventoryItem(data, targetLocal) {
   data = data || {};
   var local = data.local || targetLocal || 'mochila';
-  var tbody = (local === 'equipado') ? eqBodyEquipado : eqBodyMochila;
-  if (!tbody) return;
+  var container = (local === 'equipado') ? eqBodyEquipado : eqBodyMochila;
+  if (!container) return;
 
-  var tr = document.createElement('tr');
+  var card = document.createElement('div');
+  card.className = 'eq-card';
+  card.dataset.local = local;
   var moveLabel = (local === 'equipado') ? '↓ Mochila' : '↑ Equipar';
-  tr.dataset.local = local;
-  tr.innerHTML = '<td><input class="eq-nome" placeholder="Nome do item"/></td>' +
-    '<td><input class="eq-peso" type="number" min="0" step="0.1" value="0" placeholder="0"/></td>' +
-    '<td><input class="eq-qtd" type="number" min="1" step="1" value="1" placeholder="1"/></td>' +
-    '<td><textarea class="eq-ef" rows="1" placeholder="Efeito/Notas"></textarea></td>' +
-    '<td class="row-actions"><button class="eq-move-btn">' + moveLabel + '</button><button class="mini del">X</button></td>';
-  tbody.appendChild(tr);
 
-  tr.querySelector('.eq-nome').value = data.nome || '';
-  tr.querySelector('.eq-peso').value = data.peso != null ? data.peso : 0;
-  tr.querySelector('.eq-qtd').value = data.qtd != null ? data.qtd : 1;
-  tr.querySelector('.eq-ef').value = data.efeito || '';
+  card.innerHTML =
+    '<div class="eq-card-name-row">' +
+      '<input class="eq-nome" placeholder="Nome do item"/>' +
+      '<div class="eq-card-actions">' +
+        '<button class="eq-move-btn">' + moveLabel + '</button>' +
+        '<button class="mini del">✕</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="eq-card-stats-row">' +
+      '<label class="eq-stat"><span class="eq-stat-label">Peso</span>' +
+        '<input class="eq-peso" type="number" min="0" step="0.1" value="0"/></label>' +
+      '<label class="eq-stat"><span class="eq-stat-label">Qtd</span>' +
+        '<input class="eq-qtd" type="number" min="1" step="1" value="1"/></label>' +
+      '<span class="eq-total-display">= 0 kg</span>' +
+    '</div>' +
+    '<textarea class="eq-ef" rows="2" placeholder="Efeito / Notas (opcional)"></textarea>';
 
-  // Eventos de atualização de peso
-  tr.querySelector('.eq-peso').addEventListener('input', function() { syncEquipToState(); renderInventoryStatus(); });
-  tr.querySelector('.eq-qtd').addEventListener('input', function() { syncEquipToState(); renderInventoryStatus(); });
-  tr.querySelector('.eq-nome').addEventListener('input', function() { syncEquipToState(); });
-  tr.querySelector('.eq-ef').addEventListener('input', function() { syncEquipToState(); });
+  container.appendChild(card);
 
-  // Botão mover entre equipado/mochila
-  tr.querySelector('.eq-move-btn').addEventListener('click', function() {
+  card.querySelector('.eq-nome').value = data.nome || '';
+  card.querySelector('.eq-peso').value = data.peso != null ? data.peso : 0;
+  card.querySelector('.eq-qtd').value = data.qtd != null ? data.qtd : 1;
+  card.querySelector('.eq-ef').value = data.efeito || '';
+
+  function updateTotal() {
+    var w = Number(card.querySelector('.eq-peso').value) || 0;
+    var q = Number(card.querySelector('.eq-qtd').value) || 1;
+    card.querySelector('.eq-total-display').textContent = '= ' + Math.round(w * q * 100) / 100 + ' kg';
+  }
+  updateTotal();
+
+  card.querySelector('.eq-peso').addEventListener('input', function() { updateTotal(); syncEquipToState(); renderInventoryStatus(); });
+  card.querySelector('.eq-qtd').addEventListener('input', function() { updateTotal(); syncEquipToState(); renderInventoryStatus(); });
+  card.querySelector('.eq-nome').addEventListener('input', function() { syncEquipToState(); });
+  card.querySelector('.eq-ef').addEventListener('input', function() { syncEquipToState(); });
+
+  card.querySelector('.eq-move-btn').addEventListener('click', function() {
     syncEquipToState();
-    var idx = getItemIndexFromRow(tr, local);
+    var idx = getItemIndexFromRow(card, local);
     if (idx === -1) return;
     var item = state.equip[idx];
     item.local = (local === 'equipado') ? 'mochila' : 'equipado';
-    tr.remove();
+    card.remove();
     addInventoryItem(item, item.local);
     syncEquipToState();
     renderInventoryStatus();
     if (window.debouncedAutoSave) window.debouncedAutoSave();
   });
 
-  // Botão remover
-  tr.querySelector('.del').addEventListener('click', function() {
-    tr.remove();
+  card.querySelector('.del').addEventListener('click', function() {
+    card.remove();
     syncEquipToState();
     renderInventoryStatus();
     if (window.debouncedAutoSave) window.debouncedAutoSave();
@@ -154,19 +172,18 @@ export function addInventoryItem(data, targetLocal) {
 }
 
 /**
- * Encontra o índice no state.equip de um item baseado em sua row TR.
+ * Encontra o índice no state.equip de um card de item.
  */
-export function getItemIndexFromRow(tr, local) {
-  var tbody = (local === 'equipado') ? eqBodyEquipado : eqBodyMochila;
-  if (!tbody) return -1;
-  var rows = Array.from(tbody.querySelectorAll('tr'));
-  var rowIdx = rows.indexOf(tr);
-  if (rowIdx === -1) return -1;
-  // Contar itens no state com esse local até achar o índice correto
+export function getItemIndexFromRow(card, local) {
+  var container = (local === 'equipado') ? eqBodyEquipado : eqBodyMochila;
+  if (!container) return -1;
+  var cards = Array.from(container.querySelectorAll('.eq-card'));
+  var cardIdx = cards.indexOf(card);
+  if (cardIdx === -1) return -1;
   var count = 0;
   for (var i = 0; i < state.equip.length; i++) {
     if ((state.equip[i].local || 'mochila') === local) {
-      if (count === rowIdx) return i;
+      if (count === cardIdx) return i;
       count++;
     }
   }
@@ -175,26 +192,24 @@ export function getItemIndexFromRow(tr, local) {
 
 export function syncEquipToState() {
   var items = [];
-  // Equipados
   if (eqBodyEquipado) {
-    Array.from(eqBodyEquipado.querySelectorAll('tr')).forEach(function(tr) {
+    Array.from(eqBodyEquipado.querySelectorAll('.eq-card')).forEach(function(card) {
       items.push({
-        nome: tr.querySelector('.eq-nome').value,
-        peso: Number(tr.querySelector('.eq-peso').value) || 0,
-        qtd: Number(tr.querySelector('.eq-qtd').value) || 1,
-        efeito: tr.querySelector('.eq-ef').value,
+        nome: card.querySelector('.eq-nome').value,
+        peso: Number(card.querySelector('.eq-peso').value) || 0,
+        qtd: Number(card.querySelector('.eq-qtd').value) || 1,
+        efeito: card.querySelector('.eq-ef').value,
         local: 'equipado'
       });
     });
   }
-  // Mochila
   if (eqBodyMochila) {
-    Array.from(eqBodyMochila.querySelectorAll('tr')).forEach(function(tr) {
+    Array.from(eqBodyMochila.querySelectorAll('.eq-card')).forEach(function(card) {
       items.push({
-        nome: tr.querySelector('.eq-nome').value,
-        peso: Number(tr.querySelector('.eq-peso').value) || 0,
-        qtd: Number(tr.querySelector('.eq-qtd').value) || 1,
-        efeito: tr.querySelector('.eq-ef').value,
+        nome: card.querySelector('.eq-nome').value,
+        peso: Number(card.querySelector('.eq-peso').value) || 0,
+        qtd: Number(card.querySelector('.eq-qtd').value) || 1,
+        efeito: card.querySelector('.eq-ef').value,
         local: 'mochila'
       });
     });
@@ -444,30 +459,62 @@ export function syncLinksToState() {
 // PISTAS
 // =============================================
 
+var CLUE_STATUS_CLASSES = {
+  'Aberta': 'clue--aberta',
+  'Em andamento': 'clue--andamento',
+  'Resolvida': 'clue--resolvida',
+  'Falsa pista': 'clue--falsa'
+};
+
 export function addClue(data) {
-  data = data || { titulo: "", desc: "", evid: "", status: "Aberta" };
+  data = data || { titulo: '', desc: '', evid: '', status: 'Aberta' };
   if (!clueBody) return;
-  var tr = document.createElement('tr');
-  tr.innerHTML = '<td><input class="cl-t" placeholder="Título"/></td>' +
-    '<td><textarea class="cl-d" rows="1" placeholder="Descrição / Ancoragem"></textarea></td>' +
-    '<td><textarea class="cl-e" rows="1" placeholder="Evidência (onde/quem/como)"></textarea></td>' +
-    '<td><select class="cl-s"><option>Aberta</option><option>Em andamento</option><option>Resolvida</option></select></td>' +
-    '<td class="row-actions"><button class="mini del">Remover</button></td>';
-  clueBody.appendChild(tr);
-  tr.querySelector('.cl-t').value = data.titulo || "";
-  tr.querySelector('.cl-d').value = data.desc || "";
-  tr.querySelector('.cl-e').value = data.evid || "";
-  tr.querySelector('.cl-s').value = data.status || "Aberta";
-  tr.querySelector('.del').addEventListener('click', function() { tr.remove(); syncCluesToState(); });
+  var card = document.createElement('div');
+  card.className = 'clue-card ' + (CLUE_STATUS_CLASSES[data.status] || 'clue--aberta');
+
+  card.innerHTML =
+    '<div class="clue-card-top">' +
+      '<input class="cl-t" placeholder="T\u00edtulo da pista ou \u00e2ncora"/>' +
+      '<select class="cl-s">' +
+        '<option>Aberta</option>' +
+        '<option>Em andamento</option>' +
+        '<option>Resolvida</option>' +
+        '<option>Falsa pista</option>' +
+      '</select>' +
+      '<button class="mini del">\u2715</button>' +
+    '</div>' +
+    '<textarea class="cl-d" rows="2" placeholder="Descri\u00e7\u00e3o / Ancoragem"></textarea>' +
+    '<textarea class="cl-e" rows="1" placeholder="Evid\u00eancia \u2014 onde, quem, como"></textarea>';
+
+  clueBody.appendChild(card);
+  card.querySelector('.cl-t').value = data.titulo || '';
+  card.querySelector('.cl-d').value = data.desc || '';
+  card.querySelector('.cl-e').value = data.evid || '';
+  card.querySelector('.cl-s').value = data.status || 'Aberta';
+
+  function updateStatusClass(s) {
+    Object.values(CLUE_STATUS_CLASSES).forEach(function(c) { card.classList.remove(c); });
+    card.classList.add(CLUE_STATUS_CLASSES[s] || 'clue--aberta');
+  }
+
+  card.querySelector('.cl-s').addEventListener('change', function() {
+    updateStatusClass(card.querySelector('.cl-s').value);
+    syncCluesToState();
+    if (window.debouncedAutoSave) window.debouncedAutoSave();
+  });
+  card.querySelector('.cl-t').addEventListener('input', syncCluesToState);
+  card.querySelector('.cl-d').addEventListener('input', syncCluesToState);
+  card.querySelector('.cl-e').addEventListener('input', syncCluesToState);
+  card.querySelector('.del').addEventListener('click', function() { card.remove(); syncCluesToState(); });
 }
 
 export function syncCluesToState() {
-  state.clues = clueBody ? Array.from(clueBody.querySelectorAll('tr')).map(function(tr) {
+  state.clues = clueBody ? Array.from(clueBody.querySelectorAll('.clue-card')).map(function(card) {
     return {
-      titulo: tr.querySelector('.cl-t').value,
-      desc: tr.querySelector('.cl-d').value,
-      evid: tr.querySelector('.cl-e').value,
-      status: tr.querySelector('.cl-s').value
+      titulo: card.querySelector('.cl-t').value,
+      desc: card.querySelector('.cl-d').value,
+      evid: card.querySelector('.cl-e').value,
+      status: card.querySelector('.cl-s').value
     };
   }) : [];
 }
@@ -477,26 +524,41 @@ export function syncCluesToState() {
 // =============================================
 
 export function addCtt(data) {
-  data = data || { nome: "", tipo: "NPC", obs: "" };
+  data = data || { nome: '', tipo: 'NPC', obs: '' };
   if (!cttBody) return;
-  var tr = document.createElement('tr');
-  tr.innerHTML = '<td><input class="ct-n" placeholder="Nome"/></td>' +
-    '<td><select class="ct-t"><option>NPC</option><option>Local</option><option>Clube</option><option>Comércio</option></select></td>' +
-    '<td><textarea class="ct-o" rows="1" placeholder="Observações / pistas / horários"></textarea></td>' +
-    '<td class="row-actions"><button class="mini del">Remover</button></td>';
-  cttBody.appendChild(tr);
-  tr.querySelector('.ct-n').value = data.nome || "";
-  tr.querySelector('.ct-t').value = data.tipo || "NPC";
-  tr.querySelector('.ct-o').value = data.obs || "";
-  tr.querySelector('.del').addEventListener('click', function() { tr.remove(); syncContactsToState(); });
+  var card = document.createElement('div');
+  card.className = 'ctt-card';
+
+  card.innerHTML =
+    '<div class="ctt-card-top">' +
+      '<input class="ct-n" placeholder="Nome do contato ou local"/>' +
+      '<select class="ct-t">' +
+        '<option>NPC</option>' +
+        '<option>Local</option>' +
+        '<option>Clube</option>' +
+        '<option>Com\u00e9rcio</option>' +
+      '</select>' +
+      '<button class="mini del">\u2715</button>' +
+    '</div>' +
+    '<textarea class="ct-o" rows="2" placeholder="Observa\u00e7\u00f5es, pistas, hor\u00e1rios, n\u00edvel de confian\u00e7a..."></textarea>';
+
+  cttBody.appendChild(card);
+  card.querySelector('.ct-n').value = data.nome || '';
+  card.querySelector('.ct-t').value = data.tipo || 'NPC';
+  card.querySelector('.ct-o').value = data.obs || '';
+
+  card.querySelector('.ct-n').addEventListener('input', syncContactsToState);
+  card.querySelector('.ct-t').addEventListener('change', syncContactsToState);
+  card.querySelector('.ct-o').addEventListener('input', syncContactsToState);
+  card.querySelector('.del').addEventListener('click', function() { card.remove(); syncContactsToState(); });
 }
 
 export function syncContactsToState() {
-  state.contacts = cttBody ? Array.from(cttBody.querySelectorAll('tr')).map(function(tr) {
+  state.contacts = cttBody ? Array.from(cttBody.querySelectorAll('.ctt-card')).map(function(card) {
     return {
-      nome: tr.querySelector('.ct-n').value,
-      tipo: tr.querySelector('.ct-t').value,
-      obs: tr.querySelector('.ct-o').value
+      nome: card.querySelector('.ct-n').value,
+      tipo: card.querySelector('.ct-t').value,
+      obs: card.querySelector('.ct-o').value
     };
   }) : [];
 }

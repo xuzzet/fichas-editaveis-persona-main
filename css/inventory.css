@@ -85,46 +85,164 @@
   color: #e53935;
 }
 
-/* Tabelas de inventário */
-#tbl-eq-equipado,
-#tbl-eq-mochila {
-  width: 100%;
+/* =============================================
+   INVENTÁRIO — CARD LAYOUT (novo)
+   ============================================= */
+
+/* Capacity card header */
+.inv-cap-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px 0 8px;
 }
 
-#tbl-eq-equipado th,
-#tbl-eq-mochila th {
-  text-align: left;
+.inv-cap-numbers {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
 }
 
-#tbl-eq-equipado input.eq-peso,
-#tbl-eq-mochila input.eq-peso,
-#tbl-eq-equipado input.eq-qtd,
-#tbl-eq-mochila input.eq-qtd {
+.inv-cap-value {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--ink);
+  font-family: "Barlow Condensed", sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.inv-cap-unit {
+  font-size: 13px;
+  color: var(--ink-dim);
+  font-weight: 600;
+}
+
+/* Item cards list */
+.eq-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.eq-card {
+  background: var(--bg-3);
+  border: 1px solid var(--stroke);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.2s ease;
+}
+
+.eq-card:hover {
+  border-color: var(--accent-2);
+}
+
+.eq-card-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.eq-nome {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 700;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--stroke);
+  color: var(--ink);
+  padding: 2px 0;
+  min-width: 0;
+}
+
+.eq-nome:focus {
+  border-bottom-color: var(--accent);
+  outline: none;
+}
+
+.eq-card-stats-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.eq-stat {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.eq-stat-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-dim);
+  font-family: "Barlow Condensed", sans-serif;
+}
+
+.eq-stat input {
   width: 64px;
   text-align: center;
+  padding: 3px 6px;
+  font-size: 12px;
+}
+
+.eq-total-display {
+  font-size: 11px;
+  color: var(--accent-2);
+  font-weight: 700;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.eq-card .eq-ef {
+  font-size: 12px;
+  color: var(--ink-dim);
+  background: var(--bg-2);
+  border: 1px solid var(--stroke);
+  border-radius: 6px;
+  padding: 6px 8px;
+  resize: vertical;
+  min-height: 32px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.eq-card-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .eq-move-btn {
   font-size: 11px;
-  padding: 2px 8px;
-  margin-right: 4px;
+  padding: 3px 10px;
   cursor: pointer;
   border: 1px solid var(--stroke);
-  border-radius: 4px;
+  border-radius: 5px;
   background: var(--bg-2);
   color: var(--ink-dim);
   transition:
     background 0.2s,
-    color 0.2s;
+    color 0.2s,
+    border-color 0.2s;
+  white-space: nowrap;
 }
 
 .eq-move-btn:hover {
   background: var(--accent);
   color: var(--bg);
+  border-color: var(--accent);
 }
 
 /* =============================================
-   EQUIPAMENTO ATIVO — SUBSEÇÕES
+   EQUIPAMENTO ATIVO — SUBSEÇÕES (legado)
    ============================================= */
 .equip-bloco {
   padding: 12px 0;
@@ -148,4 +266,13 @@
   color: var(--accent, #00e5ff);
   margin-bottom: 8px;
   line-height: 1;
+}
+
+@media (max-width: 600px) {
+  .eq-card-stats-row {
+    gap: 8px;
+  }
+  .eq-total-display {
+    margin-left: 0;
+  }
 }
