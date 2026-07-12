@@ -42,6 +42,11 @@
   min-width: auto;
 }
 
+.dice-field-wide {
+  flex: 2 1 220px;
+  min-width: 180px;
+}
+
 #dice-roll {
   background: var(--accent);
   color: var(--bg);

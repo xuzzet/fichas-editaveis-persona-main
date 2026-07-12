@@ -437,3 +437,84 @@
     min-height: 80px;
   }
 }
+
+/* =============================================
+   ÚLTIMA ROLAGEM DENTRO DO CARD DE MAGIA
+   ============================================= */
+.spell-hab-row {
+  margin-top: 8px;
+}
+.spell-hab-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-dim);
+}
+.spell-hab-label .sp-hab {
+  background: var(--bg-2);
+  border: 1px solid var(--stroke);
+  color: var(--ink);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 13px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.spell-roll-result {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--stroke);
+  border-left-width: 3px;
+  border-radius: 12px;
+  background: var(--bg-3);
+}
+.spell-roll-result__title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+.spell-roll-clear {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 11px;
+  padding: 2px 8px;
+}
+.spell-roll-result__content {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink);
+  word-break: break-word;
+}
+.spell-roll-empty {
+  color: var(--ink-dim);
+  font-style: italic;
+}
+.spell-roll-line { color: var(--ink-dim); }
+.spell-roll-line b { color: var(--ink); font-weight: 700; }
+.spell-roll-total {
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink);
+}
+.spell-roll-total b { color: var(--accent-2); }
+.spell-roll-err { color: var(--danger); }
+
+/* Variações discretas por tipo (borda esquerda) */
+.spell-roll-result--damage  { border-left-color: var(--accent); }
+.spell-roll-result--healing { border-left-color: var(--ok); }
+.spell-roll-result--percent { border-left-color: var(--accent-2); }
+.spell-roll-result--generic { border-left-color: var(--stroke); }
+.spell-roll-result--error   { border-left-color: var(--danger); }

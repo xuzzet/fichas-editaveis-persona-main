@@ -6,7 +6,14 @@
 import { state } from './state.js';
 import { ARCANAS, MOD_TARGETS } from './constants.js';
 import { clampInt } from './utils.js';
-import { rollDamage } from './dice.js';
+import { rollSpellFormula, formulaNeedsHab, COMBAT_ATTRS } from './dice.js';
+
+// Escapa HTML para inserção segura de strings do jogador em innerHTML.
+function _escHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
 
 // =============================================
 // REFERÊNCIAS AOS TBODIES DAS TABELAS
@@ -308,13 +315,16 @@ export function addSpell(data) {
   var elOpts = SPELL_ELEMENTS.map(function(e) {
     return '<option value="' + e + '">' + e + '</option>';
   }).join('');
+  var habOpts = COMBAT_ATTRS.map(function(a) {
+    return '<option value="' + a + '">' + a + '</option>';
+  }).join('');
 
   card.innerHTML =
     '<div class="spell-card-header">' +
       '<div class="spell-card-name-row">' +
         '<input class="sp-n spell-name-input" placeholder="Nome da Magia / Técnica">' +
         '<div class="spell-card-actions">' +
-          '<button type="button" class="mini roll-dmg" title="Rolar Dano">Dano</button>' +
+          '<button type="button" class="mini roll-dmg" title="Rolar / Calcular Fórmula">Rolar</button>' +
           '<button type="button" class="mini up" title="Mover para cima">↑</button>' +
           '<button type="button" class="mini down" title="Mover para baixo">↓</button>' +
           '<button type="button" class="mini del" title="Remover">✕</button>' +
@@ -338,8 +348,13 @@ export function addSpell(data) {
         '<input class="sp-duracao spell-stat-input" placeholder="—"></label>' +
       '<label class="spell-stat"><span class="spell-stat-label">Nível</span>' +
         '<input class="sp-tier spell-stat-input" placeholder="—"></label>' +
-      '<label class="spell-stat"><span class="spell-stat-label">Fórmula Dano</span>' +
-        '<input class="sp-dmg spell-stat-input" placeholder="MAGd6"></label>' +
+      '<label class="spell-stat"><span class="spell-stat-label">Fórmula</span>' +
+        '<input class="sp-dmg spell-stat-input" placeholder="MAGd8 + MAG"></label>' +
+    '</div>' +
+    '<div class="spell-hab-row" style="display:none;">' +
+      '<label class="spell-hab-label">Atributo para HAB' +
+        '<select class="sp-hab">' + habOpts + '</select>' +
+      '</label>' +
     '</div>' +
     '<div class="spell-card-desc">' +
       '<label class="spell-desc-label">Efeito / Descrição</label>' +
@@ -348,6 +363,13 @@ export function addSpell(data) {
     '<div class="spell-card-obs-wrap">' +
       '<button type="button" class="spell-obs-toggle">Observações <span class="spell-obs-arrow">▾</span></button>' +
       '<textarea class="sp-obs spell-obs-textarea" rows="1" placeholder="Notas adicionais…"></textarea>' +
+    '</div>' +
+    '<div class="spell-roll-result">' +
+      '<div class="spell-roll-result__title">' +
+        '<span class="spell-roll-title-label">Última Rolagem</span>' +
+        '<button type="button" class="mini spell-roll-clear" title="Limpar última rolagem">Limpar</button>' +
+      '</div>' +
+      '<div class="spell-roll-result__content"><span class="spell-roll-empty">Nenhuma rolagem feita ainda.</span></div>' +
     '</div>';
 
   // Set values safely (avoids XSS from interpolating data into innerHTML)
@@ -403,16 +425,99 @@ export function addSpell(data) {
   card.querySelector('.up').addEventListener('click',   function() { moveSpellRow(card, 'up'); });
   card.querySelector('.down').addEventListener('click', function() { moveSpellRow(card, 'down'); });
 
-  // Rolar Dano — usa a fórmula de dano do card e os atributos finais atuais
+  // Seletor de HAB: aparece apenas quando a fórmula usa HAB
+  var habRow = card.querySelector('.spell-hab-row');
+  var habSel = card.querySelector('.sp-hab');
+  function refreshSpellHab() {
+    var needs = formulaNeedsHab((card.querySelector('.sp-dmg') || {}).value || '');
+    if (habRow) habRow.style.display = needs ? '' : 'none';
+  }
+  card.querySelector('.sp-dmg').addEventListener('input', refreshSpellHab);
+  refreshSpellHab();
+
+  // Rolar / Calcular Fórmula — usa o parser do módulo de dados (js/dice.js).
+  // O resultado vai para o histórico geral E é renderizado dentro deste card.
   card.querySelector('.roll-dmg').addEventListener('click', function() {
     var formula = (card.querySelector('.sp-dmg') || {}).value || '';
-    var nome    = (card.querySelector('.sp-n')   || {}).value || 'Magia';
-    // rollDamage já valida a fórmula e exibe aviso amigável caso inválida/vazia
-    rollDamage(formula, nome.trim() || 'Magia');
+    var nome    = ((card.querySelector('.sp-n') || {}).value || '').trim() || 'Magia';
+    var habAttr = (habRow && habRow.style.display !== 'none' && habSel) ? habSel.value : null;
+    var res = rollSpellFormula(formula, nome, habAttr);
+    renderSpellRollResult(card, res);
+  });
+
+  // Limpar apenas a "Última Rolagem" deste card (não afeta o histórico geral)
+  var clearBtn = card.querySelector('.spell-roll-clear');
+  if (clearBtn) clearBtn.addEventListener('click', function() {
+    resetSpellRollResult(card);
   });
 
   _updateSpellCount();
   _updateSpellEmpty();
+}
+
+/** Restaura a área "Última Rolagem" de um card ao estado inicial (sem rolagem). */
+export function resetSpellRollResult(card) {
+  if (!card) return;
+  var wrap    = card.querySelector('.spell-roll-result');
+  var titleEl = card.querySelector('.spell-roll-title-label');
+  var content = card.querySelector('.spell-roll-result__content');
+  if (wrap) wrap.className = 'spell-roll-result';
+  if (titleEl) titleEl.textContent = 'Última Rolagem';
+  if (content) content.innerHTML = '<span class="spell-roll-empty">Nenhuma rolagem feita ainda.</span>';
+}
+
+/**
+ * Renderiza o resultado da última rolagem/cálculo dentro do card da magia.
+ * @param {HTMLElement} card
+ * @param {object} res - resultado de rollSpellFormula (dice.js)
+ */
+export function renderSpellRollResult(card, res) {
+  if (!card) return;
+  var wrap    = card.querySelector('.spell-roll-result');
+  var titleEl = card.querySelector('.spell-roll-title-label');
+  var content = card.querySelector('.spell-roll-result__content');
+  if (!wrap || !content) return;
+
+  wrap.className = 'spell-roll-result';
+
+  // Erro / fórmula inválida ou vazia
+  if (!res || res.ok === false) {
+    wrap.classList.add('spell-roll-result--error');
+    if (titleEl) titleEl.textContent = 'Última Rolagem';
+    content.innerHTML = '<span class="spell-roll-err">' +
+      _escHtml((res && res.error) ? res.error : 'Fórmula inválida.') + '</span>';
+    return;
+  }
+
+  var TYPE_CLASS = {
+    damage: 'spell-roll-result--damage', heal: 'spell-roll-result--healing',
+    pm: 'spell-roll-result--healing', percent: 'spell-roll-result--percent',
+    generic: 'spell-roll-result--generic'
+  };
+  wrap.classList.add(TYPE_CLASS[res.type] || 'spell-roll-result--generic');
+  if (titleEl) titleEl.textContent = (res.type === 'percent') ? 'Último Cálculo' : 'Última Rolagem';
+
+  var groups = res.diceGroups || [];
+  var diceRolled = groups.length ? groups.map(function(g) { return g.label; }).join(' + ') : '';
+  var allDice = groups.length ? groups.map(function(g) { return g.rolls.join(', ') || '—'; }).join(' | ') : '';
+
+  var TYPE_LABEL = { damage: 'Dano', heal: 'Recuperação de PV', pm: 'Recuperação de PM', percent: 'Porcentagem', generic: 'Resultado' };
+  var rows = [];
+  rows.push('<div class="spell-roll-line"><b>Tipo:</b> ' + _escHtml(TYPE_LABEL[res.type] || 'Resultado') + '</div>');
+  rows.push('<div class="spell-roll-line"><b>Fórmula:</b> ' + _escHtml(res.label) + '</div>');
+  if (res.usedHab) rows.push('<div class="spell-roll-line"><b>HAB escolhido:</b> ' + _escHtml(res.usedHab) + '</div>');
+
+  if (res.type === 'percent') {
+    rows.push('<div class="spell-roll-line"><b>Cálculo:</b> ' + _escHtml(res.resolved) + '</div>');
+    rows.push('<div class="spell-roll-total">Resultado: <b>' + _escHtml(res.total) + '%</b></div>');
+  } else {
+    rows.push('<div class="spell-roll-line"><b>Rolagem:</b> ' + _escHtml(res.resolved) + '</div>');
+    if (diceRolled) rows.push('<div class="spell-roll-line"><b>Dados:</b> ' + _escHtml(allDice) + '</div>');
+    if (res.type === 'heal') rows.push('<div class="spell-roll-total">Total recuperado: <b>' + _escHtml(res.total) + '</b> PV</div>');
+    else if (res.type === 'pm') rows.push('<div class="spell-roll-total">Total recuperado: <b>' + _escHtml(res.total) + '</b> PM</div>');
+    else rows.push('<div class="spell-roll-total">Total: <b>' + _escHtml(res.total) + '</b></div>');
+  }
+  content.innerHTML = rows.join('');
 }
 
 export function syncSpellsToState() {
