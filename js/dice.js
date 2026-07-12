@@ -217,8 +217,9 @@ export function renderDiceHistory() {
     if (h.kind === 'test') {
       lines =
         '<div class="dice-hist-line">1d20: <b>' + esc(h.die) + '</b>' +
-          (h.attribute ? ' · ' + esc(h.attrLabel || 'atributo') + ': +' + esc(h.attribute) : '') +
-          (h.extra ? ' · extra: ' + (h.extra >= 0 ? '+' : '') + esc(h.extra) : '') + '</div>' +
+          (h.attribute != null ? ' · ' + esc(h.attrLabel || 'atributo') + ': +' + esc(h.attribute) : '') +
+          (h.extra ? ' · extra: ' + (h.extra >= 0 ? '+' : '') + esc(h.extra) : '') +
+          (h.tier != null ? ' · Tier: ' + ['0','I','II','III','IV','V'][h.tier] : '') + '</div>' +
         (h.crit ? '<div class="dice-hist-flag dice-flag-crit">Crítico!</div>' : '') +
         (h.fail ? '<div class="dice-hist-flag dice-flag-fail">Falha crítica!</div>' : '');
     } else {
@@ -253,9 +254,11 @@ export function performTestRoll(category, attrKey, extraModifier) {
   var attrValue, label, attrLabel;
   if (category === 'social') {
     var meta = SOCIAL_SKILL_META[attrKey];
-    attrValue = calcSocialTier(state[attrKey] || 0);
+    // Rolagem social usa os PONTOS totais da habilidade (não o Tier).
+    attrValue = Math.trunc(Number(state[attrKey]) || 0);
+    var tier = calcSocialTier(state[attrKey] || 0);
     attrLabel = meta ? meta.name : attrKey;
-    label = attrLabel + ' — 1d20 + ' + attrValue + ' (Tier)';
+    label = attrLabel + ' — 1d20 + ' + attrValue + ' (Tier ' + ['0','I','II','III','IV','V'][tier] + ')';
   } else {
     var stats = getComputedStats();
     attrValue = Math.trunc(Number(stats[attrKey]) || 0);
@@ -273,7 +276,8 @@ export function performTestRoll(category, attrKey, extraModifier) {
     extra: res.extra,
     total: res.total,
     crit: res.crit,
-    fail: res.fail
+    fail: res.fail,
+    tier: (category === 'social') ? calcSocialTier(state[attrKey] || 0) : null
   });
   showTestResult(res, category, attrKey, res.extra);
   return res;
@@ -358,10 +362,13 @@ function populateAttrSelect(sel, category) {
 function showTestResult(res, category, attrKey, extra) {
   var out = document.getElementById('dice-result');
   if (!out) return;
-  var attrLabel, attrShown;
+  var attrLabel, attrShown, tierInfo = '';
   if (category === 'social') {
     var meta = SOCIAL_SKILL_META[attrKey];
-    attrLabel = (meta ? meta.name : attrKey) + ' (Tier)';
+    // Rolagem social soma os PONTOS da habilidade; o Tier é apenas informativo.
+    attrLabel = (meta ? meta.name : attrKey) + ' (pontos)';
+    var tier = calcSocialTier(state[attrKey] || 0);
+    tierInfo = '<span class="dice-result-tier">Tier atual: ' + ['0','I','II','III','IV','V'][tier] + '</span>';
   } else {
     attrLabel = attrKey + ' final';
   }
@@ -375,6 +382,7 @@ function showTestResult(res, category, attrKey, extra) {
       '<span>Dado: <b>' + esc(res.die) + '</b></span>' +
       '<span>' + esc(attrLabel) + ': +' + esc(attrShown) + '</span>' +
       (extra ? '<span>Mod. extra: ' + (extra >= 0 ? '+' : '') + esc(extra) + '</span>' : '') +
+      tierInfo +
     '</div>' +
     flag +
     '<div class="dice-result-total">Total: <b>' + esc(res.total) + '</b></div>';

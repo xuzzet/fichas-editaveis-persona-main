@@ -103,6 +103,11 @@
   color: var(--ink);
 }
 
+.dice-result-tier {
+  font-style: italic;
+  opacity: 0.8;
+}
+
 .dice-result-dice {
   font-size: 13px;
   color: var(--ink);
