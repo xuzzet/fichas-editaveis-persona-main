@@ -27,6 +27,7 @@ import { snapshot, applySnapshot, setRenderAll } from './storage.js';
 import { initTheme } from './themes.js';
 import { initTabs } from './tabs.js';
 import { initImportExport } from './import-export.js';
+import { initDiceSystem, renderDiceHistory, rollDamage } from './dice.js';
 
 // =============================================
 // RENDERIZAÇÃO COMPLETA
@@ -48,6 +49,7 @@ export function renderAll() {
     renderModSummary();
     buildAutoSummaryPanel();
     renderAutoSummary();
+    renderDiceHistory();
     initAutoResizeTextareas();
   } finally {
     setRendering(false);
@@ -86,6 +88,15 @@ export function getState() {
   return copy;
 }
 
+// Recalcula atributos finais + valida + renderiza.
+// Exposto para módulos que alteram fontes de bônus fora do fluxo de setState
+// (ex.: bônus automáticos de equipamentos no inventário).
+window.recalcAndRender = function() {
+  recalcState();
+  validateState();
+  render();
+};
+
 // =============================================
 // RESET DA FICHA
 // =============================================
@@ -104,6 +115,7 @@ function resetFicha() {
   state.affinities = {};
   state.portrait = { src: '' };
   state.background = {};
+  state.rollHistory = [];
 
   recalcState();
   state.CurrentHP = state.MaxHP;
@@ -227,6 +239,7 @@ function initApp() {
   try { buildSocialUI(); } catch(e) { console.error('[initApp] buildSocialUI:', e); }
   try { buildModifiersUI(); } catch(e) { console.error('[initApp] buildModifiersUI:', e); }
   try { buildAutoSummaryPanel(); } catch(e) { console.error('[initApp] buildAutoSummaryPanel:', e); }
+  try { initDiceSystem(); } catch(e) { console.error('[initApp] initDiceSystem:', e); }
   try { initInventoryButtons(); } catch(e) { console.error('[initApp] initInventoryButtons:', e); }
   try { initLinkFilters(); } catch(e) { console.error('[initApp] initLinkFilters:', e); }
   try { initLoreCollapse(); } catch(e) { console.error('[initApp] initLoreCollapse:', e); }
@@ -343,6 +356,14 @@ render();
 
 var resetBtn = document.getElementById('reset');
 if (resetBtn) resetBtn.addEventListener('click', resetFicha);
+
+// Rolar Dano da Arma — usa o campo WeaponDmg como fórmula (ex.: STRd8)
+var rollWeaponBtn = document.getElementById('roll-weapon-dmg');
+if (rollWeaponBtn) rollWeaponBtn.addEventListener('click', function() {
+  var formula = (ids.WeaponDmg ? ids.WeaponDmg.value : '') || '';
+  var nome = (ids.Weapon && ids.Weapon.value.trim()) ? ids.Weapon.value.trim() : 'Arma';
+  rollDamage(formula, nome);
+});
 
 var saveBtn = document.getElementById('save');
 if (saveBtn) saveBtn.addEventListener('click', function() {

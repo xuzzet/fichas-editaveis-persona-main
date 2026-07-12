@@ -1,0 +1,293 @@
+/* =============================================
+   SISTEMA DE ROLAGEM DE DADOS
+   ============================================= */
+
+#dice-card .dice-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.dice-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 110px;
+  flex: 1 1 110px;
+}
+
+.dice-field label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.dice-field select,
+.dice-field input {
+  background: var(--bg-2);
+  border: 1px solid var(--stroke);
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 7px 9px;
+  font-size: 14px;
+  width: 100%;
+}
+
+.dice-field-btn {
+  flex: 0 0 auto;
+  min-width: auto;
+}
+
+#dice-roll {
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  font-weight: 800;
+  padding: 9px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition:
+    background 0.15s ease,
+    transform 0.1s ease;
+}
+
+#dice-roll:hover {
+  background: var(--accent-2);
+}
+#dice-roll:active {
+  transform: translateY(1px);
+}
+
+/* ── Resultado ─────────────────────────────── */
+
+.dice-result {
+  background: var(--bg-2);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.dice-result.is-crit {
+  border-color: var(--ok);
+  box-shadow: 0 0 0 1px var(--ok) inset;
+}
+.dice-result.is-fail {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 1px var(--danger) inset;
+}
+
+.dice-result-formula {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-2);
+  margin-bottom: var(--space-2);
+  letter-spacing: 0.03em;
+}
+
+.dice-result-lines {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  font-size: 13px;
+  color: var(--ink-dim);
+  margin-bottom: var(--space-1);
+}
+
+.dice-result-lines b {
+  color: var(--ink);
+}
+
+.dice-result-dice {
+  font-size: 13px;
+  color: var(--ink);
+  margin: var(--space-1) 0;
+  word-break: break-word;
+}
+
+.dice-result-total {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-top: var(--space-2);
+}
+
+.dice-result-total b {
+  color: var(--accent-2);
+}
+
+.dice-flag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 2px 10px;
+  border-radius: 6px;
+  margin: var(--space-1) 0;
+  letter-spacing: 0.05em;
+}
+
+.dice-flag-crit {
+  background: var(--ok);
+  color: var(--bg);
+}
+.dice-flag-fail {
+  background: var(--danger);
+  color: #fff;
+}
+
+.dice-empty {
+  color: var(--ink-dim);
+  font-size: 13px;
+  margin: 0;
+}
+
+/* ── Histórico ─────────────────────────────── */
+
+.dice-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-bottom: var(--space-2);
+}
+
+.dice-history {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.dice-hist-item {
+  background: var(--bg-2);
+  border: 1px solid var(--stroke);
+  border-left-width: 3px;
+  border-radius: 8px;
+  padding: var(--space-2) var(--space-3);
+}
+
+.dice-hist-crit {
+  border-left-color: var(--ok);
+}
+.dice-hist-fail {
+  border-left-color: var(--danger);
+}
+
+.dice-hist-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-1);
+}
+
+.dice-hist-tag {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--bg);
+  background: var(--accent);
+  padding: 1px 7px;
+  border-radius: 5px;
+}
+
+.dice-hist-formula {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  flex: 1 1 auto;
+  word-break: break-word;
+}
+
+.dice-hist-total {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--accent-2);
+}
+
+.dice-hist-time {
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+
+.dice-hist-line {
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+
+.dice-hist-line b {
+  color: var(--ink);
+}
+
+.dice-hist-flag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 800;
+  margin-top: var(--space-1);
+}
+
+.dice-flag-crit {
+  color: var(--ok);
+}
+.dice-flag-fail {
+  color: var(--danger);
+}
+
+/* ── Bônus de equipamento (inventário) ─────── */
+
+.eq-bonus-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px dashed var(--stroke);
+}
+
+.eq-bonus-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+.eq-bonus-row select,
+.eq-bonus-row input {
+  background: var(--bg-2);
+  border: 1px solid var(--stroke);
+  color: var(--ink);
+  border-radius: 6px;
+  padding: 4px 7px;
+  font-size: 13px;
+}
+
+.eq-bonus-row .eq-bonus-valor {
+  width: 70px;
+}
+
+@media (max-width: 560px) {
+  .dice-field {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+  .dice-field-btn {
+    flex: 1 1 100%;
+  }
+  #dice-roll {
+    width: 100%;
+  }
+}

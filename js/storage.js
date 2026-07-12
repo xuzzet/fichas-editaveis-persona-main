@@ -76,7 +76,8 @@ export function snapshot() {
     background: JSON.parse(JSON.stringify(state.background || {})),
     conditions: JSON.parse(JSON.stringify(state.conditions || [])),
     modifiers: JSON.parse(JSON.stringify(state.modifiers || [])),
-    feitoConfig: JSON.parse(JSON.stringify(state.feitoConfig || {}))
+    feitoConfig: JSON.parse(JSON.stringify(state.feitoConfig || {})),
+    rollHistory: JSON.parse(JSON.stringify(state.rollHistory || []))
   };
 }
 
@@ -129,6 +130,8 @@ export function applySnapshot(data) {
   state.feitoConfig = data.feitoConfig || {};
   state.portrait = data.portrait || { src: '' };
   state.background = data.background || {};
+  // Histórico de rolagens (fallback para saves antigos sem o campo)
+  state.rollHistory = Array.isArray(data.rollHistory) ? data.rollHistory : [];
 
   // Recalcular HP/PM com atributos + modificadores restaurados
   recalcState();

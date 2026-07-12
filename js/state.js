@@ -67,6 +67,8 @@ export const state = {
   portrait: { src: '' },
   // Background
   background: {},
+  // Histórico de rolagens de dados (últimas 20)
+  rollHistory: [],
   // Valores computados (preenchidos por recalcState)
   _computed: null
 };

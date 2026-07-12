@@ -38,6 +38,32 @@ export function feitoIsActive(id) {
 }
 
 /**
+ * Calcula modificadores automáticos derivados de equipamentos.
+ * Itens de inventário podem ter campos opcionais de bônus:
+ *   bonusAlvo (STR/MAG/.../HP/PM), bonusTipo ('flat'|'percentual'),
+ *   bonusValor (número), bonusAtivo (boolean).
+ * Retorna array no mesmo formato de state.modifiers.
+ * NUNCA modifica state.equip.
+ */
+export function computeEquipModifiers() {
+  var mods = [];
+  (state.equip || []).forEach(function(item) {
+    if (!item || !item.bonusAtivo) return;
+    var alvo = item.bonusAlvo;
+    var valor = Number(item.bonusValor) || 0;
+    if (!alvo || MOD_TARGETS.indexOf(alvo) === -1 || valor === 0) return;
+    mods.push({
+      nome: (item.nome || 'Equipamento') + ' (' + alvo + ')',
+      tipo: item.bonusTipo === 'percentual' ? 'percentual' : 'flat',
+      valor: valor,
+      alvo: alvo,
+      ativo: true
+    });
+  });
+  return mods;
+}
+
+/**
  * Calcula modificadores automáticos derivados de Feitos ativos.
  * Retorna array no mesmo formato de state.modifiers.
  * NUNCA modifica state.modifiers — lista separada que é combinada no recalcState.
@@ -200,10 +226,15 @@ export function recalcState() {
     HP: baseHP,
     PM: basePM
   };
-  // Combina modificadores do jogador + modificadores automáticos de feitos + habilidades sociais
+  // Combina modificadores na ordem de cálculo definida:
+  // 1) equipamentos → 2) feitos automáticos → 3) habilidades sociais → 4) modificadores globais
+  var equipMods  = computeEquipModifiers();
   var feitoMods  = computeFeitoModifiers();
   var socialMods = computeSocialModifiers();
-  var allMods = (state.modifiers || []).concat(feitoMods).concat(socialMods);
+  var allMods = equipMods
+    .concat(feitoMods)
+    .concat(socialMods)
+    .concat(state.modifiers || []);
   var modded = applyModifiers(baseVals, allMods);
 
   state.MaxHP = modded.HP;
@@ -211,6 +242,7 @@ export function recalcState() {
   state._computed = {
     baseVals: baseVals,
     modded: modded,
+    equipMods: equipMods,
     feitoMods: feitoMods,
     socialMods: socialMods,
     movement: computeMovement(modded),

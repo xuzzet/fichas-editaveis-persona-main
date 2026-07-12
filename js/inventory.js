@@ -4,8 +4,9 @@
 // =============================================
 
 import { state } from './state.js';
-import { ARCANAS } from './constants.js';
+import { ARCANAS, MOD_TARGETS } from './constants.js';
 import { clampInt } from './utils.js';
+import { rollDamage } from './dice.js';
 
 // =============================================
 // REFERÊNCIAS AOS TBODIES DAS TABELAS
@@ -96,7 +97,11 @@ export function migrateEquipItem(item) {
     peso: item.peso != null ? item.peso : 0,
     qtd: item.qtd != null ? item.qtd : 1,
     efeito: item.efeito || '',
-    local: local
+    local: local,
+    bonusAtivo: !!item.bonusAtivo,
+    bonusAlvo: item.bonusAlvo || '',
+    bonusTipo: item.bonusTipo || 'flat',
+    bonusValor: item.bonusValor != null ? item.bonusValor : 0
   };
 }
 
@@ -114,6 +119,10 @@ export function addInventoryItem(data, targetLocal) {
   card.dataset.local = local;
   var moveLabel = (local === 'equipado') ? '↓ Mochila' : '↑ Equipar';
 
+  var bonusAlvoOpts = MOD_TARGETS.map(function(t) {
+    return '<option value="' + t + '">' + t + '</option>';
+  }).join('');
+
   card.innerHTML =
     '<div class="eq-card-name-row">' +
       '<input class="eq-nome" placeholder="Nome do item"/>' +
@@ -129,7 +138,16 @@ export function addInventoryItem(data, targetLocal) {
         '<input class="eq-qtd" type="number" min="1" step="1" value="1"/></label>' +
       '<span class="eq-total-display">= 0</span>' +
     '</div>' +
-    '<textarea class="eq-ef" rows="2" placeholder="Efeito / Notas (opcional)"></textarea>';
+    '<textarea class="eq-ef" rows="2" placeholder="Efeito / Notas (opcional)"></textarea>' +
+    '<div class="eq-bonus-row">' +
+      '<label class="eq-bonus-toggle"><input type="checkbox" class="eq-bonus-ativo"/> Bônus automático</label>' +
+      '<select class="eq-bonus-alvo">' + bonusAlvoOpts + '</select>' +
+      '<select class="eq-bonus-tipo">' +
+        '<option value="flat">Fixo</option>' +
+        '<option value="percentual">%</option>' +
+      '</select>' +
+      '<input class="eq-bonus-valor" type="number" step="1" value="0" title="Valor do bônus"/>' +
+    '</div>';
 
   container.appendChild(card);
 
@@ -137,6 +155,10 @@ export function addInventoryItem(data, targetLocal) {
   card.querySelector('.eq-peso').value = data.peso != null ? data.peso : 0;
   card.querySelector('.eq-qtd').value = data.qtd != null ? data.qtd : 1;
   card.querySelector('.eq-ef').value = data.efeito || '';
+  card.querySelector('.eq-bonus-ativo').checked = !!data.bonusAtivo;
+  if (data.bonusAlvo && MOD_TARGETS.indexOf(data.bonusAlvo) >= 0) card.querySelector('.eq-bonus-alvo').value = data.bonusAlvo;
+  card.querySelector('.eq-bonus-tipo').value = data.bonusTipo === 'percentual' ? 'percentual' : 'flat';
+  card.querySelector('.eq-bonus-valor').value = data.bonusValor != null ? data.bonusValor : 0;
 
   function updateTotal() {
     var w = Number(card.querySelector('.eq-peso').value) || 0;
@@ -149,6 +171,17 @@ export function addInventoryItem(data, targetLocal) {
   card.querySelector('.eq-qtd').addEventListener('input', function() { updateTotal(); syncEquipToState(); renderInventoryStatus(); });
   card.querySelector('.eq-nome').addEventListener('input', function() { syncEquipToState(); });
   card.querySelector('.eq-ef').addEventListener('input', function() { syncEquipToState(); });
+  // Bônus de equipamento: alteração recalcula atributos finais (via window.recalcAndRender)
+  ['.eq-bonus-ativo', '.eq-bonus-alvo', '.eq-bonus-tipo', '.eq-bonus-valor'].forEach(function(sel) {
+    var el = card.querySelector(sel);
+    if (!el) return;
+    var evt = (el.type === 'checkbox') ? 'change' : 'input';
+    el.addEventListener(evt, function() {
+      syncEquipToState();
+      if (window.recalcAndRender) window.recalcAndRender();
+      if (window.debouncedAutoSave) window.debouncedAutoSave();
+    });
+  });
 
   card.querySelector('.eq-move-btn').addEventListener('click', function() {
     syncEquipToState();
@@ -192,26 +225,27 @@ export function getItemIndexFromRow(card, local) {
 
 export function syncEquipToState() {
   var items = [];
+  function readCard(card, loc) {
+    return {
+      nome: card.querySelector('.eq-nome').value,
+      peso: Number(card.querySelector('.eq-peso').value) || 0,
+      qtd: Number(card.querySelector('.eq-qtd').value) || 1,
+      efeito: card.querySelector('.eq-ef').value,
+      local: loc,
+      bonusAtivo: !!(card.querySelector('.eq-bonus-ativo') || {}).checked,
+      bonusAlvo: (card.querySelector('.eq-bonus-alvo') || {}).value || '',
+      bonusTipo: (card.querySelector('.eq-bonus-tipo') || {}).value || 'flat',
+      bonusValor: Number((card.querySelector('.eq-bonus-valor') || {}).value) || 0
+    };
+  }
   if (eqBodyEquipado) {
     Array.from(eqBodyEquipado.querySelectorAll('.eq-card')).forEach(function(card) {
-      items.push({
-        nome: card.querySelector('.eq-nome').value,
-        peso: Number(card.querySelector('.eq-peso').value) || 0,
-        qtd: Number(card.querySelector('.eq-qtd').value) || 1,
-        efeito: card.querySelector('.eq-ef').value,
-        local: 'equipado'
-      });
+      items.push(readCard(card, 'equipado'));
     });
   }
   if (eqBodyMochila) {
     Array.from(eqBodyMochila.querySelectorAll('.eq-card')).forEach(function(card) {
-      items.push({
-        nome: card.querySelector('.eq-nome').value,
-        peso: Number(card.querySelector('.eq-peso').value) || 0,
-        qtd: Number(card.querySelector('.eq-qtd').value) || 1,
-        efeito: card.querySelector('.eq-ef').value,
-        local: 'mochila'
-      });
+      items.push(readCard(card, 'mochila'));
     });
   }
   state.equip = items;
@@ -280,6 +314,7 @@ export function addSpell(data) {
       '<div class="spell-card-name-row">' +
         '<input class="sp-n spell-name-input" placeholder="Nome da Magia / Técnica">' +
         '<div class="spell-card-actions">' +
+          '<button type="button" class="mini roll-dmg" title="Rolar Dano">Dano</button>' +
           '<button type="button" class="mini up" title="Mover para cima">↑</button>' +
           '<button type="button" class="mini down" title="Mover para baixo">↓</button>' +
           '<button type="button" class="mini del" title="Remover">✕</button>' +
@@ -303,6 +338,8 @@ export function addSpell(data) {
         '<input class="sp-duracao spell-stat-input" placeholder="—"></label>' +
       '<label class="spell-stat"><span class="spell-stat-label">Nível</span>' +
         '<input class="sp-tier spell-stat-input" placeholder="—"></label>' +
+      '<label class="spell-stat"><span class="spell-stat-label">Fórmula Dano</span>' +
+        '<input class="sp-dmg spell-stat-input" placeholder="MAGd6"></label>' +
     '</div>' +
     '<div class="spell-card-desc">' +
       '<label class="spell-desc-label">Efeito / Descrição</label>' +
@@ -323,6 +360,7 @@ export function addSpell(data) {
   card.querySelector('.sp-c').value          = data.custo   || '';
   card.querySelector('.sp-duracao').value    = data.duracao || '';
   card.querySelector('.sp-tier').value       = data.tier    || '';
+  card.querySelector('.sp-dmg').value        = data.damageFormula || '';
   card.querySelector('.sp-e').value          = data.efeito  || '';
   card.querySelector('.sp-obs').value        = data.obs     || '';
 
@@ -365,6 +403,14 @@ export function addSpell(data) {
   card.querySelector('.up').addEventListener('click',   function() { moveSpellRow(card, 'up'); });
   card.querySelector('.down').addEventListener('click', function() { moveSpellRow(card, 'down'); });
 
+  // Rolar Dano — usa a fórmula de dano do card e os atributos finais atuais
+  card.querySelector('.roll-dmg').addEventListener('click', function() {
+    var formula = (card.querySelector('.sp-dmg') || {}).value || '';
+    var nome    = (card.querySelector('.sp-n')   || {}).value || 'Magia';
+    // rollDamage já valida a fórmula e exibe aviso amigável caso inválida/vazia
+    rollDamage(formula, nome.trim() || 'Magia');
+  });
+
   _updateSpellCount();
   _updateSpellEmpty();
 }
@@ -378,6 +424,7 @@ export function syncSpellsToState() {
       custo:   (card.querySelector('.sp-c')       || {}).value || '',
       efeito:  (card.querySelector('.sp-e')       || {}).value || '',
       tier:    (card.querySelector('.sp-tier')    || {}).value || '',
+      damageFormula: (card.querySelector('.sp-dmg') || {}).value || '',
       uses:    (card.querySelector('.sp-uses')    || {}).value || '',
       acao:    (card.querySelector('.sp-acao')    || {}).value || '',
       alcance: (card.querySelector('.sp-alcance') || {}).value || '',
