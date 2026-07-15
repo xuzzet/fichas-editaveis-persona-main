@@ -49,49 +49,74 @@
   color: var(--accent-2);
 }
 
-/* ── DECK — composição hexagonal (desktop) ── */
+/* ── DECK — "mão de cartas" estilo baralho/poker (desktop) ── */
 .awakening-deck {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-auto-rows: auto;
-  gap: var(--space-3) var(--space-5);
-  max-width: 640px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  flex-wrap: nowrap;
+  gap: 0;
+  padding: 54px 12px 24px;
   margin: 0 auto var(--space-5);
-  align-items: center;
+  max-width: 720px;
+  min-height: 300px;
+  perspective: 1400px;
 }
 .awakening-deck.is-disabled {
   opacity: 0.5;
   pointer-events: none;
 }
 
-/* Posições da composição:
-        [ topo ]
-   [ e-cima ] [ d-cima ]
-   [ e-baixo] [ d-baixo]
-        [ base ]                 */
-.awakening-card.pos-top {
-  grid-column: 2;
-  grid-row: 1;
+/* Carta como elemento da mão: largura fixa + leque com sobreposição.
+   O ponto de origem na base cria o efeito de leque aberto. */
+.awakening-deck .awakening-card {
+  position: relative;
+  flex: 0 0 auto;
+  width: clamp(120px, 15vw, 158px);
+  margin: 0 -26px;
+  transform-origin: bottom center;
+  will-change: transform;
+  transition:
+    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 0.25s ease;
 }
-.awakening-card.pos-left-top {
-  grid-column: 1;
-  grid-row: 2;
+
+/* Leque: rotação + arco vertical (extremos descem, centro sobe/destaca) */
+.awakening-deck .awakening-card:nth-child(1) {
+  transform: rotate(-16deg) translateY(34px);
+  z-index: 1;
 }
-.awakening-card.pos-right-top {
-  grid-column: 3;
-  grid-row: 2;
+.awakening-deck .awakening-card:nth-child(2) {
+  transform: rotate(-9.5deg) translateY(14px);
+  z-index: 2;
 }
-.awakening-card.pos-left-bottom {
-  grid-column: 1;
-  grid-row: 3;
+.awakening-deck .awakening-card:nth-child(3) {
+  transform: rotate(-3deg) translateY(2px) scale(1.04);
+  z-index: 3;
 }
-.awakening-card.pos-right-bottom {
-  grid-column: 3;
-  grid-row: 3;
+.awakening-deck .awakening-card:nth-child(4) {
+  transform: rotate(3deg) translateY(2px) scale(1.04);
+  z-index: 3;
 }
-.awakening-card.pos-bottom {
-  grid-column: 2;
-  grid-row: 4;
+.awakening-deck .awakening-card:nth-child(5) {
+  transform: rotate(9.5deg) translateY(14px);
+  z-index: 2;
+}
+.awakening-deck .awakening-card:nth-child(6) {
+  transform: rotate(16deg) translateY(34px);
+  z-index: 1;
+}
+
+/* Hover / foco / selecionada: sai do leque, endireita, sobe e vem à frente.
+   Especificidade dentro de .awakening-deck garante prioridade sobre o leque. */
+.awakening-deck .awakening-card:hover,
+.awakening-deck .awakening-card:focus-visible,
+.awakening-deck .awakening-card.is-selected {
+  transform: rotate(0deg) translateY(-30px) scale(1.14);
+  z-index: 20;
+}
+.awakening-deck .awakening-card.is-selected {
+  filter: drop-shadow(0 14px 26px rgba(0, 0, 0, 0.5));
 }
 
 /* ── PAINEL DE DETALHES ── */
@@ -287,23 +312,46 @@
 
 /* ── RESPONSIVO ── */
 @media (max-width: 640px) {
+  /* Mantém a "mão de cartas", mas com sobreposição/inclinação reduzidas
+     e rolagem horizontal caso o leque ultrapasse a largura da tela. */
   .awakening-deck {
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-3);
-    max-width: 420px;
+    padding: 44px 8px 18px;
+    min-height: 250px;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
-  /* No mobile, ignora a composição hexagonal e usa fluxo em grade. */
-  .awakening-card.pos-top,
-  .awakening-card.pos-left-top,
-  .awakening-card.pos-right-top,
-  .awakening-card.pos-left-bottom,
-  .awakening-card.pos-right-bottom,
-  .awakening-card.pos-bottom {
-    grid-column: auto;
-    grid-row: auto;
+  .awakening-deck::-webkit-scrollbar {
+    display: none;
   }
-  .awakening-card:hover {
-    transform: translateY(-4px) scale(1.02);
+  .awakening-deck .awakening-card {
+    width: clamp(104px, 30vw, 128px);
+    margin: 0 -14px;
+  }
+  .awakening-deck .awakening-card:nth-child(1) {
+    transform: rotate(-11deg) translateY(20px);
+  }
+  .awakening-deck .awakening-card:nth-child(2) {
+    transform: rotate(-6.5deg) translateY(9px);
+  }
+  .awakening-deck .awakening-card:nth-child(3) {
+    transform: rotate(-2deg) translateY(1px) scale(1.03);
+  }
+  .awakening-deck .awakening-card:nth-child(4) {
+    transform: rotate(2deg) translateY(1px) scale(1.03);
+  }
+  .awakening-deck .awakening-card:nth-child(5) {
+    transform: rotate(6.5deg) translateY(9px);
+  }
+  .awakening-deck .awakening-card:nth-child(6) {
+    transform: rotate(11deg) translateY(20px);
+  }
+  .awakening-deck .awakening-card:hover,
+  .awakening-deck .awakening-card:focus-visible,
+  .awakening-deck .awakening-card.is-selected {
+    transform: rotate(0deg) translateY(-16px) scale(1.08);
   }
   .awakening-panel-header {
     flex-wrap: wrap;
@@ -315,8 +363,8 @@
 }
 
 @media (max-width: 380px) {
-  .awakening-deck {
-    grid-template-columns: 1fr;
-    max-width: 260px;
+  .awakening-deck .awakening-card {
+    width: clamp(96px, 34vw, 116px);
+    margin: 0 -10px;
   }
 }
