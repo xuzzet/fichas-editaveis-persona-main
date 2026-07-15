@@ -77,7 +77,8 @@ export function snapshot() {
     conditions: JSON.parse(JSON.stringify(state.conditions || [])),
     modifiers: JSON.parse(JSON.stringify(state.modifiers || [])),
     feitoConfig: JSON.parse(JSON.stringify(state.feitoConfig || {})),
-    rollHistory: JSON.parse(JSON.stringify(state.rollHistory || []))
+    rollHistory: JSON.parse(JSON.stringify(state.rollHistory || [])),
+    personaAwakenings: JSON.parse(JSON.stringify(state.personaAwakenings || {}))
   };
 }
 
@@ -132,6 +133,8 @@ export function applySnapshot(data) {
   state.background = data.background || {};
   // Histórico de rolagens (fallback para saves antigos sem o campo)
   state.rollHistory = Array.isArray(data.rollHistory) ? data.rollHistory : [];
+  // Despertar Trama (fallback para saves antigos sem o campo)
+  state.personaAwakenings = (data.personaAwakenings && typeof data.personaAwakenings === 'object') ? data.personaAwakenings : {};
 
   // Recalcular HP/PM com atributos + modificadores restaurados
   recalcState();

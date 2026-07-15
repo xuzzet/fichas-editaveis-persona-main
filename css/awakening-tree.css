@@ -1,0 +1,268 @@
+/* =============================================
+   DESPERTAR TRAMA — LAYOUT, DECK E PAINEL
+   ============================================= */
+
+.awakening-intro {
+  color: var(--ink-dim);
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0 0 var(--space-4);
+}
+
+/* Cabeçalho com Arcana atual + progressão */
+.awakening-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--bg-3) 65%, transparent);
+  border: 1px solid var(--stroke);
+  border-left: 4px solid var(--accent);
+}
+.awakening-arcana-name {
+  font-family: "Barlow Condensed", Inter, sans-serif;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 18px;
+  color: var(--accent);
+  flex: 1 1 auto;
+  min-width: 160px;
+}
+.awakening-header-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+.awakening-level,
+.awakening-next {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ink-dim);
+}
+.awakening-next {
+  color: var(--accent-2);
+}
+
+/* ── DECK — composição hexagonal (desktop) ── */
+.awakening-deck {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: auto;
+  gap: var(--space-3) var(--space-5);
+  max-width: 640px;
+  margin: 0 auto var(--space-5);
+  align-items: center;
+}
+.awakening-deck.is-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Posições da composição:
+        [ topo ]
+   [ e-cima ] [ d-cima ]
+   [ e-baixo] [ d-baixo]
+        [ base ]                 */
+.awakening-card.pos-top {
+  grid-column: 2;
+  grid-row: 1;
+}
+.awakening-card.pos-left-top {
+  grid-column: 1;
+  grid-row: 2;
+}
+.awakening-card.pos-right-top {
+  grid-column: 3;
+  grid-row: 2;
+}
+.awakening-card.pos-left-bottom {
+  grid-column: 1;
+  grid-row: 3;
+}
+.awakening-card.pos-right-bottom {
+  grid-column: 3;
+  grid-row: 3;
+}
+.awakening-card.pos-bottom {
+  grid-column: 2;
+  grid-row: 4;
+}
+
+/* ── PAINEL DE DETALHES ── */
+.awakening-panel {
+  border-radius: 12px;
+  border: 1px solid var(--stroke);
+  border-top: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--bg) 45%, var(--bg-2));
+  padding: var(--space-4);
+  min-height: 120px;
+}
+.awakening-panel-empty {
+  margin: 0;
+  color: var(--ink-dim);
+  font-size: 13px;
+  text-align: center;
+  padding: var(--space-4) 0;
+}
+.awakening-panel-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-3);
+  border-bottom: 1px solid color-mix(in srgb, var(--stroke) 60%, transparent);
+}
+.awakening-panel-glyph {
+  font-size: 28px;
+  color: var(--accent);
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--accent) 45%, var(--stroke));
+  background: color-mix(in srgb, var(--bg) 50%, transparent);
+  flex-shrink: 0;
+}
+.awakening-panel-titles {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+.awakening-panel-vertente {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.awakening-panel-name {
+  margin: 0;
+  font-family: "Barlow Condensed", Inter, sans-serif;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 22px;
+  color: var(--accent);
+}
+.awakening-panel-arcana {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-dim);
+  text-align: right;
+}
+
+.awakening-upgrade-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.awakening-upgrade {
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  border-left: 3px solid color-mix(in srgb, var(--accent) 55%, var(--stroke));
+  background: color-mix(in srgb, var(--bg-3) 45%, transparent);
+  padding: var(--space-3) var(--space-4);
+}
+.awakening-upgrade.is-locked {
+  border-left-color: color-mix(in srgb, var(--stroke) 70%, transparent);
+  opacity: 0.85;
+}
+.awakening-upgrade-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: 4px;
+}
+.awakening-upgrade-tier {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.awk-status {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.awk-status-unlocked {
+  color: var(--ok);
+  background: color-mix(in srgb, var(--ok) 14%, transparent);
+}
+.awk-status-narrative {
+  color: var(--accent-2);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+.awk-status-locked {
+  color: var(--ink-dim);
+  background: color-mix(in srgb, var(--stroke) 45%, transparent);
+}
+.awakening-upgrade-name {
+  font-family: "Barlow Condensed", Inter, sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--ink);
+  letter-spacing: 0.04em;
+}
+.awakening-upgrade-desc {
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-dim);
+  white-space: pre-line;
+}
+.awakening-upgrade-actions {
+  margin-top: var(--space-3);
+}
+.awk-narr-btn {
+  font-size: 11px;
+}
+
+/* ── RESPONSIVO ── */
+@media (max-width: 640px) {
+  .awakening-deck {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+    max-width: 420px;
+  }
+  /* No mobile, ignora a composição hexagonal e usa fluxo em grade. */
+  .awakening-card.pos-top,
+  .awakening-card.pos-left-top,
+  .awakening-card.pos-right-top,
+  .awakening-card.pos-left-bottom,
+  .awakening-card.pos-right-bottom,
+  .awakening-card.pos-bottom {
+    grid-column: auto;
+    grid-row: auto;
+  }
+  .awakening-card:hover {
+    transform: translateY(-4px) scale(1.02);
+  }
+  .awakening-panel-header {
+    flex-wrap: wrap;
+  }
+  .awakening-panel-arcana {
+    text-align: left;
+    width: 100%;
+  }
+}
+
+@media (max-width: 380px) {
+  .awakening-deck {
+    grid-template-columns: 1fr;
+    max-width: 260px;
+  }
+}

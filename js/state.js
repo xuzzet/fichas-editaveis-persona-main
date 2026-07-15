@@ -69,6 +69,8 @@ export const state = {
   background: {},
   // Histórico de rolagens de dados (últimas 20)
   rollHistory: [],
+  // Despertar Trama — desbloqueios narrativos por Arcana { arcanaKey: { narrative: [ids] } }
+  personaAwakenings: {},
   // Valores computados (preenchidos por recalcState)
   _computed: null
 };

@@ -28,6 +28,7 @@ import { initTheme } from './themes.js';
 import { initTabs } from './tabs.js';
 import { initImportExport } from './import-export.js';
 import { initDiceSystem, renderDiceHistory, rollDamage, rollQuick } from './dice.js';
+import { initAwakening, renderAwakening } from './awakening.js';
 
 // =============================================
 // RENDERIZAÇÃO COMPLETA
@@ -50,6 +51,7 @@ export function renderAll() {
     buildAutoSummaryPanel();
     renderAutoSummary();
     renderDiceHistory();
+    renderAwakening();
     initAutoResizeTextareas();
   } finally {
     setRendering(false);
@@ -116,6 +118,7 @@ function resetFicha() {
   state.portrait = { src: '' };
   state.background = {};
   state.rollHistory = [];
+  state.personaAwakenings = {};
 
   recalcState();
   state.CurrentHP = state.MaxHP;
@@ -240,6 +243,7 @@ function initApp() {
   try { buildModifiersUI(); } catch(e) { console.error('[initApp] buildModifiersUI:', e); }
   try { buildAutoSummaryPanel(); } catch(e) { console.error('[initApp] buildAutoSummaryPanel:', e); }
   try { initDiceSystem(); } catch(e) { console.error('[initApp] initDiceSystem:', e); }
+  try { initAwakening(); } catch(e) { console.error('[initApp] initAwakening:', e); }
   try { initInventoryButtons(); } catch(e) { console.error('[initApp] initInventoryButtons:', e); }
   try { initLinkFilters(); } catch(e) { console.error('[initApp] initLinkFilters:', e); }
   try { initLoreCollapse(); } catch(e) { console.error('[initApp] initLoreCollapse:', e); }
