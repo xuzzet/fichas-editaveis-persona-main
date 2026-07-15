@@ -1023,49 +1023,112 @@ export function buildTree(arcanaInfo) {
 }
 
 // =============================================
-// ESTADO DE DESBLOQUEIO (narrativo salvo + nível derivado)
+// ESTADO DE PROGRESSÃO — ÁRVORE DE ESCOLHAS
+// personaAwakenings[arcanaKey] = { acquired: [nodeId], narrative: [nodeId] }
+//   acquired  → habilidades efetivamente obtidas (✔)
+//   narrative → liberações narrativas da principal de Resolução (abaixo do Lv.10)
 // =============================================
+
+// Níveis em que o jogador ganha UMA escolha de aquisição.
+var ACQ_LEVELS = [2, 4, 6, 8, 9, 10, 12, 14, 16, 18, 20];
+
 function ensureStore(arcanaKey) {
   if (!state.personaAwakenings || typeof state.personaAwakenings !== 'object') {
     state.personaAwakenings = {};
   }
-  if (!state.personaAwakenings[arcanaKey]) {
-    state.personaAwakenings[arcanaKey] = { narrative: [] };
-  }
-  if (!Array.isArray(state.personaAwakenings[arcanaKey].narrative)) {
-    state.personaAwakenings[arcanaKey].narrative = [];
-  }
-  return state.personaAwakenings[arcanaKey];
-}
-
-function isNarrative(arcanaKey, nodeId) {
-  return ensureStore(arcanaKey).narrative.indexOf(nodeId) >= 0;
+  var s = state.personaAwakenings[arcanaKey];
+  if (!s) { s = { acquired: [], narrative: [] }; state.personaAwakenings[arcanaKey] = s; }
+  if (!Array.isArray(s.acquired)) s.acquired = [];
+  if (!Array.isArray(s.narrative)) s.narrative = [];
+  return s;
 }
 
 function personaLevel() {
   return Math.max(1, Math.trunc(Number(state.PerLvl) || 1));
 }
 
-/** Estado de um nó: 'level' (por nível), 'narrative' (despertar narrativo) ou 'locked'. */
-function nodeStatus(arcanaKey, node) {
-  // Nós exclusivamente narrativos nunca desbloqueiam por nível.
-  if (node.narrativeOnly) {
-    return isNarrative(arcanaKey, node.id) ? 'narrative' : 'locked';
-  }
-  if (node.level != null && personaLevel() >= node.level) return 'level';
-  if (isNarrative(arcanaKey, node.id)) return 'narrative';
-  return 'locked';
+function isNarrative(arcanaKey, nodeId) {
+  return ensureStore(arcanaKey).narrative.indexOf(nodeId) >= 0;
 }
 
-function isUnlocked(arcanaKey, node) {
-  return nodeStatus(arcanaKey, node) !== 'locked';
+/** Número de escolhas de aquisição concedidas pelo nível atual da Persona. */
+function earnedChoices() {
+  var lvl = personaLevel();
+  return ACQ_LEVELS.filter(function (l) { return lvl >= l; }).length;
 }
 
-function toggleNarrative(arcanaKey, nodeId) {
+/**
+ * Calcula o estado de cada nó como uma ÁRVORE DE ESCOLHAS.
+ * Retorna { states:{id->estado}, remaining, earned, used }.
+ * Estados: 'acquired' | 'available' | 'available-res' | 'available-narr'
+ *          | 'locked-choices' | 'locked-prereq' | 'locked-res' | 'lost'
+ */
+function computeStates(arcanaKey, tree) {
   var store = ensureStore(arcanaKey);
-  var idx = store.narrative.indexOf(nodeId);
-  if (idx >= 0) store.narrative.splice(idx, 1);
-  else store.narrative.push(nodeId);
+  var acq = store.acquired;
+  var lvl = personaLevel();
+
+  // Escolhas normais consumidas (a vertente Resolução não consome escolhas).
+  var used = 0;
+  tree.forEach(function (b) {
+    if (b.key === 'resolucao') return;
+    b.nodes.forEach(function (n) { if (acq.indexOf(n.id) >= 0) used++; });
+  });
+  var earned = earnedChoices();
+  var remaining = Math.max(0, earned - used);
+
+  var states = {};
+  tree.forEach(function (b) {
+    var isRes = (b.key === 'resolucao');
+    var main = b.nodes[0], a1 = b.nodes[1], a2 = b.nodes[2];
+
+    // Habilidade principal
+    if (acq.indexOf(main.id) >= 0) {
+      states[main.id] = 'acquired';
+    } else if (isRes) {
+      states[main.id] = (lvl >= 10 || isNarrative(arcanaKey, main.id)) ? 'available-res' : 'locked-res';
+    } else {
+      states[main.id] = remaining > 0 ? 'available' : 'locked-choices';
+    }
+
+    // Amplificações — uma OU outra (mutuamente exclusivas)
+    [[a1, a2], [a2, a1]].forEach(function (pair) {
+      var node = pair[0], sib = pair[1];
+      if (acq.indexOf(node.id) >= 0) { states[node.id] = 'acquired'; return; }
+      if (acq.indexOf(main.id) < 0) { states[node.id] = 'locked-prereq'; return; }
+      if (acq.indexOf(sib.id) >= 0) { states[node.id] = 'lost'; return; }
+      if (isRes) { states[node.id] = 'available-narr'; return; }
+      states[node.id] = remaining > 0 ? 'available' : 'locked-choices';
+    });
+  });
+
+  return { states: states, remaining: remaining, earned: earned, used: used };
+}
+
+function acquireNode(arcanaKey, nodeId) {
+  var store = ensureStore(arcanaKey);
+  if (store.acquired.indexOf(nodeId) < 0) store.acquired.push(nodeId);
+  if (window.debouncedAutoSave) window.debouncedAutoSave();
+}
+
+/** Remove um nó adquirido. Ao remover a principal, remove também suas amplificações. */
+function unacquireNode(arcanaKey, branch, nodeId) {
+  var store = ensureStore(arcanaKey);
+  var remove = [nodeId];
+  if (nodeId === branch.nodes[0].id) {
+    remove.push(branch.nodes[1].id, branch.nodes[2].id);
+    if (branch.key === 'resolucao') {
+      store.narrative = store.narrative.filter(function (id) { return id !== nodeId; });
+    }
+  }
+  store.acquired = store.acquired.filter(function (id) { return remove.indexOf(id) < 0; });
+  if (window.debouncedAutoSave) window.debouncedAutoSave();
+}
+
+/** Libera narrativamente a principal de Resolução (quando abaixo do Nível 10). */
+function grantResolucaoNarrative(arcanaKey, nodeId) {
+  var store = ensureStore(arcanaKey);
+  if (store.narrative.indexOf(nodeId) < 0) store.narrative.push(nodeId);
   if (window.debouncedAutoSave) window.debouncedAutoSave();
 }
 
@@ -1177,15 +1240,11 @@ export function renderAwakening() {
   if (lvlEl) lvlEl.textContent = info ? ('Nível da Persona: ' + personaLevel()) : '';
 
   var tree = buildTree(info);
+  var comp = info ? computeStates(arcanaKey, tree) : null;
 
-  // Próximo despertar por nível.
+  // Escolhas de Despertar disponíveis.
   if (nextEl) {
-    var lvl = personaLevel();
-    var upcoming = [];
-    tree.forEach(function (br) { br.nodes.forEach(function (n) { if (n.level > lvl) upcoming.push(n.level); }); });
-    nextEl.textContent = (info && upcoming.length)
-      ? ('Próximo despertar por nível: ' + Math.min.apply(null, upcoming))
-      : (info ? 'Todos os despertares por nível liberados' : '');
+    nextEl.textContent = info ? ('Escolhas de Despertar disponíveis: ' + comp.remaining) : '';
   }
 
   deck.classList.toggle('is-disabled', !info);
@@ -1198,9 +1257,10 @@ export function renderAwakening() {
     refs.inner.classList.toggle('is-flipped', isFlipped);
 
     var mainNode = branch.nodes[0];
-    var mainStatus = info ? nodeStatus(arcanaKey, mainNode) : 'locked';
+    var mainState = comp ? comp.states[mainNode.id] : null;
+    var mainAcquired = (mainState === 'acquired');
     refs.card.classList.toggle('is-selected', isFlipped);
-    refs.card.classList.toggle('is-locked', info ? (mainStatus === 'locked') : true);
+    refs.card.classList.toggle('is-locked', info ? !mainAcquired : true);
 
     // Conteúdo da frente (reconstruído a cada render p/ refletir Arcana atual).
     refs.front.innerHTML = '';
@@ -1233,9 +1293,10 @@ export function renderAwakening() {
     skill.className = 'awakening-card-skill';
     skill.textContent = mainNode.name;
 
+    var cs = cardStatus(mainState);
     var status = document.createElement('div');
-    status.className = 'awakening-card-status status-' + mainStatus;
-    status.textContent = statusShort(mainStatus, mainNode.level);
+    status.className = 'awakening-card-status ' + cs.cls;
+    status.textContent = cs.txt;
 
     refs.front.appendChild(vert);
     refs.front.appendChild(symbol);
@@ -1247,10 +1308,16 @@ export function renderAwakening() {
   renderPanel(info, arcanaKey, tree);
 }
 
-function statusShort(status, level) {
-  if (status === 'level') return 'Desbloqueada (Nível ' + level + ')';
-  if (status === 'narrative') return '\u2728 Despertar Narrativo';
-  return (level == null) ? 'Bloqueada \u00b7 Narrativo' : ('Bloqueada \u00b7 Nível ' + level);
+/** Rótulo/classe de status da PRINCIPAL exibido na frente da carta. */
+function cardStatus(mainState) {
+  switch (mainState) {
+    case 'acquired':      return { cls: 'status-level',     txt: '\u2714 Despertar Obtido' };
+    case 'available':     return { cls: 'status-narrative', txt: '\u2728 Disponível' };
+    case 'available-res': return { cls: 'status-narrative', txt: '\u2728 Disponível' };
+    case 'locked-res':    return { cls: 'status-locked',    txt: '\uD83D\uDD12 Nível 10 / Narrativo' };
+    case 'locked-choices':return { cls: 'status-locked',    txt: '\u2728 Requer escolha' };
+    default:              return { cls: 'status-locked',    txt: '\u2014' };
+  }
 }
 
 function renderPanel(info, arcanaKey, tree) {
@@ -1269,40 +1336,47 @@ function renderPanel(info, arcanaKey, tree) {
   var branch = tree.filter(function (b) { return b.key === selectedVertente; })[0];
   if (!branch) { panel.innerHTML = ''; return; }
 
-  var nodesHtml = branch.nodes.map(function (node) {
-    var status = nodeStatus(arcanaKey, node);
-    var narrative = isNarrative(arcanaKey, node.id);
-    var byLevel = !node.narrativeOnly && node.level != null && personaLevel() >= node.level;
-    var statusHtml;
-    if (status === 'level') {
-      statusHtml = '<span class="awk-status awk-status-unlocked">Desbloqueada \u00b7 Nível ' + node.level + '</span>';
-    } else if (status === 'narrative') {
-      statusHtml = '<span class="awk-status awk-status-narrative">\u2728 Despertar Narrativo</span>';
-    } else if (node.narrativeOnly) {
-      statusHtml = '<span class="awk-status awk-status-locked">\uD83D\uDD12 Bloqueada \u00b7 requer Despertar Narrativo</span>';
-    } else {
-      statusHtml = '<span class="awk-status awk-status-locked">\uD83D\uDD12 Bloqueada \u00b7 requer Nível ' + node.level + '</span>';
-    }
+  var comp = computeStates(arcanaKey, tree);
+  var st = comp.states;
 
-    // Botão de despertar narrativo (não disponível quando já liberado por nível).
-    var narrBtn = '';
-    if (byLevel) {
-      narrBtn = '';
-    } else if (narrative) {
-      narrBtn = '<button type="button" class="mini awk-narr-btn" data-node="' + esc(node.id) + '" data-on="1">Reverter Despertar</button>';
-    } else {
-      narrBtn = '<button type="button" class="mini awk-narr-btn" data-node="' + esc(node.id) + '" data-on="0">\u2728 Despertar Narrativo</button>';
+  var nodesHtml = branch.nodes.map(function (node) {
+    var s = st[node.id];
+    var statusHtml, actionHtml = '', cls = 'is-locked';
+
+    if (s === 'acquired') {
+      cls = 'is-acquired';
+      statusHtml = '<span class="awk-status awk-status-unlocked">\u2714 Despertar Obtido</span>';
+      actionHtml = '<button type="button" class="mini awk-remove-btn" data-node="' + esc(node.id) + '">Remover</button>';
+    } else if (s === 'available' || s === 'available-res') {
+      cls = 'is-available';
+      statusHtml = '<span class="awk-status awk-status-narrative">\u2728 Disponível para aquisição</span>';
+      actionHtml = '<button type="button" class="mini awk-acquire-btn" data-node="' + esc(node.id) + '">\u2728 Despertar</button>';
+    } else if (s === 'available-narr') {
+      cls = 'is-available';
+      statusHtml = '<span class="awk-status awk-status-narrative">\u2728 Despertar Narrativo</span>';
+      actionHtml = '<button type="button" class="mini awk-acquire-btn" data-node="' + esc(node.id) + '">\u2728 Despertar Narrativo</button>';
+    } else if (s === 'locked-choices') {
+      statusHtml = '<span class="awk-status awk-status-narrative">\u2728 Disponível</span>';
+      actionHtml = '<span class="awk-note">Sem escolhas restantes — suba o nível da Persona.</span>';
+    } else if (s === 'locked-prereq') {
+      statusHtml = '<span class="awk-status awk-status-locked">\uD83D\uDD12 Requer a Habilidade Principal</span>';
+    } else if (s === 'locked-res') {
+      statusHtml = '<span class="awk-status awk-status-locked">\uD83D\uDD12 Requer Nível 10 ou liberação narrativa</span>';
+      actionHtml = '<button type="button" class="mini awk-narr-btn" data-node="' + esc(node.id) + '">\u2728 Liberar (Narrativo)</button>';
+    } else if (s === 'lost') {
+      statusHtml = '<span class="awk-status awk-status-locked">\uD83D\uDD12 Caminho não escolhido</span>';
+      actionHtml = '<span class="awk-note">Outra evolução já foi selecionada.</span>';
     }
 
     return '' +
-      '<div class="awakening-upgrade ' + (status === 'locked' ? 'is-locked' : 'is-unlocked') + '">' +
+      '<div class="awakening-upgrade ' + cls + '">' +
         '<div class="awakening-upgrade-head">' +
           '<span class="awakening-upgrade-tier">' + esc(node.tierLabel) + '</span>' +
           statusHtml +
         '</div>' +
         '<div class="awakening-upgrade-name">' + esc(node.name) + '</div>' +
         '<p class="awakening-upgrade-desc">' + esc(node.desc) + '</p>' +
-        (narrBtn ? '<div class="awakening-upgrade-actions">' + narrBtn + '</div>' : '') +
+        (actionHtml ? '<div class="awakening-upgrade-actions">' + actionHtml + '</div>' : '') +
       '</div>';
   }).join('');
 
@@ -1315,13 +1389,31 @@ function renderPanel(info, arcanaKey, tree) {
       '</div>' +
       '<span class="awakening-panel-arcana">' + esc(info.display) + ' \u00b7 ' + esc(info.roman) + '</span>' +
     '</div>' +
+    '<div class="awakening-choice-note">Escolhas de Despertar disponíveis: <b>' + comp.remaining + '</b>' +
+      ' <span class="awk-choice-hint">(cada nível de aquisição concede uma escolha; as amplificações são caminhos alternativos)</span></div>' +
     '<div class="awakening-upgrade-list">' + nodesHtml + '</div>';
 
-  // Liga os botões de despertar narrativo.
+  // Aquisição (consome escolha para nós normais; Resolução/narrativo não consomem).
+  Array.prototype.forEach.call(panel.querySelectorAll('.awk-acquire-btn'), function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      acquireNode(arcanaKey, btn.dataset.node);
+      renderAwakening();
+    });
+  });
+  // Remoção / redefinição de uma escolha.
+  Array.prototype.forEach.call(panel.querySelectorAll('.awk-remove-btn'), function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      unacquireNode(arcanaKey, branch, btn.dataset.node);
+      renderAwakening();
+    });
+  });
+  // Liberação narrativa da principal de Resolução.
   Array.prototype.forEach.call(panel.querySelectorAll('.awk-narr-btn'), function (btn) {
     btn.addEventListener('click', function (e) {
       e.stopPropagation();
-      toggleNarrative(arcanaKey, btn.dataset.node);
+      grantResolucaoNarrative(arcanaKey, btn.dataset.node);
       renderAwakening();
     });
   });
