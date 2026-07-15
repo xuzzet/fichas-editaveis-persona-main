@@ -54,7 +54,7 @@
       <main class="grid one">
 
         <!-- ZONA 1: IDENTIDADE -->
-        <section class="card">
+        <section class="card card-primary">
           <div class="section-title"><div class="bar"></div><h2>Identidade</h2></div>
           <div class="row row4">
             <div><label>Classe <span class="field-required-indicator" title="Campo obrigatório">*</span></label><input id="CharClass" placeholder="Emergentes, Cartas-Coringa, Sombras, Supressores, Tochas" required/></div>
@@ -65,7 +65,7 @@
         </section>
 
         <!-- ZONA 2: RECURSOS VITAIS -->
-        <section class="card card-recursos">
+        <section class="card card-primary card-recursos">
           <div class="section-title"><div class="bar"></div><h2>Recursos</h2></div>
           <div class="recursos-grid">
             <div class="recurso-bloco recurso-hp">
@@ -92,7 +92,7 @@
         </section>
 
         <!-- ZONA 3: ATRIBUTOS DE COMBATE -->
-        <section class="card">
+        <section class="card card-primary">
           <div class="section-title"><div class="bar"></div><h2>Atributos de Combate</h2></div>
           <div class="hint" style="margin-bottom:8px;">Distribua <b>18 pontos</b> entre os atributos. Mínimo: <b>1</b> · Máximo: <b>12</b> por atributo.</div>
           <div class="row row3">
@@ -173,7 +173,7 @@
         </section>
 
         <!-- ZONA 6: HABILIDADES SOCIAIS -->
-        <section class="card">
+        <section class="card card-secondary">
           <div class="section-title"><div class="bar"></div><h2>Habilidades Sociais</h2></div>
           <div class="hint" style="margin-bottom:8px;">Na criação do personagem, distribua <strong>7 pontos iniciais</strong> entre as Habilidades Sociais.<br>Após isso, as habilidades podem crescer sem limite máximo.</div>
           <div class="row row3">
@@ -219,7 +219,7 @@
 
     <!-- VIEW: FEITOS -->
   <div class="view" id="feitos">
-    <section class="card">
+    <section class="card card-secondary">
       <div class="section-title"><div class="bar"></div><h2>Feitos</h2></div>
       <div class="hint">Marque os Feitos que seu personagem possui. Feitos são habilidades especiais adquiridas ao subir de nível.</div>
       <div id="feitos-list"></div>
@@ -230,7 +230,7 @@
     <div class="view" id="background">
 
       <!-- Retrato -->
-      <section class="card lore-portrait-section">
+      <section class="card card-primary lore-portrait-section">
         <div class="section-title"><div class="bar"></div><h2>Retrato do Personagem</h2></div>
         <div class="portrait-controls">
           <input type="file" id="portraitInput" accept="image/*" style="display:none">
@@ -528,7 +528,7 @@
     </div>
     <!-- VIEW: PERSONA -->
   <div class="view" id="persona">
-      <section class="card">
+      <section class="card card-primary">
         <div class="section-title"><div class="bar"></div><h2>Persona — Identidade</h2></div>
         <div class="row row3">
           <div><label>Nome da Persona <span class="field-required-indicator" title="Campo obrigatório">*</span></label><input id="PerName" placeholder="Ex.: Orfeu" required/></div>
@@ -616,7 +616,7 @@
       </section>
 
       <!-- Equipados -->
-      <section class="card">
+      <section class="card card-secondary">
         <div class="section-title"><div class="bar"></div><h2>Equipados</h2></div>
         <p class="hint">Itens em uso ativo durante o combate ou exploração.</p>
         <div class="actions"><button class="mini" id="add-eq-equipado">+ Equipar Item</button></div>
@@ -624,7 +624,7 @@
       </section>
 
       <!-- Mochila -->
-      <section class="card">
+      <section class="card card-secondary">
         <div class="section-title"><div class="bar"></div><h2>Mochila</h2></div>
         <p class="hint">Itens carregados, mas não equipados ativamente.</p>
         <div class="actions"><button class="mini" id="add-eq-mochila">+ Guardar Item</button></div>
@@ -695,11 +695,11 @@
     <div class="view" id="notes">
 
       <div class="notes-duo-grid">
-        <section class="card notes-card--diario">
+        <section class="card card-narrative notes-card--diario">
           <div class="section-title"><div class="bar"></div><h2>Diário</h2></div>
           <textarea id="NotesDiary" class="notes-big-textarea" placeholder="Resumo das sessões, momentos marcantes, pensamentos do personagem..."></textarea>
         </section>
-        <section class="card notes-card--objetivos">
+        <section class="card card-narrative notes-card--objetivos">
           <div class="section-title"><div class="bar"></div><h2>Objetivos</h2></div>
           <textarea id="NotesGoals" class="notes-big-textarea" placeholder="Curto prazo (semana), médio (bimestre), longo (ano)."></textarea>
         </section>
@@ -723,7 +723,7 @@
 
     <!-- VIEW: MODIFICADORES GLOBAIS -->
     <div class="view" id="modificadores">
-      <section class="card">
+      <section class="card card-secondary">
         <div class="section-title"><div class="bar"></div><h2>Modificadores Globais</h2></div>
         <p class="hint"><strong>Flat</strong> soma direto ao atributo; <strong>Percentual</strong> aplica % sobre o valor base. Ative ou desative sem perder os dados.</p>
         <div id="mod-summary" class="mod-summary-bar" style="display:none;"></div>
@@ -731,7 +731,7 @@
         <div id="tbl-mod"><div class="mod-list"></div></div>
       </section>
 
-      <section class="card">
+      <section class="card card-secondary">
         <div class="section-title"><div class="bar"></div><h2>Condições</h2></div>
         <div class="hint">Condições são status negativos/temporários. Marque como ativa quando estiver em vigor.</div>
         <div id="conditions-list"></div>

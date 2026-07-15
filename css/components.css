@@ -109,21 +109,38 @@
   margin: 0;
   font-family: "Barlow Condensed", Inter, sans-serif;
   font-weight: 900;
-  font-size: 18px;
-  letter-spacing: 0.32em;
+  font-size: 19px;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--accent);
   transition: color 0.2s;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
 }
 
 .bar {
-  height: 14px;
+  height: 16px;
   width: 84px;
   transform: skewX(-18deg);
   border-radius: 2px;
-  background: var(--accent);
-  box-shadow: none;
+  background: linear-gradient(
+    90deg,
+    var(--accent),
+    color-mix(in srgb, var(--accent) 35%, transparent)
+  );
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 35%, transparent);
   flex-shrink: 0;
+  position: relative;
+}
+.bar::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background: var(--accent);
+  transform: skewX(0);
+  border-radius: 1px;
 }
 
 .badge {
@@ -245,6 +262,8 @@ th:last-child {
   border-color: var(--accent);
   color: var(--accent);
   background: var(--bg-3);
+  transform: translateY(-1px) skewX(-4deg);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
 }
 
 .actions {
@@ -279,7 +298,8 @@ button:hover {
   border-color: var(--accent);
   background: var(--bg-3);
   color: var(--accent);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
+  transform: translateY(-1px) skewX(-3deg);
 }
 button:active {
   transform: scale(0.97);

@@ -5,14 +5,21 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin: 10px 0 20px;
-  padding: 6px 2px;
-  background: color-mix(in srgb, var(--bg-2) 80%, transparent);
+  margin: 10px 0 24px;
+  padding: 8px;
+  background: linear-gradient(
+    120deg,
+    color-mix(in srgb, var(--bg-2) 92%, transparent),
+    color-mix(in srgb, var(--bg-3) 60%, transparent)
+  );
   border-radius: 14px;
   border: 1px solid var(--stroke);
   position: relative !important;
   z-index: 9999 !important;
   pointer-events: auto !important;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 color-mix(in srgb, var(--accent) 12%, transparent);
 }
 .tabs::before {
   content: none;
@@ -23,21 +30,23 @@
   z-index: 3;
   cursor: pointer;
   color: var(--ink-dim);
-  background: transparent;
+  background: color-mix(in srgb, var(--bg) 55%, transparent);
   border: 2px solid transparent;
-  padding: 11px 18px 10px;
+  padding: 11px 20px 10px;
   font-weight: 900;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   font-family: "Rodin", "New Rodin", "Barlow Condensed", Inter, sans-serif;
-  clip-path: none;
+  /* Recorte diagonal — energia de menu de RPG */
+  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
   transition:
     border-color 0.2s ease,
     background 0.2s ease,
     color 0.2s ease,
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
   font-size: 12px;
-  border-radius: 10px;
+  border-radius: 4px;
   background-image: none;
   pointer-events: auto !important;
   display: inline-flex !important;
@@ -48,38 +57,45 @@
   user-select: none !important;
 }
 .tab::after {
-  content: none;
-}
-.tab::before {
+  /* faixa de destaque animada na base */
   content: "";
   position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
+  left: 8px;
+  right: 8px;
+  bottom: 3px;
+  height: 2px;
   background: var(--accent);
-  border-top-left-radius: 8px;
-  border-bottom-left-radius: 8px;
-  opacity: 0;
-  transition: opacity 0.25s ease;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  opacity: 0.9;
+}
+.tab::before {
+  content: none;
 }
 .tab:hover {
   border-color: transparent;
   background: var(--bg-3);
   color: var(--ink);
+  transform: translateY(-2px) skewX(-4deg);
+}
+.tab:hover::after {
+  transform: scaleX(1);
 }
 .tab.active {
-  border-color: var(--accent);
-  background: var(--accent);
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
   color: var(--bg);
-  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 35%, transparent);
-  background-image: none;
-}
-.tab.active::before {
-  opacity: 1;
+  box-shadow:
+    0 4px 14px color-mix(in srgb, var(--accent) 42%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--accent) 60%, transparent);
+  background-image: linear-gradient(135deg, var(--accent), var(--accent-2));
+  transform: skewX(-4deg);
 }
 .tab.active::after {
-  opacity: 0;
+  transform: scaleX(1);
+  background: var(--bg);
+  opacity: 0.85;
 }
 
 .view {

@@ -1,0 +1,178 @@
+/* =============================================
+   CARDS — Sistema de variantes de card
+   Estilo: painéis de menu de RPG, geometria angular.
+   Preserva a base .card definida em components.css.
+   ============================================= */
+
+/* ── Detalhe geométrico compartilhado ──
+   Um "carimbo" diagonal no canto superior direito de cada card,
+   dando a sensação de recorte/assimetria sem prejudicar leitura. */
+.card {
+  overflow: hidden;
+}
+.card::after {
+  content: "";
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 34px;
+  height: 34px;
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+  pointer-events: none;
+  transition:
+    background 0.25s ease,
+    width 0.25s ease,
+    height 0.25s ease;
+}
+.card:hover::after {
+  background: color-mix(in srgb, var(--accent) 40%, transparent);
+  width: 42px;
+  height: 42px;
+}
+
+/* =============================================
+   CARD PRIMÁRIO — Identidade, Recursos, Atributos,
+   Persona, Retrato. Maior destaque.
+   ============================================= */
+.card-primary {
+  border-top-width: 5px;
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--accent) 8%, var(--bg-2)) 0%,
+    var(--bg-2) 46%
+  );
+  box-shadow:
+    0 6px 22px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 color-mix(in srgb, var(--accent) 18%, transparent);
+}
+.card-primary::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background: linear-gradient(
+    180deg,
+    var(--accent),
+    color-mix(in srgb, var(--accent) 30%, transparent)
+  );
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 92%);
+  pointer-events: none;
+}
+.card-primary .section-title h2 {
+  font-size: 20px;
+}
+
+/* =============================================
+   CARD SECUNDÁRIO — Inventário, Modificadores,
+   Feitos, Condições. Mais compacto.
+   ============================================= */
+.card-secondary {
+  border-top-width: 2px;
+  border-top-color: color-mix(in srgb, var(--accent) 55%, var(--stroke));
+  padding: var(--space-4);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.22);
+}
+.card-secondary .section-title {
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+}
+.card-secondary .section-title h2 {
+  font-size: 16px;
+  letter-spacing: 0.26em;
+}
+.card-secondary .bar {
+  width: 60px;
+  height: 11px;
+}
+
+/* =============================================
+   CARD NARRATIVO — Lore, Diário, Anotações, Vínculos.
+   Aparência de documento.
+   ============================================= */
+.card-narrative {
+  border-top: 2px solid color-mix(in srgb, var(--accent) 40%, var(--stroke));
+  border-left: 3px solid color-mix(in srgb, var(--accent) 45%, var(--stroke));
+  background:
+    repeating-linear-gradient(
+      transparent,
+      transparent 33px,
+      color-mix(in srgb, var(--stroke) 22%, transparent) 33px,
+      color-mix(in srgb, var(--stroke) 22%, transparent) 34px
+    ),
+    var(--bg-2);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.24);
+}
+.card-narrative::after {
+  /* Marca de "documento" — dobra de papel no canto */
+  background: color-mix(in srgb, var(--ink-dim) 20%, transparent);
+  width: 26px;
+  height: 26px;
+}
+.card-narrative .section-title h2 {
+  letter-spacing: 0.22em;
+}
+.card-narrative textarea {
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  line-height: 1.7;
+}
+
+/* =============================================
+   SECTION TITLE — reforço da hierarquia
+   ============================================= */
+.section-title {
+  position: relative;
+}
+.section-title h2 {
+  position: relative;
+}
+
+/* Faixa de acento fina animada ao passar o mouse no card */
+.card > .section-title::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  width: 0;
+  background: var(--accent);
+  transition: width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.card:hover > .section-title::after {
+  width: 40%;
+}
+
+/* =============================================
+   BADGE / CHIP genérico reutilizável
+   ============================================= */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  font-family: "Barlow Condensed", Inter, sans-serif;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--bg));
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--stroke));
+  border-radius: 999px;
+  line-height: 1.4;
+}
+
+/* =============================================
+   Responsivo — suaviza os recortes no mobile
+   ============================================= */
+@media (max-width: 600px) {
+  .card::after {
+    width: 24px;
+    height: 24px;
+  }
+  .card-primary .section-title h2 {
+    font-size: 16px;
+  }
+}

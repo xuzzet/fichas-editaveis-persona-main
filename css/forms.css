@@ -228,22 +228,61 @@ input[type="range"]::-moz-range-thumb:hover {
 }
 
 .recurso-bloco {
-  background: color-mix(in srgb, var(--bg-3, #111) 80%, var(--accent) 20%);
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--bg-3) 92%, var(--accent) 8%) 0%,
+    var(--bg) 100%
+  );
   border: 1px solid var(--stroke, rgba(255, 255, 255, 0.1));
+  border-left: 4px solid var(--accent);
   border-radius: 10px;
   padding: var(--space-4);
   min-width: 0;
+  position: relative;
+  overflow: hidden;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+.recurso-bloco:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+.recurso-bloco::after {
+  content: "";
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 26px;
+  height: 26px;
+  background: color-mix(in srgb, var(--accent) 25%, transparent);
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+  pointer-events: none;
+}
+.recurso-hp {
+  border-left-color: #e05a5a;
+}
+.recurso-hp::after {
+  background: rgba(224, 90, 90, 0.3);
+}
+.recurso-pm {
+  border-left-color: #5aace0;
+}
+.recurso-pm::after {
+  background: rgba(90, 172, 224, 0.3);
 }
 
 .recurso-titulo {
   display: block;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.13em;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--accent, #00e5ff);
   margin-bottom: var(--space-3);
   line-height: 1;
+  font-family: "Barlow Condensed", Inter, sans-serif;
 }
 
 .recurso-hp .recurso-titulo {
@@ -280,15 +319,22 @@ input[type="range"]::-moz-range-thumb:hover {
 }
 
 .recurso-par > div input {
-  font-size: 20px !important;
-  font-weight: 800 !important;
+  font-size: 30px !important;
+  font-weight: 900 !important;
   text-align: center;
-  padding: 8px 6px !important;
+  padding: 6px 4px !important;
   width: 100%;
+  font-family: "Barlow Condensed", Inter, sans-serif;
+  font-variant-numeric: tabular-nums;
+  background: transparent;
+  border-color: color-mix(in srgb, var(--stroke) 70%, transparent);
+}
+.recurso-par > div input:focus {
+  background: var(--bg-3);
 }
 
 .recurso-slash {
-  font-size: 20px;
+  font-size: 26px;
   font-weight: 300;
   color: var(--ink-dim, #888);
   line-height: 1;
@@ -297,10 +343,13 @@ input[type="range"]::-moz-range-thumb:hover {
 }
 
 .recurso-rd input {
-  font-size: 20px !important;
-  font-weight: 800 !important;
+  font-size: 30px !important;
+  font-weight: 900 !important;
   text-align: center;
-  padding: 8px 6px !important;
+  padding: 6px 4px !important;
   width: 100%;
   margin-top: 4px;
+  font-family: "Barlow Condensed", Inter, sans-serif;
+  font-variant-numeric: tabular-nums;
+  background: transparent;
 }

@@ -1,0 +1,151 @@
+/* =============================================
+   ANIMATIONS — Movimento estilo menu de RPG
+   Inspiração: energia/assimetria de menus modernos.
+   Somente apresentação. Respeita prefers-reduced-motion.
+   ============================================= */
+
+/* ── Keyframes ── */
+@keyframes p5-slide-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-26px) skewX(-3deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) skewX(0);
+  }
+}
+
+@keyframes p5-rise-in {
+  0% {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes p5-pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.015);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes p5-accent-sweep {
+  0% {
+    transform: translateX(-120%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(240%) skewX(-20deg);
+  }
+}
+
+@keyframes p5-value-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.14);
+    text-shadow: 0 0 14px color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes p5-tab-flash {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 10px transparent;
+  }
+}
+
+@keyframes p5-fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* ── Entrada das views/abas ── */
+.view.active {
+  animation: p5-fade-in 0.22s ease both;
+}
+
+/* Entrada escalonada dos cards da view ativa */
+.view.active > .card,
+.view.active > .grid > .card,
+.view.active > .lore-duo > .card,
+.view.active > .notes-duo-grid > .card {
+  animation: p5-rise-in 0.42s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.view.active > .card:nth-child(1),
+.view.active > .grid > .card:nth-child(1) {
+  animation-delay: 0.02s;
+}
+.view.active > .card:nth-child(2),
+.view.active > .grid > .card:nth-child(2) {
+  animation-delay: 0.06s;
+}
+.view.active > .card:nth-child(3),
+.view.active > .grid > .card:nth-child(3) {
+  animation-delay: 0.1s;
+}
+.view.active > .card:nth-child(4),
+.view.active > .grid > .card:nth-child(4) {
+  animation-delay: 0.14s;
+}
+.view.active > .card:nth-child(5),
+.view.active > .grid > .card:nth-child(5) {
+  animation-delay: 0.18s;
+}
+.view.active > .card:nth-child(n + 6),
+.view.active > .grid > .card:nth-child(n + 6) {
+  animation-delay: 0.22s;
+}
+
+/* Entrada de cards gerados por JS (magias, vínculos, inventário, condições) */
+.spell-card,
+.link-card,
+.eq-card,
+.condition-item,
+.mod-item {
+  animation: p5-pop-in 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* Aba recém-selecionada */
+.tab.active {
+  animation: p5-tab-flash 0.5s ease-out;
+}
+
+/* Valor grande atualizado (aplicado via classe utilitária, opcional) */
+.value-pop {
+  animation: p5-value-pop 0.4s ease-out;
+}
+
+/* ── Redução de movimento ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

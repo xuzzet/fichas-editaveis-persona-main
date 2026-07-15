@@ -68,23 +68,43 @@
 .spell-card {
   background: var(--bg-2);
   border: 1px solid var(--stroke);
+  border-left: 3px solid var(--accent);
   border-radius: 10px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  position: relative;
   transition:
     border-color 0.18s,
-    box-shadow 0.18s;
+    box-shadow 0.18s,
+    transform 0.18s ease;
+}
+.spell-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 22px;
+  height: 22px;
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+  pointer-events: none;
+  z-index: 2;
 }
 .spell-card:hover {
   border-color: var(--accent);
-  box-shadow: 0 2px 18px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.3);
+  transform: translateY(-3px);
 }
 
 /* â”€â”€ Header do card â”€â”€ */
 .spell-card-header {
   padding: var(--space-3) var(--space-4) var(--space-2);
-  background: var(--bg-3);
+  background: linear-gradient(
+    135deg,
+    var(--bg-3),
+    color-mix(in srgb, var(--accent) 8%, var(--bg-3))
+  );
   border-bottom: 1px solid var(--stroke);
 }
 
@@ -439,7 +459,7 @@
 }
 
 /* =============================================
-   ÚLTIMA ROLAGEM DENTRO DO CARD DE MAGIA
+   ï¿½LTIMA ROLAGEM DENTRO DO CARD DE MAGIA
    ============================================= */
 .spell-hab-row {
   margin-top: 8px;
@@ -501,20 +521,39 @@
   color: var(--ink-dim);
   font-style: italic;
 }
-.spell-roll-line { color: var(--ink-dim); }
-.spell-roll-line b { color: var(--ink); font-weight: 700; }
+.spell-roll-line {
+  color: var(--ink-dim);
+}
+.spell-roll-line b {
+  color: var(--ink);
+  font-weight: 700;
+}
 .spell-roll-total {
   margin-top: 4px;
   font-size: 14px;
   font-weight: 800;
   color: var(--ink);
 }
-.spell-roll-total b { color: var(--accent-2); }
-.spell-roll-err { color: var(--danger); }
+.spell-roll-total b {
+  color: var(--accent-2);
+}
+.spell-roll-err {
+  color: var(--danger);
+}
 
-/* Variações discretas por tipo (borda esquerda) */
-.spell-roll-result--damage  { border-left-color: var(--accent); }
-.spell-roll-result--healing { border-left-color: var(--ok); }
-.spell-roll-result--percent { border-left-color: var(--accent-2); }
-.spell-roll-result--generic { border-left-color: var(--stroke); }
-.spell-roll-result--error   { border-left-color: var(--danger); }
+/* Variaï¿½ï¿½es discretas por tipo (borda esquerda) */
+.spell-roll-result--damage {
+  border-left-color: var(--accent);
+}
+.spell-roll-result--healing {
+  border-left-color: var(--ok);
+}
+.spell-roll-result--percent {
+  border-left-color: var(--accent-2);
+}
+.spell-roll-result--generic {
+  border-left-color: var(--stroke);
+}
+.spell-roll-result--error {
+  border-left-color: var(--danger);
+}

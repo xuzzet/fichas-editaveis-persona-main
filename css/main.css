@@ -10,6 +10,7 @@
 @import "./base.css";
 @import "./layout.css";
 @import "./components.css";
+@import "./cards.css";
 @import "./forms.css";
 @import "./tabs.css";
 @import "./themes.css";
@@ -25,4 +26,5 @@
 @import "./persona.css";
 @import "./lore.css";
 @import "./dice.css";
+@import "./animations.css";
 @import "./responsive.css";
