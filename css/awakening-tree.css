@@ -310,61 +310,13 @@
   font-style: italic;
 }
 
-/* ── RESPONSIVO ── */
+/* ── RESPONSIVO — o layout mobile do deck fica em css/mobile/persona-mobile.css ── */
 @media (max-width: 640px) {
-  /* Mantém a "mão de cartas", mas com sobreposição/inclinação reduzidas
-     e rolagem horizontal caso o leque ultrapasse a largura da tela. */
-  .awakening-deck {
-    padding: 44px 8px 18px;
-    min-height: 250px;
-    max-width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .awakening-deck::-webkit-scrollbar {
-    display: none;
-  }
-  .awakening-deck .awakening-card {
-    width: clamp(104px, 30vw, 128px);
-    margin: 0 -14px;
-  }
-  .awakening-deck .awakening-card:nth-child(1) {
-    transform: rotate(-11deg) translateY(20px);
-  }
-  .awakening-deck .awakening-card:nth-child(2) {
-    transform: rotate(-6.5deg) translateY(9px);
-  }
-  .awakening-deck .awakening-card:nth-child(3) {
-    transform: rotate(-2deg) translateY(1px) scale(1.03);
-  }
-  .awakening-deck .awakening-card:nth-child(4) {
-    transform: rotate(2deg) translateY(1px) scale(1.03);
-  }
-  .awakening-deck .awakening-card:nth-child(5) {
-    transform: rotate(6.5deg) translateY(9px);
-  }
-  .awakening-deck .awakening-card:nth-child(6) {
-    transform: rotate(11deg) translateY(20px);
-  }
-  .awakening-deck .awakening-card:hover,
-  .awakening-deck .awakening-card:focus-visible,
-  .awakening-deck .awakening-card.is-selected {
-    transform: rotate(0deg) translateY(-16px) scale(1.08);
-  }
   .awakening-panel-header {
     flex-wrap: wrap;
   }
   .awakening-panel-arcana {
     text-align: left;
     width: 100%;
-  }
-}
-
-@media (max-width: 380px) {
-  .awakening-deck .awakening-card {
-    width: clamp(96px, 34vw, 116px);
-    margin: 0 -10px;
   }
 }

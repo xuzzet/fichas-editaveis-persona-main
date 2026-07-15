@@ -1,0 +1,104 @@
+/* =============================================
+   MOBILE — FICHA (recursos, atributos, formulários,
+   lore, anotações, tipografia).
+   Somente visual — não altera lógica nem dados.
+   ============================================= */
+
+@media (max-width: 600px) {
+  /* ── Recursos (PV/PM/RD) empilhados e legíveis ── */
+  .recursos-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .recurso-par > div input,
+  .recurso-rd input {
+    font-size: 26px !important;
+  }
+  .recurso-slash {
+    font-size: 22px;
+  }
+
+  /* ── Blocos duplos de Lore / Anotações em coluna única ── */
+  .lore-duo,
+  .notes-duo-grid,
+  .lore-grid-2 {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+  .lore-field--span2 {
+    grid-column: auto;
+  }
+
+  /* Diário / objetivos: altura confortável para digitar */
+  .notes-big-textarea {
+    min-height: 160px;
+  }
+
+  /* ── Tipografia: hierarquia clara sem estourar ── */
+  .brand h1 {
+    font-size: clamp(20px, 6.5vw, 28px);
+    letter-spacing: 0.1em;
+  }
+  .brand .sub {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+  }
+  .awakening-panel-name,
+  .lore-block-title {
+    font-size: 17px;
+  }
+  .hint {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  /* Retrato: nunca ultrapassa a tela e mantém proporção */
+  .portrait-preview img {
+    max-width: min(70vw, 220px);
+    height: auto;
+  }
+
+  /* Última rolagem: número grande porém proporcional */
+  .last-roll-total {
+    font-size: 40px;
+  }
+}
+
+/* ── Header/HUD compacto no celular ── */
+@media (max-width: 600px) {
+  .hud {
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .slash {
+    height: 44px;
+    width: 12px;
+  }
+  .theme-switcher {
+    margin-left: auto;
+  }
+}
+
+/* ── Hexagrama das Habilidades Sociais ── */
+@media (max-width: 480px) {
+  #social-tier-list svg {
+    max-width: 100%;
+  }
+  #hx-detail {
+    padding: 10px 12px;
+  }
+}
+
+/* ── Telas muito pequenas (≤ 340px) ── */
+@media (max-width: 340px) {
+  .recurso-par > div input,
+  .recurso-rd input {
+    font-size: 22px !important;
+  }
+  .section-title h2 {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+  }
+}

@@ -1,0 +1,106 @@
+/* =============================================
+   MOBILE — CARDS (magias, inventário, modificadores,
+   condições, vínculos) e cards gerais.
+   Somente visual — não altera lógica nem dados.
+   ============================================= */
+
+@media (max-width: 600px) {
+  /* Grades de cards em coluna única com respiro adequado */
+  .spell-grid,
+  .eq-card-list,
+  .link-card-grid,
+  #conditions-list,
+  .mod-list {
+    grid-template-columns: 1fr !important;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Cards crescem conforme o conteúdo (sem cortes) */
+  .spell-card,
+  .eq-card,
+  .link-card,
+  .condition-item,
+  .mod-item {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+  }
+
+  /* Detalhe geométrico do canto menor no mobile */
+  .card::after {
+    width: 20px;
+    height: 20px;
+  }
+  .spell-card::after,
+  .eq-card::after {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Textos longos sempre quebram, nunca vazam */
+  .spell-card,
+  .eq-card,
+  .awakening-upgrade,
+  .card {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  /* Filtros de magia/vínculo empilham e ocupam a largura */
+  .spell-filters,
+  .link-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .spell-search-input,
+  .spell-filter-select,
+  .link-filter-input,
+  .link-filter-select {
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 42px;
+  }
+
+  /* Cabeçalho de ações das magias em coluna */
+  .spell-header-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .spell-header-actions .mini {
+    width: 100%;
+  }
+
+  /* Painel de Despertar Trama: itens de habilidade confortáveis */
+  .awakening-upgrade {
+    padding: 12px 14px;
+  }
+  .awakening-upgrade-head {
+    gap: 6px;
+  }
+  .awakening-panel-name {
+    font-size: 18px;
+  }
+
+  /* Ações do card ocupam a largura para toque fácil */
+  .awakening-upgrade-actions .mini,
+  .eq-card-actions,
+  .spell-card-actions {
+    flex-wrap: wrap;
+  }
+}
+
+/* Carga do inventário: números e barra legíveis */
+@media (max-width: 480px) {
+  .inv-cap-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .inv-cap-value {
+    font-size: 20px;
+  }
+}

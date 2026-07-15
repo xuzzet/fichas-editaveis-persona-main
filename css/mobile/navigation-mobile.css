@@ -1,0 +1,81 @@
+/* =============================================
+   MOBILE — NAVEGAÇÃO
+   Abas roláveis e fixas + alvos de toque maiores.
+   Somente visual — não altera lógica nem IDs.
+   ============================================= */
+
+@media (max-width: 600px) {
+  /* Barra de abas: uma única linha rolável e FIXA no topo,
+     dando sensação de navegação de aplicativo durante a sessão. */
+  .tabs {
+    position: sticky !important;
+    top: 0;
+    z-index: 9999;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+    gap: 6px;
+    padding: 8px;
+    margin: 4px 0 16px;
+    background: color-mix(in srgb, var(--bg) 90%, var(--bg-2));
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  }
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .tab {
+    flex: 0 0 auto;
+    min-width: max-content;
+    min-height: 44px;
+    padding: 10px 16px 9px;
+    font-size: 13px;
+    scroll-snap-align: start;
+  }
+}
+
+/* ── Otimizações de toque (qualquer largura sem hover fino) ── */
+@media (hover: none) and (pointer: coarse) {
+  /* Botões pequenos ("+ Item", setas, ✕, filtros) com alvo de toque decente */
+  .mini {
+    min-height: 40px;
+    padding: 8px 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .spell-card-actions .mini,
+  .eq-card-actions .mini,
+  .row-actions .mini {
+    min-width: 40px;
+  }
+  /* Espaçamento maior entre ações para evitar toques acidentais */
+  .actions,
+  .row-actions,
+  .eq-card-actions,
+  .spell-card-actions {
+    gap: 10px;
+  }
+  /* Selects e chips clicáveis */
+  .spell-cat-select,
+  .spell-el-select {
+    min-height: 34px;
+  }
+  /* Nomes clicáveis (rolagem 1d20) — área de toque confortável */
+  .attr-roll,
+  .social-roll {
+    min-height: 32px;
+    padding: 4px 4px 4px 0;
+  }
+  /* O ícone de dado auxiliar aparece sempre no toque (não há hover) */
+  .attr-roll::after,
+  .social-roll::after {
+    opacity: 0.55;
+    transform: translateX(0);
+  }
+}

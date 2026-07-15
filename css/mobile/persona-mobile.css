@@ -1,0 +1,125 @@
+/* =============================================
+   MOBILE — PERSONA / DESPERTAR TRAMA
+   Ajustes de responsividade da "mão de cartas".
+   Somente visual — não altera lógica nem dados.
+   ============================================= */
+
+/* ── Tablet / telas médias ── */
+@media (max-width: 640px) {
+  .awakening-deck {
+    padding: 40px 6px 16px;
+    min-height: 210px;
+    /* O leque cabe inteiro na tela (sem rolagem/clipping). */
+    overflow: visible;
+    max-width: 100%;
+  }
+  .awakening-deck .awakening-card {
+    width: clamp(74px, 22vw, 96px);
+    min-height: 0; /* deixa o aspect-ratio controlar a altura */
+    margin: 0 -18px;
+  }
+
+  /* Leque mais suave para caber na largura do celular */
+  .awakening-deck .awakening-card:nth-child(1) {
+    transform: rotate(-11deg) translateY(18px);
+  }
+  .awakening-deck .awakening-card:nth-child(2) {
+    transform: rotate(-6.5deg) translateY(8px);
+  }
+  .awakening-deck .awakening-card:nth-child(3) {
+    transform: rotate(-2deg) translateY(0) scale(1.03);
+  }
+  .awakening-deck .awakening-card:nth-child(4) {
+    transform: rotate(2deg) translateY(0) scale(1.03);
+  }
+  .awakening-deck .awakening-card:nth-child(5) {
+    transform: rotate(6.5deg) translateY(8px);
+  }
+  .awakening-deck .awakening-card:nth-child(6) {
+    transform: rotate(11deg) translateY(18px);
+  }
+
+  .awakening-deck .awakening-card:hover,
+  .awakening-deck .awakening-card:focus-visible,
+  .awakening-deck .awakening-card.is-selected {
+    transform: rotate(0deg) translateY(-14px) scale(1.12);
+  }
+
+  /* Conteúdo da frente compacto para caber em cartas menores */
+  .awakening-card-front {
+    padding: 8px 5px;
+    gap: 3px;
+  }
+  .awakening-card-vertente {
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+  }
+  .awakening-card-symbol {
+    width: 40px;
+    height: 40px;
+  }
+  .awakening-card-roman {
+    font-size: 16px;
+  }
+  .awakening-card-arcana {
+    font-size: 8.5px;
+  }
+  .awakening-card-skill {
+    font-size: 10px;
+    line-height: 1.1;
+  }
+  .awakening-card-status {
+    font-size: 7px;
+    padding: 2px 5px;
+    letter-spacing: 0.04em;
+  }
+  .awakening-back-emblem {
+    font-size: 26px;
+  }
+  .awakening-back-label {
+    font-size: 9px;
+  }
+
+  /* Intro do sistema mais enxuta */
+  .awakening-intro {
+    font-size: 12px;
+  }
+  .awakening-arcana-name {
+    font-size: 15px;
+  }
+}
+
+/* ── Celulares médios ── */
+@media (max-width: 390px) {
+  .awakening-deck .awakening-card {
+    width: clamp(68px, 23vw, 84px);
+    margin: 0 -16px;
+  }
+  .awakening-card-symbol {
+    width: 36px;
+    height: 36px;
+  }
+  .awakening-card-roman {
+    font-size: 14px;
+  }
+}
+
+/* ── Celulares pequenos (≤ 340px) ── */
+@media (max-width: 340px) {
+  .awakening-deck .awakening-card {
+    width: clamp(62px, 24vw, 76px);
+    margin: 0 -14px;
+  }
+  .awakening-deck .awakening-card:nth-child(1) {
+    transform: rotate(-9deg) translateY(14px);
+  }
+  .awakening-deck .awakening-card:nth-child(2) {
+    transform: rotate(-5deg) translateY(6px);
+  }
+  .awakening-deck .awakening-card:nth-child(5) {
+    transform: rotate(5deg) translateY(6px);
+  }
+  .awakening-deck .awakening-card:nth-child(6) {
+    transform: rotate(9deg) translateY(14px);
+  }
+}
