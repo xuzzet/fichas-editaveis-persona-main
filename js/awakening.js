@@ -1349,17 +1349,17 @@ function renderPanel(info, arcanaKey, tree) {
       actionHtml = '<button type="button" class="mini awk-remove-btn" data-node="' + esc(node.id) + '">Remover</button>';
     } else if (s === 'available' || s === 'available-res') {
       cls = 'is-available';
-      statusHtml = '<span class="awk-status awk-status-narrative">\u2728 Disponível para aquisição</span>';
+      statusHtml = '<span class="awk-status awk-status-narrative">\u2728 Custo: 1 ponto de Despertar</span>';
       actionHtml = '<button type="button" class="mini awk-acquire-btn" data-node="' + esc(node.id) + '">\u2728 Despertar</button>';
     } else if (s === 'available-narr') {
       cls = 'is-available';
       statusHtml = '<span class="awk-status awk-status-narrative">\u2728 Despertar Narrativo</span>';
       actionHtml = '<button type="button" class="mini awk-acquire-btn" data-node="' + esc(node.id) + '">\u2728 Despertar Narrativo</button>';
     } else if (s === 'locked-choices') {
-      statusHtml = '<span class="awk-status awk-status-narrative">\u2728 Disponível</span>';
-      actionHtml = '<span class="awk-note">Sem escolhas restantes — suba o nível da Persona.</span>';
+      statusHtml = '<span class="awk-status awk-status-locked">\uD83D\uDD12 Necessário 1 ponto de Despertar Trama</span>';
+      actionHtml = '<span class="awk-note">Sem pontos restantes — suba o nível da Persona.</span>';
     } else if (s === 'locked-prereq') {
-      statusHtml = '<span class="awk-status awk-status-locked">\uD83D\uDD12 Requer a Habilidade Principal</span>';
+      statusHtml = '<span class="awk-status awk-status-locked">\uD83D\uDD12 Requer: ' + esc(branch.nodes[0].name) + '</span>';
     } else if (s === 'locked-res') {
       statusHtml = '<span class="awk-status awk-status-locked">\uD83D\uDD12 Requer Nível 10 ou liberação narrativa</span>';
       actionHtml = '<button type="button" class="mini awk-narr-btn" data-node="' + esc(node.id) + '">\u2728 Liberar (Narrativo)</button>';
@@ -1390,7 +1390,7 @@ function renderPanel(info, arcanaKey, tree) {
       '<span class="awakening-panel-arcana">' + esc(info.display) + ' \u00b7 ' + esc(info.roman) + '</span>' +
     '</div>' +
     '<div class="awakening-choice-note">Escolhas de Despertar disponíveis: <b>' + comp.remaining + '</b>' +
-      ' <span class="awk-choice-hint">(cada nível de aquisição concede uma escolha; as amplificações são caminhos alternativos)</span></div>' +
+      ' <span class="awk-choice-hint">(cada nível de aquisição concede 1 ponto; tanto Habilidades Principais quanto Amplificações custam 1 ponto)</span></div>' +
     '<div class="awakening-upgrade-list">' + nodesHtml + '</div>';
 
   // Aquisição (consome escolha para nós normais; Resolução/narrativo não consomem).
