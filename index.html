@@ -94,17 +94,48 @@
         <!-- ZONA 3: ATRIBUTOS DE COMBATE -->
         <section class="card card-primary">
           <div class="section-title"><div class="bar"></div><h2>Atributos de Combate</h2></div>
-          <div class="hint" style="margin-bottom:8px;">Distribua <b>18 pontos</b> entre os atributos. Mínimo: <b>1</b> · Máximo: <b>12</b> por atributo.</div>
+          <div class="hint" style="margin-bottom:8px;">Distribua <b>18 pontos</b> entre os atributos. Mínimo: <b>1</b> · Máximo: <b>12</b> por atributo.<br>Clique no <b>nome do atributo</b> para rolar <b>1d20 + valor final</b>.</div>
           <div class="row row3">
-            <div><label>STR</label><input id="CharSTR" type="range" min="1" max="12" value="1"><span class="badge" id="bSTR">1</span></div>
-            <div><label>MAG</label><input id="CharMAG" type="range" min="1" max="12" value="1"><span class="badge" id="bMAG">1</span></div>
-            <div><label>TEC</label><input id="CharTEC" type="range" min="1" max="12" value="1"><span class="badge" id="bTEC">1</span></div>
+            <div><label class="attr-roll" data-attr="STR" title="Rolar 1d20 + Força">STR</label><input id="CharSTR" type="range" min="1" max="12" value="1"><span class="badge" id="bSTR">1</span></div>
+            <div><label class="attr-roll" data-attr="MAG" title="Rolar 1d20 + Magia">MAG</label><input id="CharMAG" type="range" min="1" max="12" value="1"><span class="badge" id="bMAG">1</span></div>
+            <div><label class="attr-roll" data-attr="TEC" title="Rolar 1d20 + Técnica">TEC</label><input id="CharTEC" type="range" min="1" max="12" value="1"><span class="badge" id="bTEC">1</span></div>
           </div>
 
           <div class="row row3">
-            <div><label>AGI</label><input id="CharAGI" type="range" min="1" max="12" value="1"><span class="badge" id="bAGI">1</span></div>
-            <div><label>VIT</label><input id="CharVIT" type="range" min="1" max="12" value="1"><span class="badge" id="bVIT">1</span></div>
-            <div><label>LCK</label><input id="CharLCK" type="range" min="1" max="12" value="1"><span class="badge" id="bLCK">1</span></div>
+            <div><label class="attr-roll" data-attr="AGI" title="Rolar 1d20 + Agilidade">AGI</label><input id="CharAGI" type="range" min="1" max="12" value="1"><span class="badge" id="bAGI">1</span></div>
+            <div><label class="attr-roll" data-attr="VIT" title="Rolar 1d20 + Vitalidade">VIT</label><input id="CharVIT" type="range" min="1" max="12" value="1"><span class="badge" id="bVIT">1</span></div>
+            <div><label class="attr-roll" data-attr="LCK" title="Rolar 1d20 + Sorte">LCK</label><input id="CharLCK" type="range" min="1" max="12" value="1"><span class="badge" id="bLCK">1</span></div>
+          </div>
+        </section>
+
+        <!-- ZONA 3.1: HABILIDADES SOCIAIS (logo abaixo dos atributos) -->
+        <section class="card card-secondary" id="social-card">
+          <div class="section-title"><div class="bar"></div><h2>Habilidades Sociais</h2></div>
+          <div class="hint" style="margin-bottom:8px;">Distribua <strong>7 pontos iniciais</strong> na criação. O valor <b>base</b> vai de <b>0</b> a <b>25</b> — modificadores podem ultrapassar esse limite.<br>Clique no <b>nome da habilidade</b> para rolar <b>1d20 + pontos</b>.</div>
+          <div class="row row3">
+            <div><label class="social-roll" data-social="KNOPts" title="Rolar 1d20 + Conhecimento">Conhecimento</label><input id="KNOPts" type="range" min="0" max="25" value="0"><span class="badge" id="bKNOPts">0</span></div>
+            <div><label class="social-roll" data-social="DISPts" title="Rolar 1d20 + Disciplina">Disciplina</label><input id="DISPts" type="range" min="0" max="25" value="0"><span class="badge" id="bDISPts">0</span></div>
+            <div><label class="social-roll" data-social="EMPpts" title="Rolar 1d20 + Empatia">Empatia</label><input id="EMPpts" type="range" min="0" max="25" value="0"><span class="badge" id="bEMPpts">0</span></div>
+          </div>
+          <div class="row row3">
+            <div><label class="social-roll" data-social="EXPPts" title="Rolar 1d20 + Expressão">Expressão</label><input id="EXPPts" type="range" min="0" max="25" value="0"><span class="badge" id="bEXPPts">0</span></div>
+            <div><label class="social-roll" data-social="COUPts" title="Rolar 1d20 + Coragem">Coragem</label><input id="COUPts" type="range" min="0" max="25" value="0"><span class="badge" id="bCOUPts">0</span></div>
+            <div><label class="social-roll" data-social="CHAPts" title="Rolar 1d20 + Charme">Charme</label><input id="CHAPts" type="range" min="0" max="25" value="0"><span class="badge" id="bCHAPts">0</span></div>
+          </div>
+          <div class="row" style="margin-top:10px;align-items:center;">
+            <div style="font-size:13px;color:var(--ink-dim);">Pontos iniciais restantes: <span id="social-remaining" style="font-weight:700;">7</span> <span style="opacity:0.6;">(apenas informativo)</span></div>
+            <div style="margin-left:12px;color:var(--ink-dim);font-size:13px;" id="social-msg"></div>
+          </div>
+          <div id="social-tier-list" style="margin-top:12px;">
+            <!-- JS irá popular as descrições e tiers aqui -->
+          </div>
+        </section>
+
+        <!-- ZONA 3.2: ÚLTIMA ROLAGEM (display minimalista) -->
+        <section class="card card-secondary" id="last-roll-card">
+          <div class="section-title"><div class="bar"></div><h2>Última Rolagem</h2></div>
+          <div id="last-roll" class="last-roll last-roll--empty">
+            <p class="last-roll-empty">Clique no nome de um atributo ou habilidade social para rolar <b>1d20</b>.</p>
           </div>
         </section>
 
@@ -169,29 +200,6 @@
               </label>
               <textarea id="Buffs" class="expandable" placeholder="Buffs ativos"></textarea>
             </div>
-          </div>
-        </section>
-
-        <!-- ZONA 6: HABILIDADES SOCIAIS -->
-        <section class="card card-secondary">
-          <div class="section-title"><div class="bar"></div><h2>Habilidades Sociais</h2></div>
-          <div class="hint" style="margin-bottom:8px;">Na criação do personagem, distribua <strong>7 pontos iniciais</strong> entre as Habilidades Sociais.<br>Após isso, as habilidades podem crescer sem limite máximo.</div>
-          <div class="row row3">
-            <div><label>Conhecimento</label><input id="KNOPts" type="number" min="0" value="0"/></div>
-            <div><label>Disciplina</label><input id="DISPts" type="number" min="0" value="0"/></div>
-            <div><label>Empatia</label><input id="EMPpts" type="number" min="0" value="0"/></div>
-          </div>
-          <div class="row row3">
-            <div><label>Expressão</label><input id="EXPPts" type="number" min="0" value="0"/></div>
-            <div><label>Coragem</label><input id="COUPts" type="number" min="0" value="0"/></div>
-            <div><label>Charme</label><input id="CHAPts" type="number" min="0" value="0"/></div>
-          </div>
-          <div class="row" style="margin-top:10px;align-items:center;">
-            <div style="font-size:13px;color:var(--ink-dim);">Pontos iniciais restantes: <span id="social-remaining" style="font-weight:700;">7</span> <span style="opacity:0.6;">(apenas informativo)</span></div>
-            <div style="margin-left:12px;color:var(--ink-dim);font-size:13px;" id="social-msg"></div>
-          </div>
-          <div id="social-tier-list" style="margin-top:12px;">
-            <!-- JS irá popular as descrições e tiers aqui -->
           </div>
         </section>
 

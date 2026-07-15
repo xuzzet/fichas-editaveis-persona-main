@@ -108,6 +108,9 @@ export function renderSocial() {
 
   HX.skills.forEach(function(s, i) {
     var val = Math.max(0, Number(state[s.id]) || 0);
+    // Sincroniza o badge do slider social (não altera o valor de state).
+    var badgeEl = document.getElementById('b' + s.id);
+    if (badgeEl) badgeEl.textContent = val;
     var tier = Math.min(5, Math.floor(val / 5));
     var meta = SOCIAL_SKILL_META[s.id];
     if (!meta) return;

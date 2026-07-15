@@ -301,3 +301,105 @@
     width: 100%;
   }
 }
+
+/* =============================================
+   ÚLTIMA ROLAGEM — display minimalista (#last-roll)
+   ============================================= */
+.last-roll {
+  text-align: center;
+  padding: var(--space-4) var(--space-3);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--bg) 55%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--stroke) 85%, transparent);
+  min-height: 104px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.last-roll.is-crit {
+  border-color: color-mix(in srgb, var(--ok) 55%, transparent);
+  background: color-mix(in srgb, var(--ok) 8%, transparent);
+}
+.last-roll.is-fail {
+  border-color: color-mix(in srgb, var(--danger) 55%, transparent);
+  background: color-mix(in srgb, var(--danger) 8%, transparent);
+}
+.last-roll-empty {
+  margin: 0;
+  color: var(--ink-dim);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.last-roll-name {
+  font-family: "Barlow Condensed", Inter, sans-serif;
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  line-height: 1.1;
+}
+.last-roll-formula {
+  font-family: "Barlow Condensed", Inter, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--ink-dim);
+  font-variant-numeric: tabular-nums;
+}
+.last-roll-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2px;
+}
+.last-roll-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.last-roll-total {
+  font-family: "Barlow Condensed", Inter, sans-serif;
+  font-weight: 900;
+  font-size: 50px;
+  line-height: 1;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  animation: p5-value-pop 0.35s ease;
+}
+.last-roll.is-crit .last-roll-total {
+  color: var(--ok);
+}
+.last-roll.is-fail .last-roll-total {
+  color: var(--danger);
+}
+.last-roll-flag {
+  font-family: "Barlow Condensed", Inter, sans-serif;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 13px;
+  padding: 2px 12px;
+  border-radius: 999px;
+}
+.last-roll-flag--crit {
+  color: var(--ok);
+  background: color-mix(in srgb, var(--ok) 16%, transparent);
+}
+.last-roll-flag--fail {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 16%, transparent);
+}
+
+@media (max-width: 560px) {
+  .last-roll-total {
+    font-size: 42px;
+  }
+  .last-roll-name {
+    font-size: 19px;
+  }
+}

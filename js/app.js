@@ -27,7 +27,7 @@ import { snapshot, applySnapshot, setRenderAll } from './storage.js';
 import { initTheme } from './themes.js';
 import { initTabs } from './tabs.js';
 import { initImportExport } from './import-export.js';
-import { initDiceSystem, renderDiceHistory, rollDamage } from './dice.js';
+import { initDiceSystem, renderDiceHistory, rollDamage, rollQuick } from './dice.js';
 
 // =============================================
 // RENDERIZAÇÃO COMPLETA
@@ -302,6 +302,27 @@ SOCIAL_IDS.forEach(function(key) {
     partial[key] = Number(el.value) || 0;
     setState(partial);
   });
+});
+
+// =============================================
+// ROLAGEM POR CLIQUE — clicar no NOME de um atributo/habilidade
+// Combate: 1d20 + atributo final · Social: 1d20 + pontos atuais
+// Delegação no document (labels são estáticos no HTML).
+// =============================================
+document.addEventListener('click', function(e) {
+  var t = e.target;
+  if (!t || !t.closest) return;
+  var attrEl = t.closest('.attr-roll');
+  if (attrEl && attrEl.dataset && attrEl.dataset.attr) {
+    e.preventDefault();
+    rollQuick('combat', attrEl.dataset.attr);
+    return;
+  }
+  var socEl = t.closest('.social-roll');
+  if (socEl && socEl.dataset && socEl.dataset.social) {
+    e.preventDefault();
+    rollQuick('social', socEl.dataset.social);
+  }
 });
 
 // HP/PM máximos: atualiza state sem recalc

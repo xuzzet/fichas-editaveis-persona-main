@@ -549,6 +549,64 @@ export function performTestRoll(category, attrKey, extraModifier) {
   return res;
 }
 
+// =============================================
+// ROLAGEM RÁPIDA POR CLIQUE (nome do atributo / habilidade)
+// Atualiza somente o display minimalista #last-roll.
+// Não altera fórmulas, cálculos nem o painel avançado de dados.
+// =============================================
+
+/** Renderiza o resultado minimalista no card "Última Rolagem". */
+function showLastRoll(name, attrValue, res) {
+  var out = document.getElementById('last-roll');
+  if (!out) return;
+  out.className = 'last-roll' + (res.crit ? ' is-crit' : res.fail ? ' is-fail' : '');
+  var flag = res.crit ? '<div class="last-roll-flag last-roll-flag--crit">Crítico!</div>'
+           : res.fail ? '<div class="last-roll-flag last-roll-flag--fail">Falha crítica!</div>' : '';
+  var sign = attrValue >= 0 ? ' + ' : ' - ';
+  out.innerHTML =
+    '<div class="last-roll-name">' + esc(name) + '</div>' +
+    '<div class="last-roll-formula">1d20' + sign + esc(Math.abs(attrValue)) + '</div>' +
+    flag +
+    '<div class="last-roll-result">' +
+      '<span class="last-roll-label">Resultado</span>' +
+      '<strong class="last-roll-total">' + esc(res.total) + '</strong>' +
+    '</div>';
+}
+
+/**
+ * Rolagem rápida disparada pelo clique no nome de um atributo/habilidade.
+ * Combate: 1d20 + atributo final (com modificadores).
+ * Social:  1d20 + pontos atuais (Tier é apenas informativo).
+ * @param {string} category - 'combat' | 'social'
+ * @param {string} attrKey  - 'STR'.. ou 'KNOPts'..
+ * @returns {object} resultado do teste
+ */
+export function rollQuick(category, attrKey) {
+  var name, attrValue, tier = null;
+  if (category === 'social') {
+    var meta = SOCIAL_SKILL_META[attrKey];
+    name = meta ? meta.name : attrKey;
+    attrValue = Math.trunc(Number(state[attrKey]) || 0);
+    tier = calcSocialTier(state[attrKey] || 0);
+  } else {
+    var stats = getComputedStats();
+    name = attrKey;
+    attrValue = Math.trunc(Number(stats[attrKey]) || 0);
+  }
+  var res = rollTest(attrValue, 0);
+  var label = (category === 'social')
+    ? name + ' — 1d20 + ' + attrValue + ' (Tier ' + ['0','I','II','III','IV','V'][tier] + ')'
+    : name + ' — 1d20 + ' + attrValue;
+  addRollToHistory({
+    kind: 'test', label: label, attrLabel: name,
+    die: res.die, attribute: res.attribute, extra: res.extra,
+    total: res.total, crit: res.crit, fail: res.fail,
+    tier: tier
+  });
+  showLastRoll(name, attrValue, res);
+  return res;
+}
+
 /**
  * Executa uma rolagem/cálculo a partir de uma fórmula flexível e registra no histórico.
  * Usada pela UI, pelos botões de magia e pelo botão de arma.

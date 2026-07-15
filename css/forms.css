@@ -16,6 +16,51 @@ label:hover {
   color: var(--accent-2);
 }
 
+/* ── Nomes clicáveis (rolagem 1d20 ao clicar) ── */
+.attr-roll,
+.social-roll {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 2px 2px 2px 0;
+  transition:
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+.attr-roll::after,
+.social-roll::after {
+  content: "\2680";
+  font-size: 13px;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+.attr-roll:hover,
+.social-roll:hover {
+  color: var(--accent-2);
+  transform: translateX(3px);
+}
+.attr-roll:hover::after,
+.social-roll:hover::after {
+  opacity: 0.85;
+  transform: translateX(0);
+}
+.attr-roll:active,
+.social-roll:active {
+  transform: translateX(1px) scale(0.96);
+}
+.attr-roll:focus-visible,
+.social-roll:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 input,
 select,
 textarea {
