@@ -24,6 +24,12 @@ import { buildFeitosUI, renderFeitos } from './feats.js';
 import { buildConditionsUI, renderConditions } from './conditions.js';
 import { buildModifiersUI, renderModifiers, renderModSummary } from './modifiers.js';
 import { snapshot, applySnapshot, setRenderAll } from './storage.js';
+import {
+  loadProfileStore, getActiveProfile, saveActiveSnapshot,
+  createProfile, duplicateProfile, deleteProfile, renameProfile,
+  setProfileAvatar, switchProfile, getActiveId, isFull
+} from './profiles.js';
+import { initProfilesUI, refreshProfilesUI } from './profiles-ui.js';
 import { initTheme } from './themes.js';
 import { initTabs } from './tabs.js';
 import { initImportExport } from './import-export.js';
@@ -100,12 +106,12 @@ window.recalcAndRender = function() {
 };
 
 // =============================================
-// RESET DA FICHA
+// RESET / ESTADO PADRÃO DA FICHA
 // =============================================
 
-function resetFicha() {
-  if (!confirm('Tem certeza que deseja resetar a ficha?\nTodos os dados serão perdidos permanentemente.')) return;
-
+// Zera o `state` para os valores padrão de uma ficha nova.
+// NÃO mexe em localStorage nem na interface — apenas nos dados.
+function resetStateToDefaults() {
   FIELD_IDS.forEach(function(key) {
     state[key] = NUMBER_FIELDS.has(key) ? (RECALC_FIELDS.has(key) ? 1 : 0) : '';
   });
@@ -124,21 +130,111 @@ function resetFicha() {
   state.CurrentHP = state.MaxHP;
   state.CurrentPM = state.EnergyMax;
   validateState();
+}
 
+// Reconstrói a tabela de afinidades (selects) e re-renderiza tudo.
+function rebuildSheetUI() {
   var afGrid = document.getElementById('af-grid');
   if (afGrid) afGrid.innerHTML = '';
   var afSum = document.getElementById('af-summary');
   if (afSum) afSum.innerHTML = '';
   buildAffinityTable();
-
   renderAll();
+}
+
+function resetFicha() {
+  if (!confirm('Tem certeza que deseja resetar a ficha?\nTodos os dados serão perdidos permanentemente.')) return;
+
+  resetStateToDefaults();
+  rebuildSheetUI();
 
   var testsOut = document.getElementById('tests-out');
   if (testsOut) testsOut.textContent = 'Clique em Testes para rodar as verificações.';
 
-  try { localStorage.removeItem('ficha-yby-p3r-skin'); } catch (e) {}
+  // Persiste a ficha resetada no perfil ativo (não remove outros perfis).
+  try { saveActiveSnapshot(snapshot()); } catch (e) {}
+  refreshProfilesUI();
   showToast('Ficha resetada', 'info');
 }
+
+// =============================================
+// FLUXOS DE PERFIL
+// =============================================
+
+// Troca de perfil: salva o atual, carrega o alvo, re-renderiza.
+function switchToProfile(id) {
+  if (id === getActiveId()) return true;
+  try {
+    saveActiveSnapshot(snapshot());
+    var r = switchProfile(id);
+    if (!r || !r.ok) return false;
+    applySnapshot(r.sheetData || {});
+    return true;
+  } catch (e) {
+    console.error('[Perfil] Erro ao trocar de perfil:', e);
+    showToast('Erro ao trocar de perfil', 'error');
+    return false;
+  }
+}
+
+// Cria um novo perfil com ficha limpa (não copia o personagem ativo).
+function createNewProfile(name, avatarDataUrl) {
+  if (isFull()) return { ok: false, error: 'limit' };
+  try {
+    // 1. Salva o estado atual no perfil ativo.
+    saveActiveSnapshot(snapshot());
+    // 2. Ficha limpa nos valores padrão.
+    resetStateToDefaults();
+    if (name) state.CharPlayer = name;
+    state.portrait = { src: avatarDataUrl || '' };
+    // 3. Atualiza a UI para refletir a ficha limpa antes de fotografar.
+    rebuildSheetUI();
+    // 4. Cria o perfil a partir do snapshot já limpo.
+    var res = createProfile(name || 'Novo Personagem', avatarDataUrl || '', snapshot());
+    return res;
+  } catch (e) {
+    console.error('[Perfil] Erro ao criar ficha:', e);
+    return { ok: false, error: 'exception' };
+  }
+}
+
+// Duplica um perfil existente.
+function duplicateExistingProfile(id) {
+  // Garante que o perfil ativo esteja salvo antes de copiar.
+  try { saveActiveSnapshot(snapshot()); } catch (e) {}
+  return duplicateProfile(id);
+}
+
+// Exclui um perfil; se era o ativo, carrega o novo ativo.
+function deleteExistingProfile(id) {
+  var wasActive = (id === getActiveId());
+  var res = deleteProfile(id);
+  if (res && res.ok && res.switched && res.newActive) {
+    applySnapshot(res.newActive.sheetData || {});
+  }
+  return res;
+}
+
+// Renomeia; se for o perfil ativo, reflete no estado ao vivo.
+function renameExistingProfile(id, name) {
+  var res = renameProfile(id, name);
+  if (res && res.ok && id === getActiveId()) {
+    setState({ CharPlayer: res.profile.name });
+  }
+  return res;
+}
+
+// Altera o avatar; se for o perfil ativo, reflete no retrato ao vivo.
+function changeProfileAvatar(id, dataUrl) {
+  var res = setProfileAvatar(id, dataUrl);
+  if (res && res.ok && id === getActiveId()) {
+    state.portrait = { src: dataUrl || '' };
+    renderPortrait();
+    if (window.debouncedAutoSave) window.debouncedAutoSave();
+  }
+  return res;
+}
+
 
 // =============================================
 // PORTRAIT
@@ -408,7 +504,8 @@ if (saveBtn) saveBtn.addEventListener('click', function() {
     return;
   }
   try {
-    localStorage.setItem('ficha-yby-p3r-skin', JSON.stringify(snapshot()));
+    saveActiveSnapshot(snapshot());
+    refreshProfilesUI();
     showToast('\u2713 Ficha salva com sucesso', 'success');
   } catch (e) {
     console.error('[Salvar] Erro ao salvar ficha:', e);
@@ -422,9 +519,9 @@ if (saveBtn) saveBtn.addEventListener('click', function() {
 
 var loadBtn = document.getElementById('load');
 if (loadBtn) loadBtn.addEventListener('click', function() {
-  var raw = localStorage.getItem('ficha-yby-p3r-skin');
-  if (!raw) return showToast('Nenhuma ficha salva', 'info');
-  try { applySnapshot(JSON.parse(raw)); showToast('\u2713 Ficha carregada', 'success'); }
+  var active = getActiveProfile();
+  if (!active || !active.sheetData) return showToast('Nenhuma ficha salva', 'info');
+  try { applySnapshot(active.sheetData); refreshProfilesUI(); showToast('\u2713 Ficha carregada', 'success'); }
   catch (e) { showToast('Erro ao carregar ficha', 'error'); }
 });
 
@@ -490,22 +587,26 @@ function seed() {
 // AUTO-LOAD
 // =============================================
 
+// =============================================
+// AUTO-LOAD (via sistema de perfis)
+// =============================================
+
 var _autoLoaded = false;
 try {
-  var raw = localStorage.getItem('ficha-yby-p3r-skin');
-  if (raw) {
-    var data = JSON.parse(raw);
-    if (data && typeof data === 'object' && data.id === 'ficha-yby-p3r-skin') {
-      applySnapshot(data);
-      _autoLoaded = true;
-    } else {
-      console.warn('[Auto-load] Dados inválidos no localStorage, ignorando.');
-    }
+  loadProfileStore(); // carrega perfis e migra a ficha antiga, se existir
+  var _active = getActiveProfile();
+  if (_active && _active.sheetData && Object.keys(_active.sheetData).length) {
+    applySnapshot(_active.sheetData);
+    _autoLoaded = true;
   }
 } catch (e) {
-  console.warn('[Auto-load] Erro ao carregar:', e);
+  console.warn('[Auto-load] Erro ao carregar perfis:', e);
 }
-if (!_autoLoaded) seed();
+if (!_autoLoaded) {
+  seed();
+  // Cria o primeiro perfil a partir da ficha semente atual.
+  try { saveActiveSnapshot(snapshot()); } catch (e) {}
+}
 
 // =============================================
 // AUTO-SAVE
@@ -532,8 +633,8 @@ function autoSave() {
   _saving = true;
   try {
     showSaveStatus('Salvando...');
-    var json = JSON.stringify(snapshot());
-    localStorage.setItem('ficha-yby-p3r-skin', json);
+    saveActiveSnapshot(snapshot());
+    refreshProfilesUI();
     showSaveStatus('Salvo \u2714', 2000);
   } catch (e) {
     if (e && (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED' || (e.code && e.code === 22))) {
@@ -577,8 +678,26 @@ if (spellGrid) tableObserver.observe(spellGrid, { childList: true, subtree: true
 
 // Safety net: salvar ao fechar
 window.addEventListener('beforeunload', function() {
-  try { localStorage.setItem('ficha-yby-p3r-skin', JSON.stringify(snapshot())); } catch (e) {}
+  try { saveActiveSnapshot(snapshot()); } catch (e) {}
 });
+
+// =============================================
+// INICIALIZAÇÃO DA INTERFACE DE PERFIS
+// =============================================
+
+try {
+  initProfilesUI({
+    onSwitch:       switchToProfile,
+    onCreate:       createNewProfile,
+    onDuplicate:    duplicateExistingProfile,
+    onDelete:       deleteExistingProfile,
+    onRename:       renameExistingProfile,
+    onAvatarChange: changeProfileAvatar,
+    toast:          showToast
+  });
+} catch (e) {
+  console.error('[Perfis] Erro ao inicializar interface de perfis:', e);
+}
 
 // =============================================
 // EXPOR API GLOBAL (para debugging e interoperabilidade)
