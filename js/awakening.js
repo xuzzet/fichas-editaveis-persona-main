@@ -975,6 +975,381 @@ export const AWAKENING_OVERRIDES = {
               'Requisito: somente narrativo.'
       }
     }
+  },
+
+  // ── A Morte (XIII) ──
+  death: {
+    impeto: {
+      main: {
+        name: 'Uma Notícia Ruim',
+        desc: 'Uma vez por rodada, após atingir um inimigo com uma Magia de Trevas ou após ele resistir a um efeito de Morte Instantânea, pode pagar 13 PM para aplicar Perda de Entropia durante os próximos 2 turnos do alvo.\n' +
+              '\n' +
+              'PERDA DE ENTROPIA:\n' +
+              'O dano causado pelo alvo é reduzido com base na sua MAG. A RD do alvo é reduzida em valor equivalente à metade da sua MAG.\n' +
+              '\n' +
+              'Enquanto estiver em Portões da Morte — Morrendo, a condição é agravada: além da penalidade normal, o alvo perde sua MAG como Dano Bônus, sofre -2 Dados de Dano e a redução de RD passa a utilizar o valor completo da MAG.'
+      },
+      amp1: {
+        name: 'Mal Contagioso',
+        desc: 'Quando um inimigo afetado por Perda de Entropia morrer, pode aplicar a condição em outro inimigo perceptível. A duração é renovada completamente.\n' +
+              'Ao fazer isso, recupera MAG + Nível em PM.'
+      },
+      amp2: {
+        name: 'Colapso Terminal',
+        desc: 'Enquanto estiver Morrendo, suas Magias de Trevas recebem +2 Dados de Dano contra inimigos afetados por Perda de Entropia.\n' +
+              'Efeitos de Morte Instantânea recebem +10% de Chance adicional.'
+      }
+    },
+    autocuidado: {
+      main: {
+        name: 'A Falsa Sensação de Viver',
+        desc: 'Enquanto estiver em Portões da Morte — Morrendo, pode armazenar efeitos de Cura como Vida Falsa.\n' +
+              'Limite: 50% do PV Máximo + Empatia.\n' +
+              '\n' +
+              'REGRAS:\n' +
+              'Vida Falsa funciona como HP Bônus e recebe dano antes do PV. Não remove a condição Morrendo. No início de cada rodada perde 10 pontos de Vida Falsa.\n' +
+              '\n' +
+              'Pode utilizar uma Ação de Interromper para consumir toda a Vida Falsa restante, convertê-la em PV Atual e sair dos Portões da Morte.'
+      },
+      amp1: {
+        name: 'Mentira Reconfortante',
+        desc: 'No início da rodada, pode pagar 13 × Tier PM para receber Empatia como RD. Essa RD protege apenas a Vida Falsa.\n' +
+              'Caso um aliado esteja nos Portões da Morte, pode transferir sua cura de A Falsa Sensação de Viver para ele, retirando-o automaticamente dos Portões da Morte.'
+      },
+      amp2: {
+        name: 'A Mentira se Torna Verdade',
+        desc: 'Ao consumir Vida Falsa para sair dos Portões da Morte, recupera Empatia em PM e remove Condições Negativas que estejam afetando você.'
+      }
+    },
+    artificio: {
+      main: {
+        name: 'Rumo ao Pós-Vida',
+        desc: 'Uma vez por combate, pode utilizar uma Ação de Interromper para reduzir seu PV Atual a zero e entrar automaticamente nos Portões da Morte — Morrendo.\n' +
+              '\n' +
+              'EFEITO: Metade do PV perdido dessa forma é convertido em PM Bônus, podendo ultrapassar o limite normal de PM.\n' +
+              '\n' +
+              'Enquanto estiver no Estado Pós-Vida, O Começo do Fim recebe melhorias:\n' +
+              '• Magias de Trevas: +2 Dados de Dano.\n' +
+              '• Morte Instantânea: +10% de Chance e +10% de Vida necessária para Execução.\n' +
+              '\n' +
+              'MAGIA EXCLUSIVA — Presságio Soturno:\n' +
+              'Disponível apenas no Estado Pós-Vida. Custo: 13 PM × Tier de Magia.\n' +
+              'Alvos: quantidade de inimigos igual ao Tier de Magia (Tier 4: todos os inimigos).\n' +
+              'Efeito: causa Dano Médio (D8) de Trevas, com aumento da quantidade de dados conforme o Tier, e aplica Sentença por 2 turnos.\n' +
+              'Sentença: o alvo possui duas rodadas para removê-la. Caso falhe, recebe Desespero.'
+      },
+      amp1: {
+        name: 'Pressentimento Ruim',
+        desc: 'Enquanto estiver no Estado Pós-Vida, alvos em Medo ou Desespero possuem desvantagem para resistir a Morte Instantânea.\n' +
+              'Contra inimigos Imunes, recebe MAG + Empatia ou Conhecimento como Dano Onipotente.'
+      },
+      amp2: {
+        name: 'O Presságio se Cumpre',
+        desc: 'Ao sair do Estado Pós-Vida, todas as Sentenças aplicadas por você chegam imediatamente à resolução.\n' +
+              'O alvo possui uma última chance:\n' +
+              '• Falha: recebe Desespero.\n' +
+              '• Sucesso: remove Sentença.'
+      }
+    },
+    elo: {
+      main: {
+        name: 'Voto do Coração',
+        desc: 'Ao adquirir este Despertar Trama, pode Melhorar sua Habilidade Natural ou sua Habilidade de Combate.\n' +
+              'Pode adicionar um terceiro efeito ou aprimorar uma capacidade existente.'
+      },
+      amp1: {
+        name: 'Coração de Batalha',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade de Combate.\n' +
+              'Caso ela já tenha sido aprimorada por Voto do Coração, pode melhorá-la uma segunda vez.'
+      },
+      amp2: {
+        name: 'Coração com o Mundo',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade Natural.\n' +
+              'Caso ela já tenha sido aprimorada por Voto do Coração, pode melhorá-la uma segunda vez.'
+      }
+    },
+    cognicao: {
+      main: {
+        name: 'Anjo do Coração Despedaçado',
+        desc: 'Uma vez por rodada, quando um aliado visível for alvo de Morte Instantânea de Trevas, pode utilizar uma Ação de Interromper para redirecionar o efeito para si.\n' +
+              '\n' +
+              'REGRAS: A chance é recalculada utilizando suas afinidades, resistências e defesas. O aliado deixa de ser alvo.'
+      },
+      amp1: {
+        name: 'Ainda Não Era Sua Hora',
+        desc: 'Ao redirecionar Morte Instantânea, o aliado protegido recebe Imunidade contra Morte Instantânea de Trevas até o início da próxima rodada.\n' +
+              'Caso resista, você e o aliado recuperam 13 PM.'
+      },
+      amp2: {
+        name: 'Um Nome por Outro',
+        desc: 'Pode redirecionar Morte Instantânea de outros elementos.\n' +
+              'Quantidade máxima de alvos protegidos: Tier de Empatia ou Conhecimento.'
+      }
+    },
+    resolucao: {
+      main: {
+        name: '"Quem eu Devo ser..."',
+        level: 10,
+        desc: 'O personagem atingiu o ponto onde sua Trama começa a chegar em uma Resolução graças aos seus Vínculos.\n' +
+              'Desperta um novo poder.\n' +
+              'Pode ser adquirido após: Persona Nível 10 ou decisão narrativa do Narrador.'
+      },
+      amp1: {
+        name: '"Ó Mundo Meu..."',
+        narrativeOnly: true,
+        desc: 'A Persona atinge o ápice de sua forma.\n' +
+              'Alcança a Forma Verdadeira do Coração.\n' +
+              'Requisito: somente narrativo.'
+      },
+      amp2: {
+        name: '"... Ó Fome que me Consome"',
+        narrativeOnly: true,
+        desc: 'A Persona alcança uma forma corrompida da sua verdadeira forma.\n' +
+              'Torna-se uma Persona Suprimida da Fome.\n' +
+              'Requisito: somente narrativo.'
+      }
+    }
+  },
+
+  // ── A Temperança (XIV) ──
+  temperance: {
+    impeto: {
+      main: {
+        name: 'Reação Exotérmica',
+        desc: 'Uma vez por rodada, após um inimigo causar dano a um ou mais aliados, pode utilizar Por um Propósito para curar pelo menos um dos personagens atingidos.\n' +
+              'Após resolver a cura, o responsável pelo ataque recebe Dano Fixo do tipo Físico equivalente a 50% do HP utilizado naquela ativação. O HP Temporário utilizado como cura também conta.\n' +
+              '\n' +
+              'Esse dano não recebe bônus adicionais, não causa Acerto Crítico e apenas atinge o responsável pelo efeito original.'
+      },
+      amp1: {
+        name: 'Reação em Cadeia',
+        desc: 'Para cada aliado adicional ferido pelo mesmo efeito e curado pela ativação de Por um Propósito, o dano de Reação Exotérmica aumenta em +25%.\n' +
+              'Máximo: +100% do PV utilizado.'
+      },
+      amp2: {
+        name: 'Solução Corrosiva',
+        desc: 'Após sofrer o dano de Reação Exotérmica, a afinidade defensiva do inimigo contra o tipo de dano retornado é reduzida em 1 Categoria até o final da próxima rodada.\n' +
+              'Categorias: Fraco → Normal → Resiste → Anula → Reflete → Absorve.'
+      }
+    },
+    autocuidado: {
+      main: {
+        name: 'Retorno ao Equilíbrio',
+        desc: 'Uma vez por rodada, após sacrificar PV ou sofrer dano equivalente a 40 + VIT em um único efeito, seu corpo inicia um processo de restauração.\n' +
+              'No início da próxima rodada, recupera VIT = d6 de Cura.\n' +
+              '\n' +
+              'Vida Temporária não ativa esse efeito. Não pode acumular mais de uma vez.'
+      },
+      amp1: {
+        name: 'Purificação pelas Águas',
+        desc: 'Quando receber a cura de Retorno ao Equilíbrio, pode remover uma Condição Negativa que esteja afetando você.'
+      },
+      amp2: {
+        name: 'Nenhuma Gota Desperdiçada',
+        desc: 'Toda Cura excedente de Retorno ao Equilíbrio é convertida em Vida Temporária.\n' +
+              'Limite: VIT × 5.\n' +
+              'Pode ser utilizada normalmente através de Por um Propósito. A Vida Temporária criada desaparece ao final do combate.'
+      }
+    },
+    artificio: {
+      main: {
+        name: 'Vasos Comunicantes',
+        desc: 'Uma vez por combate, como Ação Padrão, estabelece uma Confluência Vital entre você e aliados voluntários. Quantidade de aliados: VIT. A ligação permanece até o final do combate.\n' +
+              '\n' +
+              'Uma vez por rodada, quando um único efeito fizer personagens ligados perderem ou recuperarem PV, pode redistribuir livremente o valor total entre os integrantes:\n' +
+              '• Dano: soma todo o dano final e distribui entre os ligados.\n' +
+              '• Cura: soma toda a cura recebida e redistribui.\n' +
+              'O valor total não muda.\n' +
+              '\n' +
+              'O dano é redistribuído após Afinidades e RD. Custos e sacrifícios de PV não podem ser redistribuídos.'
+      },
+      amp1: {
+        name: 'Fluxo Contínuo',
+        desc: 'Pode utilizar Vasos Comunicantes duas vezes por rodada: uma vez para redistribuir dano e uma vez para redistribuir cura.'
+      },
+      amp2: {
+        name: 'A Última Gota do Cálice',
+        desc: 'Uma vez por combate, quando um aliado ligado seria reduzido a zero PV, pode ativar Vasos Comunicantes mesmo que já tenha utilizado a redistribuição na rodada.\n' +
+              'Todo dano que reduziria qualquer aliado ligado abaixo de 1 PV é transferido para você. O dano transferido pode reduzir seu PV a zero.'
+      }
+    },
+    elo: {
+      main: {
+        name: 'Voto do Coração',
+        desc: 'Ao adquirir este Despertar Trama, pode Melhorar sua Habilidade Natural ou sua Habilidade de Combate.\n' +
+              'Pode adicionar um terceiro efeito ou aprimorar uma capacidade existente.'
+      },
+      amp1: {
+        name: 'Coração de Batalha',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade de Combate.\n' +
+              'Caso ela já tenha sido aprimorada por Voto do Coração, pode melhorá-la uma segunda vez.'
+      },
+      amp2: {
+        name: 'Coração com o Mundo',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade Natural.\n' +
+              'Caso ela já tenha sido aprimorada por Voto do Coração, pode melhorá-la uma segunda vez.'
+      }
+    },
+    cognicao: {
+      main: {
+        name: 'A Dor Pode Esperar',
+        desc: 'Uma vez por rodada, ao sofrer dano, pode utilizar uma Ação de Interromper para colocar metade do dano final em Suspensão, sofrendo a outra metade imediatamente.\n' +
+              'O Dano Suspenso será aplicado no início da próxima rodada.\n' +
+              '\n' +
+              'O Dano Suspenso ignora Afinidades e RD, não pode ser reduzido, não pode ser redirecionado e não pode ser colocado novamente em Suspensão. Pode ser absorvido por Vida Temporária.'
+      },
+      amp1: {
+        name: 'Tempo Emprestado',
+        desc: 'Pode utilizar A Dor Pode Esperar quando um aliado perceptível sofrer dano.\n' +
+              'O aliado sofre metade imediatamente e a outra metade fica em Suspensão. Continua limitado a uma utilização por rodada.'
+      },
+      amp2: {
+        name: 'Longa Decantação',
+        desc: 'O Dano Suspenso passa a ser dividido igualmente e aplicado no início das próximas 2 rodadas.\n' +
+              'Cada parcela continua sendo parte do mesmo dano original. Não pode ser colocado novamente em Suspensão.'
+      }
+    },
+    resolucao: {
+      main: {
+        name: '"Quem eu Devo ser..."',
+        level: 10,
+        desc: 'O personagem atingiu o ponto onde sua Trama começa a chegar em uma Resolução graças aos seus Vínculos.\n' +
+              'Desperta um novo poder.\n' +
+              'Pode ser adquirido após: Persona Nível 10 ou liberação narrativa pelo Narrador.'
+      },
+      amp1: {
+        name: '"Ó Mundo Meu..."',
+        narrativeOnly: true,
+        desc: 'A Persona alcança sua Forma Verdadeira do Coração.\n' +
+              'Aquisição exclusivamente narrativa.'
+      },
+      amp2: {
+        name: '"... Ó Fome que me Consome"',
+        narrativeOnly: true,
+        desc: 'A Persona alcança uma forma corrompida da sua verdadeira forma.\n' +
+              'Torna-se uma Persona Suprimida da Fome.\n' +
+              'Aquisição exclusivamente narrativa.'
+      }
+    }
+  },
+
+  // ── A Estrela (XVII) ──
+  star: {
+    impeto: {
+      main: {
+        name: 'Colapso Luminoso',
+        desc: 'Uma vez por rodada, após causar dano em um inimigo afetado por Brilho Estelar, pode consumir essa condição para provocar uma Explosão Estelar.\n' +
+              'O alvo recebe Dados de Dano Bônus equivalente ao Tier de Charme ou Empatia.\n' +
+              '\n' +
+              'REGRAS: os dados da Explosão Estelar não são multiplicados por Acertos Críticos. Consumir Brilho Estelar encerra todos os efeitos da condição.'
+      },
+      amp1: {
+        name: 'Estrela Cadente',
+        desc: 'Caso o inimigo seja derrotado pelo ataque fortalecido por Colapso Luminoso, pode aplicar Brilho Estelar em outro inimigo perceptível sem pagar o custo de Ofuscando Espírito.\n' +
+              'Pode acontecer apenas uma vez por rodada.'
+      },
+      amp2: {
+        name: 'Supernova',
+        desc: 'Ao provocar uma Explosão Estelar, todos os outros inimigos afetados por Brilho Estelar recebem metade dos Dados gerados pela explosão como Dano de Luz. O Brilho Estelar dos alvos secundários não é consumido.\n' +
+              'Arredondar para baixo. Mínimo: 1 Dado. O dano não pode gerar outra Explosão Estelar.'
+      }
+    },
+    autocuidado: {
+      main: {
+        name: 'Águas Cristalinas da Renovação',
+        desc: 'Ao final de uma rodada em que tenha utilizado uma habilidade benéfica para curar, fortalecer, proteger ou acalmar um aliado, recupera Tier de Charme ou Empatia = d8 de Cura.\n' +
+              '\n' +
+              'REGRA: utiliza o maior Tier entre Charme e Empatia. Pode ativar apenas uma vez por rodada e somente durante combate.'
+      },
+      amp1: {
+        name: 'Cântaro Inesgotável',
+        desc: 'Sempre que receber a cura de Águas Cristalinas da Renovação, recupera também 4 × Tier de Charme ou Empatia em PM.'
+      },
+      amp2: {
+        name: 'Esperança Inabalável',
+        desc: 'Quando Águas Cristalinas da Renovação for ativada, pode remover uma Condição Mental Negativa sua ou de um aliado visível.\n' +
+              'Caso não exista nenhuma condição, recebe Imunidade a Medo e Desespero até o início da próxima rodada.'
+      }
+    },
+    artificio: {
+      main: {
+        name: 'A Estrela que Guia a Flecha',
+        desc: 'No início do combate, antes de ativar Ofuscando Espírito, pode transformar Brilho Estelar em Mira Celestial. A escolha permanece até o final do combate.\n' +
+              '\n' +
+              'MAGIA EXTRA — Mira Celestial (Custo: 12 PM): um alvo recebe Mira Celestial.\n' +
+              'Efeitos: o alvo não perde ações. Ataques e Magias Ofensivas contra ele recebem +2 Bônus de Acerto e +2 Margem Crítica. Efeitos ofensivos com chance percentual recebem +15% de Chance.\n' +
+              '\n' +
+              'REGRA: Mira Celestial conta como Brilho Estelar para Colapso Luminoso, pré-requisitos e demais habilidades da Estrela.'
+      },
+      amp1: {
+        name: 'Estrela Guia',
+        desc: 'Uma vez por rodada, quando você ou um aliado errar um Ataque ou Magia Ofensiva contra um alvo com Mira Celestial, pode realizar novamente o teste de acerto.\n' +
+              'O novo resultado deve ser mantido.'
+      },
+      amp2: {
+        name: 'Destino Traçado nas Estrelas',
+        desc: 'Uma vez por rodada, quando um efeito ofensivo baseado em chance percentual falhar contra um alvo com Mira Celestial, pode rolar novamente a chance de aplicação. O novo resultado deve ser mantido.\n' +
+              'Afeta: Condições Negativas, Morte Instantânea e outros efeitos percentuais.'
+      }
+    },
+    elo: {
+      main: {
+        name: 'Voto do Coração',
+        desc: 'Ao adquirir este Despertar Trama, pode Melhorar sua Habilidade Natural ou sua Habilidade de Combate.\n' +
+              'Pode adicionar um terceiro efeito ou aprimorar uma capacidade existente.'
+      },
+      amp1: {
+        name: 'Coração de Batalha',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade de Combate.\n' +
+              'Caso ela já tenha sido aprimorada por Voto do Coração, pode melhorá-la uma segunda vez.'
+      },
+      amp2: {
+        name: 'Coração com o Mundo',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade Natural.\n' +
+              'Caso ela já tenha sido aprimorada por Voto do Coração, pode melhorá-la uma segunda vez.'
+      }
+    },
+    cognicao: {
+      main: {
+        name: 'Quando as Estrelas se Alinham',
+        desc: 'Inimigos afetados por Brilho Estelar passam a ser considerados Derrubados apenas para cumprir requisitos de All-Out-Attack.\n' +
+              '\n' +
+              'REGRA: quando todos os inimigos estiverem afetados por Brilho Estelar, Derrubado ou ambos, o grupo pode declarar All-Out-Attack normalmente. Ao fazer isso, Brilho Estelar é consumido.\n' +
+              '\n' +
+              'IMPORTANTE: não aplica os demais efeitos de Derrubado. Inimigos sobreviventes agem imediatamente. Pode ser utilizado apenas uma vez por rodada.'
+      },
+      amp1: {
+        name: 'Constelação Reativa',
+        desc: 'Uma vez por rodada, quando você ou um aliado ativar o efeito de Ampliar sobre uma Condição afetando um inimigo, pode aplicar Brilho Estelar nesse alvo por 1 rodada, sem pagar Ofuscando Espírito.'
+      },
+      amp2: {
+        name: 'Luz Depois da Queda',
+        desc: 'Após participar de um All-Out-Attack ativado por Quando as Estrelas se Alinham, todos os participantes recebem Vantagem em Reações contra ações imediatas dos inimigos sobreviventes.\n' +
+              'Dura até todos os inimigos sobreviventes concluírem suas ações.'
+      }
+    },
+    resolucao: {
+      main: {
+        name: '"Quem eu Devo ser..."',
+        level: 10,
+        desc: 'O personagem atingiu o ponto onde sua Trama começa a chegar em uma Resolução graças aos seus Vínculos.\n' +
+              'Desperta um novo poder.\n' +
+              'Pode ser adquirido após: Persona Nível 10 ou liberação narrativa pelo Narrador.'
+      },
+      amp1: {
+        name: '"Ó Mundo Meu..."',
+        narrativeOnly: true,
+        desc: 'A Persona alcança sua Forma Verdadeira do Coração.\n' +
+              'Aquisição exclusivamente narrativa.'
+      },
+      amp2: {
+        name: '"... Ó Fome que me Consome"',
+        narrativeOnly: true,
+        desc: 'A Persona alcança uma forma corrompida da sua verdadeira forma.\n' +
+              'Torna-se uma Persona Suprimida da Fome.\n' +
+              'Aquisição exclusivamente narrativa.'
+      }
+    }
   }
 };
 
