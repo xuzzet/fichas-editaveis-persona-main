@@ -1350,6 +1350,265 @@ export const AWAKENING_OVERRIDES = {
               'Aquisição exclusivamente narrativa.'
       }
     }
+  },
+
+  // ── A Lua (XVIII) ──
+  moon: {
+    impeto: {
+      main: {
+        name: 'Pesadelo Manifesto',
+        desc: 'Uma vez por rodada, quando um inimigo afetado pelo Medo aplicado por você falhar sua chance de agir, pode transformar seus temores em realidade.\n' +
+              'O alvo sofre Tier de Empatia = d8 como Dano de Psy.\n' +
+              'Como o alvo está sob Medo, o status é automaticamente Ampliado: Medo → Desespero.\n' +
+              '\n' +
+              'REGRAS: não exige teste de acerto. Não causa Acerto Crítico. Não conta como Ataque. Não ativa Derrubado.'
+      },
+      amp1: {
+        name: 'O Medo é Contagioso',
+        desc: 'Quando Pesadelo Manifesto transformar Medo em Desespero, escolha outro inimigo perceptível.\n' +
+              'Ele possui 50% de Chance de receber Medo por 1 rodada.'
+      },
+      amp2: {
+        name: 'Noite sem Amanhecer',
+        desc: 'O Desespero provocado por Pesadelo Manifesto começa com -1 contador.\n' +
+              'O alvo será levado a 0 PV após permanecer 2 rodadas sob Desespero.\n' +
+              'Amplificar não reduz o contador inicial abaixo de 2 rodadas.'
+      }
+    },
+    autocuidado: {
+      main: {
+        name: 'Íntimo da Inconsciência',
+        desc: 'Torna-se completamente Imune a Medo e Desespero.\n' +
+              'Uma vez por rodada, quando um efeito inimigo tentar aplicar essas condições, pode utilizar uma Ação de Interromper. Escolha:\n' +
+              '\n' +
+              '\uD83C\uDF11 Abraçar o Próprio Medo: recupera MAG = d8 de Cura.\n' +
+              '\n' +
+              '\uD83C\uDF15 Compartilhar Lucidez: escolha um aliado perceptível. Remove Medo e Desespero e concede Imunidade às duas condições até o início da próxima rodada.'
+      },
+      amp1: {
+        name: 'Todos Sob a Mesma Lua',
+        desc: 'Ao utilizar Compartilhar Lucidez, pode afetar até +2 aliados.\n' +
+              'Íntimo da Inconsciência também passa a proteger contra Sono, Confuso e Encantado.'
+      },
+      amp2: {
+        name: 'Senhor dos Próprios Pesadelos',
+        desc: 'Ao utilizar Abraçar o Próprio Medo, recupera 4 × Tier de Empatia em PM.\n' +
+              'Também remove uma Condição Mental Negativa.'
+      }
+    },
+    artificio: {
+      main: {
+        name: 'A Luz que não me Pertence',
+        desc: 'Uma vez por rodada, após um inimigo afetado por uma Condição Mental aplicada por você falhar ao conjurar uma Magia, pode utilizar uma Ação de Interromper. Cria Reflexo Lunar.\n' +
+              '\n' +
+              'REFLEXO LUNAR: a magia copiada é adicionada temporariamente ao Deck e não ocupa limite normal. Pode ser conjurada usando seus atributos, custo normal, alcance original, quantidade de alvos e efeitos originais.\n' +
+              'Caso a magia não possua PM, seu custo é MAG × Tier da Magia.\n' +
+              '\n' +
+              'REGRAS: apenas um Reflexo Lunar pode existir. Copiar uma nova magia substitui a anterior. A magia deve possuir Tier igual ou inferior ao usuário. Desaparece ao final do combate.'
+      },
+      amp1: {
+        name: 'Duas Faces da Lua',
+        desc: 'Pode manter 2 Reflexos Lunares simultaneamente.\n' +
+              'Também pode copiar Magias de aliados.\n' +
+              'Necessita cumprir os requisitos da magia.'
+      },
+      amp2: {
+        name: 'Reflexo Perfeito',
+        desc: 'Uma vez por combate, após criar um Reflexo Lunar, pode conjurar imediatamente a magia copiada como parte da mesma Ação de Interromper.\n' +
+              'Paga o custo normalmente. Pode escolher novos alvos.\n' +
+              'O Reflexo Lunar permanece no Deck.'
+      }
+    },
+    elo: {
+      main: {
+        name: 'Voto do Coração',
+        desc: 'Ao adquirir este Despertar Trama, pode Melhorar sua Habilidade Natural ou sua Habilidade de Combate.\n' +
+              'Pode adicionar um terceiro efeito ou aprimorar uma capacidade existente.'
+      },
+      amp1: {
+        name: 'Coração de Batalha',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade de Combate.\n' +
+              'Caso ela já tenha sido aprimorada por Voto do Coração, pode melhorá-la uma segunda vez.'
+      },
+      amp2: {
+        name: 'Coração com o Mundo',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade Natural.\n' +
+              'Caso ela já tenha sido aprimorada por Voto do Coração, pode melhorá-la uma segunda vez.'
+      }
+    },
+    cognicao: {
+      main: {
+        name: 'Minhas Faces Além do Reflexo',
+        desc: 'Ao ser bem-sucedido em Leitura de Caráter, além do Segredo da Alma, cria um Perfil da Alma. Escolha duas perguntas:\n' +
+              '\uD83C\uDF11 Qual emoção o personagem tenta esconder?\n' +
+              '\uD83C\uDF12 O que ele deseja conseguir?\n' +
+              '\uD83C\uDF18 O que ele teme que seja descoberto?\n' +
+              '\uD83C\uDF15 Está escondendo alguma informação importante?\n' +
+              '\n' +
+              'Após a análise, recebe Vantagem no próximo teste Social ou de Investigação relacionado ao personagem analisado.\n' +
+              '\n' +
+              'REGRAS: não lê pensamentos. Não revela informações desconhecidas pelo alvo. Um personagem só pode ter Perfil da Alma analisado uma vez por Cena.'
+      },
+      amp1: {
+        name: 'Fases da Alma',
+        desc: 'Perfil da Alma permanece até o final da Sessão.\n' +
+              'Percebe automaticamente quando comportamento ou emoção contradizem informações anteriores.\n' +
+              'Após observar por 1 minuto em nova Cena, pode fazer +1 pergunta sem novo teste.'
+      },
+      amp2: {
+        name: 'Nenhuma Máscara Sob o Luar',
+        desc: 'Ao criar Perfil da Alma, também descobre se existe influência de Condição Mental, Magia, Persona, Sombra ou Interferência Cognitiva.\n' +
+              'Revela a natureza da influência.\n' +
+              'Não revela automaticamente origem ou responsável.'
+      }
+    },
+    resolucao: {
+      main: {
+        name: '"Quem eu Devo ser..."',
+        level: 10,
+        desc: 'O personagem atingiu o ponto onde sua Trama começa a chegar em uma Resolução graças aos seus Vínculos.\n' +
+              'Desperta um novo poder.\n' +
+              'Pode ser adquirido após: Persona Nível 10 ou liberação narrativa pelo Narrador.'
+      },
+      amp1: {
+        name: '"Ó Mundo Meu..."',
+        narrativeOnly: true,
+        desc: 'A Persona alcança a Forma Verdadeira do Coração.\n' +
+              'Aquisição exclusivamente narrativa.'
+      },
+      amp2: {
+        name: '"... Ó Fome que me Consome"',
+        narrativeOnly: true,
+        desc: 'A Persona alcança uma forma corrompida da sua verdadeira forma.\n' +
+              'Torna-se uma Persona Suprimida da Fome.\n' +
+              'Aquisição exclusivamente narrativa.'
+      }
+    }
+  },
+
+  // ── O Sol (XIX) ──
+  sun: {
+    impeto: {
+      main: {
+        name: 'O Sol que me Queima a Pele',
+        desc: 'Uma vez por rodada, após um efeito de Cura utilizado por você recuperar 50+ PV de um ou mais personagens, escolha um inimigo perceptível.\n' +
+              'Ele recebe 10 × Tier de Empatia ou Expressão como Dano Fixo de Fogo ou Luz.\n' +
+              'O tipo é escolhido no momento da ativação. Não exige teste de acerto.'
+      },
+      amp1: {
+        name: 'Clarão Escaldante',
+        desc: 'Inimigos atingidos por O Sol que me Queima a Pele possuem 50% de Chance de receber Queimando.'
+      },
+      amp2: {
+        name: 'Vento Solar',
+        desc: 'Caso o inimigo já esteja Queimando antes de receber O Sol que me Queima a Pele, recebe a capacidade de Ampliar Queimadura.\n' +
+              'Funciona como uma ofensiva do tipo Vento. Aumenta +10% o dano periódico de Queimando.\n' +
+              '\n' +
+              'REGRAS: não altera o tipo original do dano. Uma condição aplicada por Clarão Escaldante não pode ser ampliada pela mesma ativação.'
+      }
+    },
+    autocuidado: {
+      main: {
+        name: 'Alvorada Benevolente',
+        desc: 'Ao adquirir este Despertar Trama, recebe acesso à Magia Exclusiva: Alvorada Benevolente.\n' +
+              '\n' +
+              'MAGIA EXCLUSIVA — Alvorada Benevolente (Custo: 40 PM, Ação Padrão, Alvos: Tier de Empatia ou Expressão): realiza Cura Média = d10 em todos os alvos e remove 1 Condição Negativa diferente de cada alvo.\n' +
+              '\n' +
+              'REGRAS: utiliza o maior Tier entre Empatia e Expressão. Mínimo de 1 alvo. Recebe normalmente o bônus de Cura de Vitalidade Sofrida.'
+      },
+      amp1: {
+        name: 'Calor Revigorante',
+        desc: 'Alvorada Benevolente: Cura Média d10 se torna Cura Alta d12.'
+      },
+      amp2: {
+        name: 'Luz Purificadora',
+        desc: 'Alvorada Benevolente passa a remover até 2 Condições Negativas de cada alvo.\n' +
+              'Após remover, os personagens recebem Imunidade às condições removidas até o início da próxima rodada.\n' +
+              '\n' +
+              'RESTRIÇÕES: não remove Condições Narrativas, Características de Arcana ou efeitos que declaram não poder ser purificados.'
+      }
+    },
+    artificio: {
+      main: {
+        name: 'Positividade Incandescente',
+        desc: 'Sempre que uma habilidade sua conceder RD aos aliados, pode transformar a RD em Fulgor Solar (mesma duração).\n' +
+              '\n' +
+              'Personagens com Fulgor Solar não recebem a RD original. Em troca, a primeira Ofensiva que acertarem por rodada recebe Dano Fixo Bônus Onipotente equivalente à RD convertida e +1 Margem Crítica.\n' +
+              '\n' +
+              'REGRAS: a escolha entre RD e Fulgor Solar acontece quando o efeito é aplicado. Dano Bônus Onipotente não é multiplicado por Acerto Crítico.'
+      },
+      amp1: {
+        name: 'Entusiasmo Renovado',
+        desc: 'Uma vez por rodada, quando utilizar Cura em um aliado que já ativou Fulgor Solar, ele poderá aplicar novamente o Dano Bônus na próxima Ofensiva.\n' +
+              'Também recebe a Margem Crítica adicional.'
+      },
+      amp2: {
+        name: 'Falsa Alegria Contagiante',
+        desc: 'Uma vez por rodada, quando uma Ofensiva fortalecida por Fulgor Solar causar Acerto Crítico ou derrotar um inimigo, escolha outro aliado afetado por Fulgor.\n' +
+              'A próxima Ofensiva desse aliado recebe Vantagem.\n' +
+              'Duração: até o final da próxima rodada.'
+      }
+    },
+    elo: {
+      main: {
+        name: 'Voto do Coração',
+        desc: 'Ao adquirir este Despertar Trama, pode Melhorar sua Habilidade Natural ou sua Habilidade de Combate.\n' +
+              'Pode adicionar um terceiro efeito ou aprimorar uma capacidade existente.'
+      },
+      amp1: {
+        name: 'Coração de Batalha',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade de Combate.\n' +
+              'Caso ela já tenha sido aprimorada por Voto do Coração, pode melhorá-la uma segunda vez.'
+      },
+      amp2: {
+        name: 'Coração com o Mundo',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade Natural.\n' +
+              'Caso ela já tenha sido aprimorada por Voto do Coração, pode melhorá-la uma segunda vez.'
+      }
+    },
+    cognicao: {
+      main: {
+        name: 'O Brilho Radiante que Esconde as Lágrimas',
+        desc: 'Uma vez por rodada, após utilizar Cura ou Melhoria, escolha aliados afetados equivalente ao Tier de Empatia ou Expressão.\n' +
+              'Cada escolhido recebe Empatia ou Expressão como Vida Temporária.\n' +
+              '\n' +
+              'Enquanto possuir Vida Temporária, recebe +3 metros de Movimento e +5 de Bônus em uma Habilidade Social escolhida.\n' +
+              '\n' +
+              'REGRAS: o bônus pode aumentar o Tier da Habilidade Social. Não pode ultrapassar 25. Vida Temporária não acumula. Desaparece ao final do combate.'
+      },
+      amp1: {
+        name: 'O Sol Nunca se Põe',
+        desc: 'No início da rodada, cada personagem afetado pela Vida Temporária recupera 2 × Tier de Empatia ou Expressão.\n' +
+              'Não ultrapassa o valor recebido originalmente.'
+      },
+      amp2: {
+        name: 'Horizontes Abertos',
+        desc: 'O bônus de Movimento aumenta de +3 metros para +9 metros.\n' +
+              'Além disso, pode sacrificar Vida Temporária para receber +1 Ação de Ataque na rodada.'
+      }
+    },
+    resolucao: {
+      main: {
+        name: '"Quem eu Devo ser..."',
+        level: 10,
+        desc: 'O personagem atingiu o ponto onde sua Trama começa a chegar em uma Resolução graças aos seus Vínculos.\n' +
+              'Desperta um novo poder.\n' +
+              'Pode ser adquirido após: Persona Nível 10 ou liberação narrativa pelo Narrador.'
+      },
+      amp1: {
+        name: '"Ó Mundo Meu..."',
+        narrativeOnly: true,
+        desc: 'A Persona alcança a Forma Verdadeira do Coração.\n' +
+              'Aquisição exclusivamente narrativa.'
+      },
+      amp2: {
+        name: '"... Ó Fome que me Consome"',
+        narrativeOnly: true,
+        desc: 'A Persona alcança uma forma corrompida da sua verdadeira forma.\n' +
+              'Torna-se uma Persona Suprimida da Fome.\n' +
+              'Aquisição exclusivamente narrativa.'
+      }
+    }
   }
 };
 
