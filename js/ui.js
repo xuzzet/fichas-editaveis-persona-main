@@ -218,7 +218,7 @@ export function renderAutoSummary() {
       '<div class="autos-label autos-label-social">B\u00f4nus de Habilidades Sociais</div>' +
       socialMods.map(function(mod) {
         var sign = mod.valor >= 0 ? '+' : '';
-        return '<div class="autos-row autos-row-social">\u2b50 ' + mod.nome + ': ' + sign + mod.valor + ' ' + mod.alvo + '</div>';
+        return '<div class="autos-row autos-row-social">\u2605\uFE0E ' + mod.nome + ': ' + sign + mod.valor + ' ' + mod.alvo + '</div>';
       }).join('') +
       '</div>';
   }

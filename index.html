@@ -68,7 +68,7 @@
         </section>
 
         <!-- ZONA 2: RECURSOS VITAIS -->
-        <section class="card card-primary card-recursos">
+        <section class="card card-primary card-recursos" data-span="full">
           <div class="section-title"><div class="bar"></div><h2>Recursos</h2></div>
           <div class="recursos-grid">
             <div class="recurso-bloco recurso-hp">
@@ -95,7 +95,7 @@
         </section>
 
         <!-- ZONA 3: ATRIBUTOS DE COMBATE -->
-        <section class="card card-primary">
+        <section class="card card-primary" data-span="full">
           <div class="section-title"><div class="bar"></div><h2>Atributos de Combate</h2></div>
           <div class="hint" style="margin-bottom:8px;">Distribua <b>18 pontos</b> entre os atributos. Mínimo: <b>1</b> · Máximo: <b>12</b> por atributo.<br>Clique no <b>nome do atributo</b> para rolar <b>1d20 + valor final</b>.</div>
           <div class="row row3">
@@ -112,7 +112,7 @@
         </section>
 
         <!-- ZONA 3.1: HABILIDADES SOCIAIS (logo abaixo dos atributos) -->
-        <section class="card card-secondary" id="social-card">
+        <section class="card card-secondary" id="social-card" data-span="full">
           <div class="section-title"><div class="bar"></div><h2>Habilidades Sociais</h2></div>
           <div class="hint" style="margin-bottom:8px;">Distribua <strong>7 pontos iniciais</strong> na criação. O valor <b>base</b> vai de <b>0</b> a <b>25</b> — modificadores podem ultrapassar esse limite.<br>Clique no <b>nome da habilidade</b> para rolar <b>1d20 + pontos</b>.</div>
           <div class="row row3">
@@ -143,7 +143,7 @@
         </section>
 
         <!-- ZONA 4: EQUIPAMENTO ATIVO -->
-        <section class="card">
+        <section class="card" data-span="full">
           <div class="section-title"><div class="bar"></div><h2>Equipamento Ativo</h2></div>
 
           <div class="equip-bloco">
@@ -185,7 +185,7 @@
         </section>
 
         <!-- ZONA 5: STATUS & ASPECTOS -->
-        <section class="card">
+        <section class="card" data-span="full">
           <div class="section-title"><div class="bar"></div><h2>Status & Aspectos</h2></div>
           <div class="row row3">
             <div><label>SP</label><input id="PerSP" type="number" min="0" max="999" value="0"/></div>
@@ -209,7 +209,7 @@
         <!-- ZONA 7: RESUMO AUTOMÁTICO — inserido por JS via buildAutoSummaryPanel() -->
 
         <!-- ZONA 8: AÇÕES -->
-        <section class="card">
+        <section class="card" data-span="full">
           <div class="section-title"><div class="bar"></div><h2>Ações</h2></div>
           <div class="actions">
             <button id="undo-btn" class="btn-feedback" title="Desfazer última alteração (Ctrl+Z)" disabled>Desfazer</button>

@@ -35,6 +35,7 @@ import { initTabs } from './tabs.js';
 import { initImportExport } from './import-export.js';
 import { saveSafetyBackup, getSafetyBackup } from './backup.js';
 import { initHistory, recordHistory, undo, redo } from './history.js';
+import { initVisualEnhancements } from './visual-enhancements.js';
 import { initDiceSystem, renderDiceHistory, rollDamage, rollQuick } from './dice.js';
 import { initAwakening, renderAwakening } from './awakening.js';
 
@@ -350,6 +351,7 @@ function initApp() {
   try { initLoreCollapse(); } catch(e) { console.error('[initApp] initLoreCollapse:', e); }
   try { initPortrait(); } catch(e) { console.error('[initApp] initPortrait:', e); }
   try { initImportExport(); } catch(e) { console.error('[initApp] initImportExport:', e); }
+  try { initVisualEnhancements(); } catch(e) { console.error('[initApp] initVisualEnhancements:', e); }
 }
 initApp();
 

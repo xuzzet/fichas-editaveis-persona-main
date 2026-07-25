@@ -34,6 +34,9 @@
 @import './responsive.css';
 @import './redesign.css';
 @import './a11y.css';
+@import './visual-polish.css';
+@import './layout-enhancements.css';
+@import './p5-style.css';
 
 /* Camada mobile — carregada por último para ter prioridade nos ajustes de tela pequena */
 @import './mobile/navigation-mobile.css';

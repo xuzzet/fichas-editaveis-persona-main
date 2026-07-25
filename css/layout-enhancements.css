@@ -1,0 +1,74 @@
+/* =============================================
+   MELHORIAS DE LAYOUT — camada aditiva
+   Não altera lógica, cálculos, IDs de elementos
+   nem a estrutura de estados. Apenas apresentação.
+   ============================================= */
+
+/* ---------------------------------------------
+   1. NAVEGAÇÃO FIXA (sticky tabs)
+   Mantém as abas acessíveis ao rolar páginas
+   longas (Resumo Automático / Habilidades são
+   bem altos). A barra de perfil é position:
+   relative e some ao rolar, então top:0 é seguro.
+   --------------------------------------------- */
+@media (min-width: 768px) {
+  .tabs {
+    position: sticky !important;
+    top: 8px;
+    /* fundo mais opaco + desfoque para legibilidade
+       quando o conteúdo passa por baixo */
+    background: linear-gradient(
+      120deg,
+      color-mix(in srgb, var(--bg-2) 97%, transparent),
+      color-mix(in srgb, var(--bg-3) 88%, transparent)
+    );
+    -webkit-backdrop-filter: blur(8px) saturate(1.1);
+    backdrop-filter: blur(8px) saturate(1.1);
+  }
+}
+
+/* Em impressão a navegação não deve flutuar */
+@media print {
+  .tabs {
+    position: static !important;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* ---------------------------------------------
+   2. ABA JOGO EM DUAS COLUNAS (telas largas)
+   Cards com muita variação de altura ficam em
+   largura total; apenas os cards compactos e de
+   altura semelhante (Identidade + Última Rolagem)
+   dividem a linha, aproveitando o espaço lateral.
+   --------------------------------------------- */
+@media (min-width: 1100px) {
+  #acessorapido main.grid.one {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    grid-auto-flow: row dense;
+  }
+
+  /* Cards que ocupam a linha inteira */
+  #acessorapido main.grid.one > [data-span='full'],
+  #acessorapido main.grid.one > #auto-summary-card,
+  #acessorapido main.grid.one > #dice-card,
+  #acessorapido main.grid.one > #tests-card {
+    grid-column: 1 / -1;
+  }
+
+  /* Cards compactos ocupam meia largura → as linhas
+     internas (baseadas em viewport) precisam colapsar
+     para não espremer os campos. */
+  #acessorapido
+    main.grid.one
+    > section:not([data-span='full']):not(#auto-summary-card):not(#dice-card):not(#tests-card)
+    .row4,
+  #acessorapido
+    main.grid.one
+    > section:not([data-span='full']):not(#auto-summary-card):not(#dice-card):not(#tests-card)
+    .row3 {
+    grid-template-columns: 1fr 1fr;
+  }
+}

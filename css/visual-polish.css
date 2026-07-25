@@ -1,0 +1,167 @@
+/* =============================================================
+   VISUAL POLISH — camada puramente estética (aditiva)
+   Não altera lógica, estados, cálculos, regras nem estrutura.
+   Carregada após os demais estilos para refinar a aparência.
+   Respeita prefers-reduced-motion e não interfere na captura
+   PNG (a textura fica fora de #captureRoot).
+   ============================================================= */
+
+/* ── Textura sutil sobre o fundo ──
+   body::after no mesmo plano do cenário (z-index:-1), pintada
+   por cima da cidade porém atrás de todo o conteúdo. */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
+}
+
+/* ── Slash diagonal nos títulos de seção (estética Persona) ── */
+.section-title .bar {
+  transform: skewX(-14deg);
+  background: linear-gradient(180deg, var(--accent-2), var(--accent));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+/* ── Números de destaque: PV / PM maiores e marcantes ── */
+.recurso-par input {
+  font-family: 'Barlow Condensed', 'Inter', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+.recurso-slash {
+  font-size: 22px;
+  font-weight: 800;
+  opacity: 0.55;
+}
+
+/* ── Barras visuais de PV / PM (elementos criados por JS) ── */
+.recurso-bar {
+  margin-top: var(--space-2);
+  height: 9px;
+  border-radius: 999px;
+  background: var(--bg-3);
+  border: 1px solid var(--stroke);
+  overflow: hidden;
+}
+.recurso-bar__fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  transition:
+    width 0.35s ease,
+    background-color 0.35s ease;
+}
+.recurso-hp .recurso-bar__fill {
+  background: linear-gradient(90deg, var(--ok), color-mix(in srgb, var(--ok) 55%, var(--accent)));
+}
+.recurso-hp .recurso-bar__fill.is-low {
+  background: linear-gradient(90deg, var(--danger), color-mix(in srgb, var(--danger) 60%, #ff9d2f));
+}
+.recurso-pm .recurso-bar__fill {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
+/* ── Hover/foco mais expressivos em cartões (só em ponteiro fino) ── */
+@media (hover: hover) {
+  .card {
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.25s ease,
+      transform 0.25s ease;
+  }
+  .card:hover {
+    border-color: color-mix(in srgb, var(--accent) 32%, var(--stroke));
+    box-shadow:
+      0 8px 26px rgba(0, 0, 0, 0.3),
+      0 0 0 1px color-mix(in srgb, var(--accent) 16%, transparent);
+    transform: translateY(-2px);
+  }
+
+  /* Botões de ação com brilho e leve elevação */
+  .btn-feedback {
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.2s ease,
+      border-color 0.2s ease,
+      background-color 0.2s ease;
+  }
+  .btn-feedback:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 22%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--stroke));
+  }
+}
+.btn-feedback:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+/* ── Transição suave ao trocar de aba ── */
+.view.active {
+  animation: viewFadeIn 0.26s ease both;
+}
+@keyframes viewFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Toast com ícone por tipo ── */
+.toast {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.toast::before {
+  font-family: 'Inter', sans-serif;
+  font-weight: 900;
+  font-size: 15px;
+  line-height: 1;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  flex: 0 0 auto;
+}
+.toast.success::before {
+  content: '\2713';
+} /* ✓ */
+.toast.error::before {
+  content: '!';
+}
+.toast.info::before {
+  content: 'i';
+  font-style: italic;
+}
+
+/* ── Respeita quem prefere menos movimento ── */
+@media (prefers-reduced-motion: reduce) {
+  .view.active {
+    animation: none;
+  }
+  .card:hover {
+    transform: none;
+  }
+  .btn-feedback:hover:not(:disabled),
+  .btn-feedback:active:not(:disabled) {
+    transform: none;
+  }
+  .recurso-bar__fill {
+    transition: none;
+  }
+}

@@ -1,0 +1,151 @@
+/* =============================================================
+   ESTILO PERSONA 5 ROYAL — camada puramente estética (aditiva)
+   Não altera lógica, cálculos, regras, IDs nem estados.
+   NÃO mexe em temas: usa apenas as variáveis de cor existentes
+   (var(--accent), --ink, --bg, ...), então se adapta ao tema
+   atualmente selecionado. Sem emojis (apenas glifos/vetores).
+   Respeita prefers-reduced-motion. Carregada por último.
+   ============================================================= */
+
+/* ---------------------------------------------------------------
+   1. TEXTURA HALFTONE (pop-art) sobre o fundo
+   Reaproveita o body::after (que já fica fora de #captureRoot,
+   logo não afeta a exportação PNG). Só sobrescreve a imagem, o
+   tamanho e a opacidade — mantém position/z-index/blend da base.
+   --------------------------------------------------------------- */
+body::after {
+  background-image:
+    radial-gradient(color-mix(in srgb, var(--ink) 70%, transparent) 1.1px, transparent 1.7px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:
+    13px 13px,
+    140px 140px;
+  background-position:
+    0 0,
+    0 0;
+  opacity: 0.07;
+}
+
+/* ---------------------------------------------------------------
+   2. TÍTULOS DE SEÇÃO — "legenda" inclinada estilo P5R
+   Bloco de destaque com texto itálico inclinado. As cores saem
+   das variáveis do tema (alto contraste garantido).
+   --------------------------------------------------------------- */
+.section-title h2 {
+  display: inline-block;
+  padding: 2px 12px 3px;
+  background: color-mix(in srgb, var(--ink) 90%, var(--accent));
+  color: var(--bg);
+  font-style: italic;
+  letter-spacing: 0.05em;
+  transform: skewX(-9deg);
+  transform-origin: left center;
+  box-shadow: 3px 3px 0 color-mix(in srgb, var(--accent) 65%, transparent);
+  -webkit-clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+  clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+}
+/* Compensa o skew para o texto não colar na borda esquerda */
+.section-title h2 {
+  margin-left: 2px;
+}
+
+/* ---------------------------------------------------------------
+   3. ENTRADA CINÉTICA DOS CARDS ao trocar de aba
+   Cada card entra deslizando na diagonal, em cascata — a "energia
+   de menu" do Persona 5. Sem overflow horizontal (deslocamento
+   pequeno, dentro do padding do .wrap).
+   --------------------------------------------------------------- */
+.view.active .card {
+  animation: p5CardIn 0.42s cubic-bezier(0.2, 0.85, 0.25, 1) both;
+}
+@keyframes p5CardIn {
+  from {
+    opacity: 0;
+    transform: translate(-12px, 14px) skewX(-1.5deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* Cascata: pequenos atrasos por posição */
+.view.active .card:nth-child(1) {
+  animation-delay: 0.02s;
+}
+.view.active .card:nth-child(2) {
+  animation-delay: 0.06s;
+}
+.view.active .card:nth-child(3) {
+  animation-delay: 0.1s;
+}
+.view.active .card:nth-child(4) {
+  animation-delay: 0.14s;
+}
+.view.active .card:nth-child(5) {
+  animation-delay: 0.18s;
+}
+.view.active .card:nth-child(6) {
+  animation-delay: 0.22s;
+}
+.view.active .card:nth-child(n + 7) {
+  animation-delay: 0.26s;
+}
+
+/* ---------------------------------------------------------------
+   4. ABA ATIVA — estrela de seleção (vetorial, monocromática)
+   Espaço reservado em todas as abas para não haver "pulo" ao
+   trocar de aba; a estrela só aparece na ativa, com um leve pop.
+   --------------------------------------------------------------- */
+.tab {
+  padding-left: 28px;
+}
+.tab.active::before {
+  content: '\2605'; /* ★ */
+  position: absolute;
+  left: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+  line-height: 1;
+  color: var(--bg);
+  opacity: 0.95;
+  animation: p5StarPop 0.3s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+  pointer-events: none;
+}
+@keyframes p5StarPop {
+  from {
+    transform: translateY(-50%) scale(0) rotate(-40deg);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(-50%) scale(1) rotate(0);
+    opacity: 0.95;
+  }
+}
+
+/* ---------------------------------------------------------------
+   5. HOVER COM INCLINAÇÃO (jitter) nos botões — energia P5R
+   --------------------------------------------------------------- */
+@media (hover: hover) {
+  .btn-feedback:hover:not(:disabled) {
+    transform: translateY(-1px) skewX(-4deg);
+  }
+  .mini:hover:not(:disabled) {
+    transform: translateY(-1px) skewX(-3deg);
+    transition: transform 0.15s ease;
+  }
+}
+
+/* ---------------------------------------------------------------
+   6. RESPEITA PREFERÊNCIA POR MENOS MOVIMENTO
+   --------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .view.active .card,
+  .tab.active::before {
+    animation: none;
+  }
+  .btn-feedback:hover:not(:disabled),
+  .mini:hover:not(:disabled) {
+    transform: none;
+  }
+}
