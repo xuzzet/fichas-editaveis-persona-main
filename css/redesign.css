@@ -1,0 +1,101 @@
+/* =============================================================
+   REDESIGN — Revisão de UI/UX
+   Consolidação de navegação (8 → 5 abas) + hierarquia visual,
+   densidade e ritmo. Camada de refinamento sobre os módulos
+   existentes. NÃO altera IDs, lógica, cálculos nem dados.
+   Importar ANTES da camada mobile para que os ajustes de tela
+   pequena continuem tendo prioridade.
+   ============================================================= */
+
+/* =============================================================
+   NAVEGAÇÃO — sensação de aplicativo
+   ============================================================= */
+
+/* Barra de abas fixa no topo ao rolar (no mobile isso já é feito
+   em navigation-mobile.css). Fundo mais sólido para não deixar o
+   conteúdo aparecer atrás quando fixada. */
+@media (min-width: 601px) {
+  .tabs {
+    position: sticky !important;
+    top: 8px;
+    z-index: 9999;
+    background: color-mix(in srgb, var(--bg-2) 96%, transparent);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+
+  /* Agora são só 5 abas: deixamos cada uma ocupar o espaço de forma
+     equilibrada, com alvo de clique confortável. */
+  .tab {
+    flex: 1 1 0;
+    justify-content: center;
+    min-height: 42px;
+  }
+}
+
+/* =============================================================
+   VIEWS EMPILHADAS — abas que reúnem duas seções
+   (Estado & Vínculos, Crônica). O seletor ~ atinge a 2ª view
+   ativa mesmo com views ocultas entre elas no DOM.
+   ============================================================= */
+.view.active ~ .view.active {
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid color-mix(in srgb, var(--stroke) 70%, transparent);
+  position: relative;
+}
+.view.active ~ .view.active::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 120px;
+  height: 2px;
+  background: var(--accent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+/* =============================================================
+   CABEÇALHO — mais compacto, recupera espaço vertical para o
+   que importa durante a sessão.
+   ============================================================= */
+.hud {
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-3);
+}
+.slash {
+  height: 48px;
+}
+.brand h1 {
+  font-size: clamp(22px, 3.4vw, 30px);
+}
+.brand .sub {
+  font-size: 11px;
+  opacity: 0.72;
+}
+
+/* =============================================================
+   DENSIDADE E HIERARQUIA
+   ============================================================= */
+
+/* Dicas/instruções mais discretas — informação de apoio, não
+   deve competir com os dados da ficha. */
+.hint {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink-dim);
+  opacity: 0.82;
+}
+
+/* Neutraliza margens inline herdadas de alguns hints, deixando o
+   espaçamento consistente entre título e conteúdo. */
+.section-title {
+  margin-bottom: var(--space-3);
+}
+
+/* Recursos vitais (PV/PM/RD) são prioridade máxima: reforço sutil
+   de destaque sem alterar a estrutura. */
+.card-recursos {
+  border-top-width: 5px;
+}

@@ -14,6 +14,7 @@
 @import "./forms.css";
 @import "./tabs.css";
 @import "./themes.css";
+@import "./background.css";
 @import "./social-skills.css";
 @import "./quick-access.css";
 @import "./spells.css";
@@ -31,6 +32,7 @@
 @import "./profiles.css";
 @import "./animations.css";
 @import "./responsive.css";
+@import "./redesign.css";
 
 /* Camada mobile — carregada por último para ter prioridade nos ajustes de tela pequena */
 @import "./mobile/navigation-mobile.css";

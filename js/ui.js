@@ -242,7 +242,7 @@ export function renderAutoSummary() {
       '</div>';
   }
 
-  content.innerHTML =
+  var html =
     '<div class="autos-grid">' +
       '<div class="autos-stat"><span class="autos-key">STR</span>'   + statStr('STR') + '</div>' +
       '<div class="autos-stat"><span class="autos-key">MAG</span>'   + statStr('MAG') + '</div>' +
@@ -261,6 +261,14 @@ export function renderAutoSummary() {
     alertsHtml +
     socialEffectsHtml +
     socialManualHtml;
+
+  // Dirty-check: só reescreve o DOM quando o conteúdo realmente muda.
+  // Evita reparse/reflow do innerHTML a cada tecla digitada em campos
+  // que não afetam o resumo (nome, notas, etc.).
+  if (content._lastHtml !== html) {
+    content.innerHTML = html;
+    content._lastHtml = html;
+  }
 }
 
 // =============================================

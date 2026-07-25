@@ -12,13 +12,18 @@ export function initTabs() {
     return;
   }
 
-  function activateTab(viewId) {
+  // Uma aba pode controlar várias views (data-view separado por espaços).
+  // Ex.: data-view="background notes" mostra as duas de uma vez.
+  function activateTab(viewKey) {
+    var ids = String(viewKey).split(/\s+/).filter(Boolean);
     tabs.forEach(function(t) {
-      t.classList.toggle('active', t.dataset.view === viewId);
+      t.classList.toggle('active', t.dataset.view === viewKey);
     });
     views.forEach(function(v) {
-      v.classList.toggle('active', v.id === viewId);
+      v.classList.toggle('active', ids.indexOf(v.id) !== -1);
     });
+    // Volta ao topo ao trocar de aba (evita ficar "no meio" da aba anterior)
+    if (typeof window.scrollTo === 'function') window.scrollTo({ top: 0, behavior: 'auto' });
     // Auto-resize textareas que ficaram visíveis
     requestAnimationFrame(function() {
       if (typeof window.initAutoResizeTextareas === 'function') {
@@ -29,13 +34,15 @@ export function initTabs() {
 
   tabs.forEach(function(tab) {
     tab.addEventListener('click', function() {
-      var viewId = tab.dataset.view;
-      if (!viewId) return;
-      if (!document.getElementById(viewId)) {
-        console.warn('[tabs] View não encontrada: ' + viewId);
+      var viewKey = tab.dataset.view;
+      if (!viewKey) return;
+      var ids = String(viewKey).split(/\s+/).filter(Boolean);
+      var anyExists = ids.some(function(id) { return document.getElementById(id); });
+      if (!anyExists) {
+        console.warn('[tabs] View não encontrada: ' + viewKey);
         return;
       }
-      activateTab(viewId);
+      activateTab(viewKey);
     });
   });
 
