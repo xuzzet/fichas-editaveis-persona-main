@@ -75,7 +75,7 @@ export function renderInventoryStatus() {
   if (weight > cap) {
     fill.classList.add('inv-sobrecarregado');
     statusText.classList.add('inv-sobrecarregado');
-    statusText.textContent = '⚠ Sobrecarregado';
+    statusText.textContent = '▲ Sobrecarregado';
     fill.style.width = '100%';
   } else if (weight >= cap * 0.8) {
     fill.classList.add('inv-pesado');

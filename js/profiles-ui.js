@@ -118,7 +118,7 @@ function renderMenu() {
       '" data-switch="' + escapeHtml(p.id) + '">' +
       avatarMarkup(p, 'profile-avatar--sm') +
       '<span class="profile-menu__item-name">' + escapeHtml(p.name) + '</span>' +
-      (isActive ? '<span class="profile-menu__check" aria-hidden="true">\u2714</span>' : '') +
+      (isActive ? '<span class="profile-menu__check" aria-hidden="true">\u2714\uFE0E</span>' : '') +
       '</button>';
   }).join('');
 

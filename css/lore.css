@@ -43,9 +43,16 @@
 }
 
 .lore-block-icon {
-  font-size: 1.25rem;
-  line-height: 1;
-  opacity: 0.85;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  opacity: 0.9;
+}
+.lore-block-icon svg {
+  width: 20px;
+  height: 20px;
+  display: block;
 }
 
 .lore-block-title {

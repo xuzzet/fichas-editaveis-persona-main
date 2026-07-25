@@ -68,10 +68,10 @@ export function getArcanaInfo(value) {
 // VERTENTES (6 cartas principais) + posição na composição
 // =============================================
 export const VERTENTES = [
-  { key: 'impeto',      name: 'Ímpeto',      glyph: '\u2694', pos: 'top' },
+  { key: 'impeto',      name: 'Ímpeto',      glyph: '\u2694\uFE0E', pos: 'top' },
   { key: 'cognicao',    name: 'Cognição',    glyph: '\u2726', pos: 'left-top' },
   { key: 'elo',         name: 'Elo',         glyph: '\u2766', pos: 'right-top' },
-  { key: 'artificio',   name: 'Artifício',   glyph: '\u2699', pos: 'left-bottom' },
+  { key: 'artificio',   name: 'Artifício',   glyph: '\u2699\uFE0E', pos: 'left-bottom' },
   { key: 'autocuidado', name: 'Autocuidado', glyph: '\u271A', pos: 'right-bottom' },
   { key: 'resolucao',   name: 'Resolução',   glyph: '\u2735', pos: 'bottom' }
 ];
@@ -767,8 +767,8 @@ export const AWAKENING_OVERRIDES = {
       main: {
         name: 'Balança Interior',
         desc: 'Uma vez por rodada, como Ação Rápida, pode converter até 20 pontos entre seus recursos:\n' +
-              '\uD83E\uDE78 PV → PM: perde PV e recupera a mesma quantidade de PM.\n' +
-              '\uD83D\uDD37 PM → PV: consome PM e recupera a mesma quantidade de PV.\n' +
+              '▸ PV → PM: perde PV e recupera a mesma quantidade de PM.\n' +
+              '▸ PM → PV: consome PM e recupera a mesma quantidade de PV.\n' +
               'A conversão é 1 para 1. PV não pode ser reduzido abaixo de 1 e nenhum recurso pode ultrapassar seu máximo.\n' +
               'Não é considerado Dano, Cura ou Recuperação de PM e não recebe modificadores desses efeitos.'
       },
