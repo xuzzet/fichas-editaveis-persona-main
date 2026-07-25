@@ -38,6 +38,7 @@
   text-transform: uppercase;
   font-family: "Rodin", "New Rodin", "Barlow Condensed", Inter, sans-serif;
   /* Recorte diagonal — energia de menu de RPG */
+  -webkit-clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
   clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
   transition:
     border-color 0.2s ease,

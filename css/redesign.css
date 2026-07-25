@@ -16,6 +16,7 @@
    conteúdo aparecer atrás quando fixada. */
 @media (min-width: 601px) {
   .tabs {
+    position: -webkit-sticky !important;
     position: sticky !important;
     top: 8px;
     z-index: 9999;

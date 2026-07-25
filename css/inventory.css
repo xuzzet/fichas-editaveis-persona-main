@@ -149,6 +149,7 @@
   width: 18px;
   height: 18px;
   background: color-mix(in srgb, var(--accent) 26%, transparent);
+  -webkit-clip-path: polygon(100% 0, 100% 100%, 0 0);
   clip-path: polygon(100% 0, 100% 100%, 0 0);
   pointer-events: none;
 }

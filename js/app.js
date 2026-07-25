@@ -614,7 +614,7 @@ if (!_autoLoaded) {
 
 var saveIndicator = document.createElement('div');
 saveIndicator.id = 'auto-save-indicator';
-saveIndicator.style.cssText = 'position:fixed;bottom:16px;right:16px;padding:6px 16px;border-radius:8px;font-size:13px;font-weight:700;color:#fff;background:rgba(30,30,30,0.85);opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:9999;backdrop-filter:blur(6px);';
+saveIndicator.style.cssText = 'position:fixed;bottom:16px;right:16px;padding:6px 16px;border-radius:8px;font-size:13px;font-weight:700;color:#fff;background:rgba(30,30,30,0.85);opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:9999;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);';
 document.body.appendChild(saveIndicator);
 var saveIndicatorTimer = null;
 
