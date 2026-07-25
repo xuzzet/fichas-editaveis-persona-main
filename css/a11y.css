@@ -1,0 +1,37 @@
+/* =============================================================
+   A11Y & POLIMENTO
+   Foco visível para navegação por teclado e estados vazios
+   discretos. Camada aditiva — puramente visual.
+   ============================================================= */
+
+/* ── Foco visível (apenas teclado, não atrapalha o mouse) ── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+/* Remove o outline padrão só quando o foco NÃO veio do teclado. */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Aba focada por teclado ganha destaque extra ao outline. */
+.tab:focus-visible {
+  outline-offset: -2px;
+}
+
+/* ── Estados vazios discretos ──
+   Aparecem só quando o container está realmente sem itens. */
+.link-card-grid:empty::before,
+.spell-grid:empty::before {
+  content: 'Nenhum item ainda. Use os botões acima para adicionar.';
+  display: block;
+  grid-column: 1 / -1;
+  padding: var(--space-4);
+  text-align: center;
+  font-size: 13px;
+  color: var(--ink-dim);
+  opacity: 0.8;
+  border: 1px dashed color-mix(in srgb, var(--stroke) 70%, transparent);
+  border-radius: var(--radius);
+}

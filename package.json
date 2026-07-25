@@ -1,0 +1,19 @@
+{
+  "name": "fichas-editaveis-persona",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Ficha de personagem automatizada para RPG temático de Persona (HTML/CSS/JS puro, sem build).",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint js",
+    "format": "prettier --write \"**/*.{js,css,html,json,md}\"",
+    "format:check": "prettier --check \"**/*.{js,css,html,json,md}\""
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.3",
+    "vitest": "^2.1.0"
+  }
+}

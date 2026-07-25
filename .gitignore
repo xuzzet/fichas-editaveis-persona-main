@@ -1,0 +1,14 @@
+# Dependências (instaladas via npm install — não versionar)
+node_modules/
+
+# Saídas de teste / cobertura
+coverage/
+.vitest/
+
+# Logs e temporários
+*.log
+npm-debug.log*
+
+# Artefatos de SO / editor
+.DS_Store
+Thumbs.db

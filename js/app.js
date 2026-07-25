@@ -33,6 +33,8 @@ import { initProfilesUI, refreshProfilesUI } from './profiles-ui.js';
 import { initTheme } from './themes.js';
 import { initTabs } from './tabs.js';
 import { initImportExport } from './import-export.js';
+import { saveSafetyBackup, getSafetyBackup } from './backup.js';
+import { initHistory, recordHistory, undo, redo } from './history.js';
 import { initDiceSystem, renderDiceHistory, rollDamage, rollQuick } from './dice.js';
 import { initAwakening, renderAwakening } from './awakening.js';
 
@@ -144,6 +146,9 @@ function rebuildSheetUI() {
 
 function resetFicha() {
   if (!confirm('Tem certeza que deseja resetar a ficha?\nTodos os dados serão perdidos permanentemente.')) return;
+
+  // Backup de segurança antes de destruir os dados (restaurável depois).
+  try { saveSafetyBackup(snapshot()); } catch (e) {}
 
   resetStateToDefaults();
   rebuildSheetUI();
@@ -478,6 +483,28 @@ render();
 var resetBtn = document.getElementById('reset');
 if (resetBtn) resetBtn.addEventListener('click', resetFicha);
 
+// Restaurar o backup de segurança (criado antes de resetar/importar).
+var restoreBackupBtn = document.getElementById('restore-backup');
+if (restoreBackupBtn) restoreBackupBtn.addEventListener('click', function() {
+  var bk = getSafetyBackup();
+  if (!bk || !bk.sheetData) {
+    showToast('Nenhum backup de seguran\u00e7a dispon\u00edvel', 'info');
+    return;
+  }
+  var quando = '';
+  try { quando = new Date(bk.savedAt).toLocaleString(); } catch (e) {}
+  if (!confirm('Restaurar o backup de seguran\u00e7a' + (quando ? ' de ' + quando : '') + '?\nA ficha atual ser\u00e1 substitu\u00edda.')) return;
+  try {
+    applySnapshot(bk.sheetData);
+    saveActiveSnapshot(snapshot());
+    refreshProfilesUI();
+    showToast('\u2713 Backup restaurado', 'success');
+  } catch (e) {
+    console.error('[Backup] Erro ao restaurar:', e);
+    showToast('Erro ao restaurar backup', 'error');
+  }
+});
+
 // Rolar Dano da Arma — usa o campo WeaponDmg como fórmula (ex.: STRd8)
 var rollWeaponBtn = document.getElementById('roll-weapon-dmg');
 if (rollWeaponBtn) rollWeaponBtn.addEventListener('click', function() {
@@ -614,6 +641,8 @@ if (!_autoLoaded) {
 
 var saveIndicator = document.createElement('div');
 saveIndicator.id = 'auto-save-indicator';
+saveIndicator.setAttribute('role', 'status');
+saveIndicator.setAttribute('aria-live', 'polite');
 saveIndicator.style.cssText = 'position:fixed;bottom:16px;right:16px;padding:6px 16px;border-radius:8px;font-size:13px;font-weight:700;color:#fff;background:rgba(30,30,30,0.85);opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:9999;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);';
 document.body.appendChild(saveIndicator);
 var saveIndicatorTimer = null;
@@ -636,6 +665,7 @@ function autoSave() {
     saveActiveSnapshot(snapshot());
     refreshProfilesUI();
     showSaveStatus('Salvo \u2714', 2000);
+    recordHistory();
   } catch (e) {
     if (e && (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED' || (e.code && e.code === 22))) {
       console.warn('[Auto-save] localStorage cheio (retrato muito grande?):', e);
@@ -698,6 +728,54 @@ try {
 } catch (e) {
   console.error('[Perfis] Erro ao inicializar interface de perfis:', e);
 }
+
+// =============================================
+// HISTÓRICO — DESFAZER / REFAZER (camada aditiva)
+// =============================================
+
+try {
+  initHistory({
+    getSnapshot: snapshot,
+    applySnapshot: applySnapshot,
+    afterRestore: function() {
+      try { saveActiveSnapshot(snapshot()); refreshProfilesUI(); } catch (e) {}
+    }
+  });
+} catch (e) {
+  console.warn('[Histórico] Falha ao inicializar:', e);
+}
+
+var undoBtn = document.getElementById('undo-btn');
+if (undoBtn) undoBtn.addEventListener('click', function() {
+  if (undo()) showToast('Desfeito', 'info', 1200);
+});
+var redoBtn = document.getElementById('redo-btn');
+if (redoBtn) redoBtn.addEventListener('click', function() {
+  if (redo()) showToast('Refeito', 'info', 1200);
+});
+
+// Verifica se o foco está em um campo editável (para não interceptar o
+// desfazer nativo do texto).
+function _isEditableTarget(el) {
+  if (!el) return false;
+  var tag = el.tagName;
+  return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable;
+}
+
+// Atalhos globais: Ctrl+Z (desfazer) / Ctrl+Y ou Ctrl+Shift+Z (refazer).
+document.addEventListener('keydown', function(e) {
+  if (!(e.ctrlKey || e.metaKey)) return;
+  var k = (e.key || '').toLowerCase();
+  if (k === 'z' && !e.shiftKey) {
+    if (_isEditableTarget(e.target)) return; // preserva o desfazer do campo
+    e.preventDefault();
+    if (undo()) showToast('Desfeito', 'info', 1200);
+  } else if (k === 'y' || (k === 'z' && e.shiftKey)) {
+    if (_isEditableTarget(e.target)) return;
+    e.preventDefault();
+    if (redo()) showToast('Refeito', 'info', 1200);
+  }
+});
 
 // =============================================
 // EXPOR API GLOBAL (para debugging e interoperabilidade)

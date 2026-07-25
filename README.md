@@ -371,8 +371,8 @@ Fontes de modificadores combinadas em `recalcState()`:
 | **HTML5** | — | Estrutura semântica da aplicação |
 | **CSS3** | — | Arquitetura modular em 20 arquivos sob `/css/`, custom properties para temas, responsividade, animações |
 | **JavaScript** | ES Modules (nativo) | Lógica de estado, cálculos, renderização, persistência |
-| [**pdf-lib**](https://pdf-lib.js.org/) | 1.17.1 | Preenchimento de PDFs modelo (CDN) |
-| [**html2canvas**](https://html2canvas.hertzen.com/) | 1.4.1 | Captura visual em PNG (CDN) |
+| [**pdf-lib**](https://pdf-lib.js.org/) | 1.17.1 | Preenchimento de PDFs modelo (local, carregado sob demanda) |
+| [**html2canvas**](https://html2canvas.hertzen.com/) | 1.4.1 | Captura visual em PNG (local, carregado sob demanda) |
 | **Google Fonts** | — | Barlow Condensed, Inter, Noto Sans JP |
 
 ---

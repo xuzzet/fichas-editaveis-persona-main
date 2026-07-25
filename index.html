@@ -4,14 +4,18 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Ficha Automatizada — Persona</title>
+  <meta name="description" content="Ficha de personagem automatizada para RPG temático de Persona." />
+  <meta name="theme-color" content="#0a1120" />
+  <!-- PWA / instalável -->
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="apple-touch-icon" href="./Elements/card-back.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@500;700&display=swap" rel="stylesheet">
   <!-- Pré-carrega o cenário urbano de fundo para render mais rápido -->
   <link rel="preload" as="image" href="./Elements/background-image.jpg" fetchpriority="low">
-  <!-- Bibliotecas -->
-  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-  <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <!-- Bibliotecas pesadas (pdf-lib, html2canvas) carregadas sob demanda
+       via js/vendor-loader.js — evita baixar ~700KB no load inicial. -->
   <!-- Estilos -->
   <link rel="stylesheet" href="./css/main.css" />
 </head>
@@ -40,12 +44,12 @@
     </header>
 
     <!-- TABS -->
-    <nav class="tabs" id="tabs">
-      <button class="tab active" data-view="acessorapido">Jogo</button>
-      <button class="tab" data-view="persona">Persona</button>
-      <button class="tab" data-view="equip">Inventário</button>
-      <button class="tab" data-view="modificadores vinculos">Estado &amp; Vínculos</button>
-      <button class="tab" data-view="background notes">Crônica</button>
+    <nav class="tabs" id="tabs" role="tablist" aria-label="Seções da ficha">
+      <button class="tab active" data-view="acessorapido" role="tab" aria-selected="true" aria-controls="acessorapido">Jogo</button>
+      <button class="tab" data-view="persona" role="tab" aria-selected="false" aria-controls="persona" tabindex="-1">Persona</button>
+      <button class="tab" data-view="equip" role="tab" aria-selected="false" aria-controls="equip" tabindex="-1">Inventário</button>
+      <button class="tab" data-view="modificadores vinculos" role="tab" aria-selected="false" aria-controls="modificadores vinculos" tabindex="-1">Estado &amp; Vínculos</button>
+      <button class="tab" data-view="background notes" role="tab" aria-selected="false" aria-controls="background notes" tabindex="-1">Crônica</button>
     </nav>
 
     <!-- VIEW: GERAL -->
@@ -208,10 +212,15 @@
         <section class="card">
           <div class="section-title"><div class="bar"></div><h2>Ações</h2></div>
           <div class="actions">
+            <button id="undo-btn" class="btn-feedback" title="Desfazer última alteração (Ctrl+Z)" disabled>Desfazer</button>
+            <button id="redo-btn" class="btn-feedback" title="Refazer alteração (Ctrl+Y)" disabled>Refazer</button>
             <button id="save" class="btn-feedback">Salvar</button>
             <button id="load" class="btn-feedback">Carregar</button>
             <button id="export" class="btn-feedback">Exportar JSON</button>
             <button id="import" class="btn-feedback">Importar JSON</button>
+            <button id="export-all" class="btn-feedback" title="Exporta TODOS os personagens em um único arquivo de backup">Exportar Tudo</button>
+            <button id="import-all" class="btn-feedback" title="Importa um backup completo (substitui todos os personagens)">Importar Tudo</button>
+            <button id="restore-backup" class="btn-feedback" title="Restaura o último estado salvo automaticamente antes de resetar ou importar">Restaurar Backup</button>
             <button id="reset" class="btn-feedback">Resetar Ficha</button>
           </div>
           <p class="hint">Em testes por favor relevar se ocorrer algum erro.</p>
@@ -773,5 +782,16 @@
 
   <!-- Scripts do app -->
   <script type="module" src="./js/app.js"></script>
+  <!-- Service Worker: só registra quando servido via http(s); em file:// é ignorado. -->
+  <script>
+    if ('serviceWorker' in navigator &&
+        (location.protocol === 'https:' || location.protocol === 'http:')) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('./sw.js').catch(function (e) {
+          console.warn('[SW] Falha ao registrar service worker:', e);
+        });
+      });
+    }
+  </script>
 </body>
 </html>
