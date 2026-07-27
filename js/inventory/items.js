@@ -186,10 +186,11 @@ export function addInventoryItem(data, targetLocal) {
   });
 
   card.querySelector('.del').addEventListener('click', function() {
-    card.remove();
-    syncEquipToState();
-    renderInventoryStatus();
-    if (window.debouncedAutoSave) window.debouncedAutoSave();
+    (window.animateCardOut || function(el, cb){ el.remove(); cb(); })(card, function() {
+      syncEquipToState();
+      renderInventoryStatus();
+      if (window.debouncedAutoSave) window.debouncedAutoSave();
+    });
   });
 }
 

@@ -24,6 +24,7 @@ export function renderSocial() {
     var tier = Math.min(5, Math.floor(val / 5));
     var meta = SOCIAL_SKILL_META[s.id];
     if (!meta) return;
+    var color = HX.colors[s.id] || 'var(--accent)';
 
     // Update target radius for animation
     var targetR = HX.tipR(tier);
@@ -31,6 +32,16 @@ export function renderSocial() {
       HX.targetRadii[i] = targetR;
       tierChanged = true;
     }
+
+    // Dot cresce e halo intensifica conforme o tier.
+    var dotEl = document.getElementById(s.id + '-hx-dot');
+    if (dotEl) { dotEl.setAttribute('r', (3.5 + tier * 0.9).toFixed(1)); dotEl.setAttribute('fill', color); }
+    var haloEl = document.getElementById(s.id + '-hx-halo');
+    if (haloEl) { haloEl.setAttribute('opacity', (0.06 + tier * 0.03).toFixed(2)); haloEl.setAttribute('fill', color); }
+
+    // Número de pontos por eixo (oculto quando zero).
+    var valEl = document.getElementById(s.id + '-hx-val');
+    if (valEl) valEl.textContent = val > 0 ? String(val) : '';
 
     // Update label text
     var hxTier  = document.getElementById(s.id + '-hx-tier');
@@ -44,8 +55,29 @@ export function renderSocial() {
     }
     if (hxTitle) hxTitle.textContent = meta.titles[tier] || meta.titles[meta.titles.length - 1];
 
+    // Rótulo acessível do alvo de clique/foco.
+    var hitEl = document.getElementById(s.id + '-hx-hit');
+    if (hitEl) {
+      hitEl.setAttribute('aria-label',
+        meta.name + ', Tier ' + ROMAN[tier] + ' — ' +
+        (meta.titles[tier] || meta.titles[meta.titles.length - 1]));
+    }
+
+    // Burst de brilho ao SUBIR de tier (não dispara no 1º render/carregamento).
+    if (HX.prevInit && tier > HX.prevTiers[i]) {
+      var burst = document.getElementById(s.id + '-hx-burst');
+      if (burst) {
+        burst.classList.remove('hx-burst-go');
+        void burst.getBoundingClientRect();
+        burst.classList.add('hx-burst-go');
+      }
+    }
+    HX.prevTiers[i] = tier;
+
     sum += val;
   });
+
+  HX.prevInit = true;
 
   if (tierChanged) {
     hxStartAnimation();

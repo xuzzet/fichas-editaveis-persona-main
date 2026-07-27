@@ -1,0 +1,457 @@
+/* =============================================================
+   CARD PERSONA — Contorno + animações unificados (aditivo)
+   Redesenha o contorno e o movimento de TODOS os cards do site
+   com estética Persona (angular, cinética, itálico-diagonal) e
+   acabamento profissional (profundidade, camadas, brilho sutil).
+
+   • Usa apenas variáveis do tema (--accent, --ink, --bg-*, ...),
+     então se adapta a qualquer tema selecionado.
+   • Não altera lógica, IDs, cálculos, dados nem estrutura HTML.
+   • Estado de repouso é estático (não interfere na exportação PNG).
+   • Respeita prefers-reduced-motion.
+   • Carregado após p5-style.css para consolidar a cascata.
+   ============================================================= */
+
+/* -------------------------------------------------------------
+   1. KEYFRAMES
+   ------------------------------------------------------------- */
+
+/* Entrada cinética: desliza na diagonal com leve inclinação e
+   escala — a "energia de menu" do Persona, porém controlada. */
+@keyframes cp-card-enter {
+  from {
+    opacity: 0;
+    transform: translate(-14px, 18px) skewX(-2deg) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Pop diagonal para cards gerados via JS (magias, vínculos, etc.) */
+@keyframes cp-card-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) skewX(-2deg) scale(0.96);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(0) skewX(0) scale(1.008);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Faixa de luz diagonal que varre o card no hover (glint P5R). */
+@keyframes cp-card-sweep {
+  0% {
+    left: -75%;
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    left: 135%;
+    opacity: 0;
+  }
+}
+
+/* Saída: recolhe na diagonal ao remover um sub-card (via JS). */
+@keyframes cp-card-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-6px) skewX(-4deg) scale(0.94);
+  }
+}
+
+/* Pulso de acento quando o conteúdo de um card é atualizado. */
+@keyframes cp-updated-pulse {
+  0% {
+    box-shadow:
+      0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent),
+      var(--card-shadow);
+  }
+  100% {
+    box-shadow:
+      0 0 0 8px transparent,
+      var(--card-shadow);
+  }
+}
+
+/* -------------------------------------------------------------
+   2. CONTORNO BASE — todos os cards de seção (.card)
+   Moldura angular assimétrica, aresta de acento no topo, anel
+   interno sutil e sombra em camadas para dar sensação de painel.
+   ------------------------------------------------------------- */
+.card {
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--stroke) 88%, transparent);
+  border-top: 3px solid var(--accent);
+  /* Cantos assimétricos: agudos em cima-esq/baixo-dir, recortados
+     no eixo oposto — assinatura visual angular da série. */
+  border-radius: var(--card-radius-angular);
+  box-shadow: var(--card-shadow);
+  transition:
+    transform 0.14s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+
+/* ── Faixa de luz (sweep) — usa o ::before, liberado do uso antigo.
+   Também sobrescreve a barra lateral que .card-primary criava no
+   ::before, unificando o efeito em todos os cards. ── */
+.card::before,
+.card-primary::before {
+  content: '';
+  position: absolute;
+  top: -25%;
+  left: -75%;
+  width: 55%;
+  height: 150%;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    color-mix(in srgb, var(--accent) 20%, transparent) 46%,
+    color-mix(in srgb, var(--ink) 12%, transparent) 54%,
+    transparent 100%
+  );
+  transform: skewX(-18deg);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+  -webkit-clip-path: none;
+  clip-path: none;
+}
+
+/* ── Lâmina de canto (::after) — recorte diagonal nítido no canto
+   superior direito, com aresta interna clara para leitura. ── */
+.card::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(
+    135deg,
+    var(--accent) 0%,
+    color-mix(in srgb, var(--accent) 28%, transparent) 100%
+  );
+  -webkit-clip-path: polygon(100% 0, 100% 100%, 0 0);
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+  box-shadow: -1px 1px 0 color-mix(in srgb, var(--ink) 18%, transparent);
+  pointer-events: none;
+  z-index: 2;
+  transition:
+    width 0.28s ease,
+    height 0.28s ease,
+    filter 0.28s ease;
+}
+
+/* -------------------------------------------------------------
+   3. TÍTULO DE SEÇÃO — marcador angular "faixa recortada" (P5R)
+   Transforma a .bar em uma etiqueta diagonal recortada, reforçando
+   a linguagem angular sem alterar a estrutura HTML.
+   ------------------------------------------------------------- */
+.section-title .bar {
+  width: 7px;
+  height: 22px;
+  border-radius: 0;
+  background: linear-gradient(180deg, var(--accent-2), var(--accent));
+  -webkit-clip-path: polygon(32% 0, 100% 0, 68% 100%, 0 100%);
+  clip-path: polygon(32% 0, 100% 0, 68% 100%, 0 100%);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 40%, transparent);
+  transform: none;
+}
+
+/* -------------------------------------------------------------
+   4. VARIANTES
+   ------------------------------------------------------------- */
+
+/* Card primário: aresta lateral de acento (substitui a antiga
+   barra em ::before, agora usada pelo sweep) e topo mais forte. */
+.card-primary {
+  border-top-width: 4px;
+  border-left: 3px solid color-mix(in srgb, var(--accent) 62%, var(--stroke));
+}
+
+/* Card narrativo: mantém o ar de documento, porém com a mesma
+   linguagem de canto recortado. */
+.card-narrative::after {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--ink-dim) 55%, transparent) 0%,
+    transparent 100%
+  );
+}
+
+/* -------------------------------------------------------------
+   4. HOVER — elevação, brilho de acento e lâmina expandida
+   Apenas em ponteiro fino (evita "grude" de hover no touch).
+   ------------------------------------------------------------- */
+@media (hover: hover) {
+  .card:hover {
+    transform: translateY(-4px);
+    will-change: transform;
+    border-top-color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 34%, var(--stroke));
+    box-shadow: var(--card-shadow-hover);
+  }
+  .card:hover::before,
+  .card-primary:hover::before {
+    animation: cp-card-sweep 0.75s cubic-bezier(0.25, 0.7, 0.3, 1);
+  }
+  .card:hover::after {
+    width: 40px;
+    height: 40px;
+    filter: brightness(1.15) saturate(1.1);
+  }
+}
+
+/* Foco por teclado realça o card ativo (acessibilidade). */
+.card:focus-within {
+  border-top-color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--stroke));
+  box-shadow: var(--card-shadow-hover);
+}
+
+/* Pulso ao atualizar conteúdo (aplicado via JS: classe .cp-updated). */
+.cp-updated {
+  animation: cp-updated-pulse 0.7s ease-out;
+}
+
+/* -------------------------------------------------------------
+   5. ENTRADA EM CASCATA das views (troca de aba)
+   ------------------------------------------------------------- */
+.view.active > .card,
+.view.active > .grid > .card,
+.view.active > .lore-duo > .card,
+.view.active > .notes-duo-grid > .card,
+.view.active .card {
+  animation: cp-card-enter 0.44s cubic-bezier(0.2, 0.85, 0.25, 1) both;
+}
+.view.active .card:nth-child(1) {
+  animation-delay: 0.02s;
+}
+.view.active .card:nth-child(2) {
+  animation-delay: 0.06s;
+}
+.view.active .card:nth-child(3) {
+  animation-delay: 0.1s;
+}
+.view.active .card:nth-child(4) {
+  animation-delay: 0.14s;
+}
+.view.active .card:nth-child(5) {
+  animation-delay: 0.18s;
+}
+.view.active .card:nth-child(6) {
+  animation-delay: 0.22s;
+}
+.view.active .card:nth-child(n + 7) {
+  animation-delay: 0.26s;
+}
+
+/* -------------------------------------------------------------
+   6. SUB-CARDS (gerados por JS) — contorno e movimento coesos
+   Magias, vínculos, itens/equipamentos, afinidades, condições,
+   modificadores. Unifica raio angular, transição e hover.
+   ------------------------------------------------------------- */
+.spell-card,
+.eq-card,
+.af-card,
+.link-card,
+.cond-item,
+.mod-card {
+  border-radius: var(--card-radius-angular-sm);
+  /* Isola layout/estilo para render mais leve em listas grandes,
+     sem esconder conteúdo (seguro para a exportação PNG). */
+  contain: layout style;
+  transition:
+    transform 0.18s cubic-bezier(0.2, 0.85, 0.25, 1),
+    box-shadow 0.24s ease,
+    border-color 0.24s ease;
+}
+
+/* Lâmina de canto nos sub-cards que já a possuem, padronizada. */
+.spell-card::after,
+.eq-card::after {
+  background: linear-gradient(
+    135deg,
+    var(--accent) 0%,
+    color-mix(in srgb, var(--accent) 25%, transparent) 100%
+  );
+  transition:
+    width 0.24s ease,
+    height 0.24s ease,
+    filter 0.24s ease;
+}
+
+@media (hover: hover) {
+  .spell-card:hover,
+  .eq-card:hover,
+  .af-card:hover,
+  .link-card:hover,
+  .mod-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+    box-shadow:
+      0 10px 24px rgba(0, 0, 0, 0.34),
+      0 0 0 1px color-mix(in srgb, var(--accent) 20%, transparent);
+  }
+  .spell-card:hover::after,
+  .eq-card:hover::after {
+    filter: brightness(1.15) saturate(1.1);
+  }
+}
+
+/* Entrada dos sub-cards criados dinamicamente. */
+.spell-card,
+.link-card,
+.eq-card,
+.cond-item,
+.mod-card {
+  animation: cp-card-pop 0.34s cubic-bezier(0.2, 0.85, 0.25, 1) both;
+}
+
+/* Saída animada (aplicada via JS: classe .cp-leaving). */
+.cp-leaving {
+  animation: cp-card-out 0.24s ease forwards !important;
+  pointer-events: none;
+}
+
+/* -------------------------------------------------------------
+   8. CORES POR ELEMENTO — lâmina de canto das magias
+   Reaproveita o data-element já usado nos selects, estendendo a
+   identidade de elemento à moldura do card.
+   ------------------------------------------------------------- */
+.spell-card[data-element='Fogo']::after {
+  background: linear-gradient(135deg, #e87050, transparent);
+}
+.spell-card[data-element='Gelo']::after {
+  background: linear-gradient(135deg, #60c0f0, transparent);
+}
+.spell-card[data-element='Vento']::after {
+  background: linear-gradient(135deg, #50d070, transparent);
+}
+.spell-card[data-element='Raio']::after {
+  background: linear-gradient(135deg, #e8c830, transparent);
+}
+.spell-card[data-element='Nuclear']::after {
+  background: linear-gradient(135deg, #b060e0, transparent);
+}
+.spell-card[data-element='PSY']::after {
+  background: linear-gradient(135deg, #e060c0, transparent);
+}
+.spell-card[data-element='Luz']::after {
+  background: linear-gradient(135deg, #f0c830, transparent);
+}
+.spell-card[data-element='Trevas']::after {
+  background: linear-gradient(135deg, #9050d0, transparent);
+}
+.spell-card[data-element='Físico']::after {
+  background: linear-gradient(135deg, #d8d8d8, transparent);
+}
+
+/* -------------------------------------------------------------
+   9. ESTADOS SEMÂNTICOS UNIFICADOS
+   Mapeia os estados existentes para os tokens de cor, dando uma
+   linguagem única de status entre vínculos e modificadores.
+   ------------------------------------------------------------- */
+.link--ativo {
+  border-top-color: var(--state-active);
+}
+.link--pausado {
+  border-top-color: var(--state-paused);
+}
+.link--concluido {
+  border-top-color: var(--state-done);
+}
+.link--bloqueado {
+  border-top-color: var(--state-blocked);
+}
+.link--rompido {
+  border-top-color: var(--state-broken);
+}
+.mod-card--positive {
+  border-left: 3px solid var(--state-positive);
+}
+.mod-card--negative {
+  border-left: 3px solid var(--state-negative);
+}
+
+/* -------------------------------------------------------------
+   10. CONTRASTE — temas claros
+   Garante que a lâmina de canto continue legível em fundos claros.
+   ------------------------------------------------------------- */
+body.theme-claro .card::after,
+body.theme-rosa .card::after,
+body.theme-claro .spell-card::after,
+body.theme-rosa .spell-card::after,
+body.theme-claro .eq-card::after,
+body.theme-rosa .eq-card::after {
+  box-shadow: -1px 1px 0 color-mix(in srgb, var(--ink) 40%, transparent);
+}
+
+/* -------------------------------------------------------------
+   11. DENSIDADE COMPACTA (Configurações → Interface)
+   Reduz o respiro dos cards para sessões longas, sem alterar dados.
+   ------------------------------------------------------------- */
+body.compact-cards .card {
+  padding: var(--space-4);
+}
+body.compact-cards .card-secondary {
+  padding: var(--space-3);
+}
+body.compact-cards .card > .section-title {
+  margin-bottom: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+body.compact-cards .spell-card-header,
+body.compact-cards .link-card-header {
+  padding-top: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+body.compact-cards .eq-card {
+  padding-top: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+
+/* -------------------------------------------------------------
+   7. REDUÇÃO DE MOVIMENTO
+   ------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .spell-card,
+  .link-card,
+  .eq-card,
+  .cond-item,
+  .mod-card {
+    animation: none !important;
+  }
+  .card:hover,
+  .spell-card:hover,
+  .eq-card:hover,
+  .af-card:hover,
+  .link-card:hover,
+  .mod-card:hover {
+    transform: none;
+  }
+  .card:hover::before,
+  .card-primary:hover::before,
+  .cp-updated {
+    animation: none;
+  }
+  .cp-leaving {
+    animation: none !important;
+    opacity: 0;
+  }
+}

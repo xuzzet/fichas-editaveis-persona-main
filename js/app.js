@@ -39,6 +39,7 @@ import {
   deleteExistingProfile, renameExistingProfile, changeProfileAvatar
 } from './app/profile-flows.js';
 import { initPortrait } from './app/portrait.js';
+import { initCardFx } from './ui/card-fx.js';
 
 
 // =============================================
@@ -66,6 +67,7 @@ function initApp() {
   try { initLoreCollapse(); } catch(e) { console.error('[initApp] initLoreCollapse:', e); }
   try { initPortrait(); } catch(e) { console.error('[initApp] initPortrait:', e); }
   try { initImportExport(); } catch(e) { console.error('[initApp] initImportExport:', e); }
+  try { initCardFx(); } catch(e) { console.error('[initApp] initCardFx:', e); }
 }
 initApp();
 

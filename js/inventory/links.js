@@ -218,8 +218,10 @@ export function addLink(data) {
     if (el) el.addEventListener('input', function() { syncLinksToState(); renderLinkSummary(); });
   });
   card.querySelector('.del').addEventListener('click', function() {
-    card.remove(); syncLinksToState(); renderLinkSummary(); applyLinkFilters();
-    if (window.debouncedAutoSave) window.debouncedAutoSave();
+    (window.animateCardOut || function(el, cb){ el.remove(); cb(); })(card, function() {
+      syncLinksToState(); renderLinkSummary(); applyLinkFilters();
+      if (window.debouncedAutoSave) window.debouncedAutoSave();
+    });
   });
 }
 

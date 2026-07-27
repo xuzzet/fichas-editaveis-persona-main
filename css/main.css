@@ -38,6 +38,7 @@
 @import './visual-polish.css';
 @import './layout-enhancements.css';
 @import './p5-style.css';
+@import './card-persona.css';
 
 /* Camada mobile — carregada por último para ter prioridade nos ajustes de tela pequena */
 @import './mobile/navigation-mobile.css';

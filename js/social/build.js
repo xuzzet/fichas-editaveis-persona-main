@@ -40,7 +40,19 @@ export function buildSocialUI() {
     }).join(' ');
   }
 
-  var svg = mk('svg', { viewBox: '0 0 ' + HX.W + ' ' + HX.H, width: '100%', 'aria-hidden': 'true' });
+  // Estrela de 4 pontas (emblema central estilo P5R)
+  function starPts(cx, cy, outer, inner, points) {
+    var arr = [];
+    var n = points * 2;
+    for (var i = 0; i < n; i++) {
+      var rr = (i % 2 === 0) ? outer : inner;
+      var a = HX.rad(90 - i * (360 / n));
+      arr.push((cx + rr * Math.cos(a)).toFixed(2) + ',' + (cy - rr * Math.sin(a)).toFixed(2));
+    }
+    return arr.join(' ');
+  }
+
+  var svg = mk('svg', { viewBox: '0 0 ' + HX.W + ' ' + HX.H, width: '100%', role: 'img', 'aria-label': 'Hexagrama de habilidades sociais' });
   svg.style.cssText = 'max-width:640px;display:block;margin:0 auto;overflow:visible;';
 
   // DEFS -- single glow used for tip dots
@@ -52,6 +64,11 @@ export function buildSocialUI() {
   fMerge.appendChild(mk('feMergeNode', { in: 'SourceGraphic' }));
   fGlow.appendChild(fMerge);
   defs.appendChild(fGlow);
+  // Gradiente radial do preenchimento (mais forte no centro).
+  var grad = mk('radialGradient', { id: 'hx-fill-grad', cx: '50%', cy: '50%', r: '58%' });
+  grad.appendChild(mk('stop', { offset: '0%', 'stop-color': 'var(--accent)', 'stop-opacity': '0.34' }));
+  grad.appendChild(mk('stop', { offset: '100%', 'stop-color': 'var(--accent)', 'stop-opacity': '0.10' }));
+  defs.appendChild(grad);
   svg.appendChild(defs);
 
   // -- LAYER 1: Tier rings (T1..T4 subtle guides + T5 outer boundary) --
@@ -68,23 +85,36 @@ export function buildSocialUI() {
     }));
   }
 
-  // -- LAYER 2: Radial spokes from centre to each outer tip --
+  // Numerais dos tiers (I..V) ao longo do eixo superior, para leitura da escala.
+  var ROMAN_RING = ['0', 'I', 'II', 'III', 'IV', 'V'];
+  for (var tr = 1; tr <= 5; tr++) {
+    var num = mk('text', {
+      x: (CX + 9).toFixed(2), y: (CY - HX.tipR(tr) + 3).toFixed(2),
+      'text-anchor': 'start', 'font-size': '9', 'font-weight': '700',
+      fill: 'var(--ink-dim)', opacity: '0.5', 'pointer-events': 'none'
+    });
+    num.textContent = ROMAN_RING[tr];
+    svg.appendChild(num);
+  }
+
+  // -- LAYER 2: Radial spokes from centre to each outer tip (tracejados, cor por eixo) --
   skills.forEach(function(s) {
     svg.appendChild(mk('line', {
+      class: 'hx-axis', 'data-skill': s.id,
       x1: CX, y1: CY,
       x2: s.tx.toFixed(2), y2: s.ty.toFixed(2),
-      stroke: 'var(--stroke)',
-      'stroke-width': '0.9',
-      'stroke-opacity': '0.30'
+      stroke: HX.colors[s.id] || 'var(--stroke)',
+      'stroke-width': '1',
+      'stroke-opacity': '0.28',
+      'stroke-dasharray': '3 5'
     }));
   });
 
-  // -- LAYER 3: Progress fill polygon --
+  // -- LAYER 3: Progress fill polygon (gradiente radial) --
   svg.appendChild(mk('polygon', {
     id: 'hx-progress-fill',
     points: fillPts0(),
-    fill: 'var(--accent)',
-    'fill-opacity': '0.18',
+    fill: 'url(#hx-fill-grad)',
     stroke: 'none'
   }));
 
@@ -99,30 +129,53 @@ export function buildSocialUI() {
     'stroke-linejoin': 'round'
   }));
 
-  // -- LAYER 5: Central node (no text) --
-  svg.appendChild(mk('circle', { cx: CX, cy: CY, r: '6', fill: 'var(--accent)', opacity: '0.50', filter: 'url(#hx-glow)' }));
-  svg.appendChild(mk('circle', { cx: CX, cy: CY, r: '4', fill: 'var(--accent)' }));
+  // -- LAYER 5: Central emblem (estrela de 4 pontas, estilo P5R) --
+  svg.appendChild(mk('polygon', {
+    points: starPts(CX, CY, 14, 5.2, 4),
+    fill: 'var(--accent)', opacity: '0.55', filter: 'url(#hx-glow)'
+  }));
+  svg.appendChild(mk('polygon', {
+    points: starPts(CX, CY, 9, 3.4, 4),
+    fill: 'var(--accent)'
+  }));
 
-  // -- LAYER 6: Dynamic tip halos + dots (repositioned by hxUpdateProgress) --
+  // -- LAYER 6: Dynamic tip halos + dots + burst + número (cor por eixo) --
   skills.forEach(function(s) {
+    var color = HX.colors[s.id] || 'var(--accent)';
     var ix = (CX + HX.Rmin * s.cos).toFixed(2);
     var iy = (CY - HX.Rmin * s.sin).toFixed(2);
+    // Anel de burst (expande ao subir de tier)
     svg.appendChild(mk('circle', {
-      id: s.id + '-hx-halo',
-      cx: ix, cy: iy, r: '14',
-      fill: 'var(--accent)', opacity: '0.12', filter: 'url(#hx-glow)'
-    }));
-    svg.appendChild(mk('circle', {
-      id: s.id + '-hx-dot',
+      id: s.id + '-hx-burst', class: 'hx-axis', 'data-skill': s.id,
       cx: ix, cy: iy, r: '4',
-      fill: 'var(--accent)', filter: 'url(#hx-glow)'
+      fill: 'none', stroke: color, 'stroke-width': '2',
+      opacity: '0', 'pointer-events': 'none'
     }));
+    svg.appendChild(mk('circle', {
+      id: s.id + '-hx-halo', class: 'hx-axis', 'data-skill': s.id,
+      cx: ix, cy: iy, r: '14',
+      fill: color, opacity: '0.12', filter: 'url(#hx-glow)'
+    }));
+    svg.appendChild(mk('circle', {
+      id: s.id + '-hx-dot', class: 'hx-axis', 'data-skill': s.id,
+      cx: ix, cy: iy, r: '4',
+      fill: color, filter: 'url(#hx-glow)'
+    }));
+    // Número de pontos por eixo (atualizado em renderSocial)
+    var valEl = mk('text', {
+      id: s.id + '-hx-val', class: 'hx-axis hx-val', 'data-skill': s.id,
+      x: ix, y: iy, 'text-anchor': 'middle',
+      'font-size': '11', 'font-weight': '800', fill: color,
+      'pointer-events': 'none'
+    });
+    valEl.textContent = '';
+    svg.appendChild(valEl);
   });
 
   // -- LAYER 7: Labels at fixed outer positions --
   skills.forEach(function(s) {
     var meta = SOCIAL_SKILL_META[s.id];
-    var g = mk('g', { id: s.id + '-hx-label-g', class: 'hx-tip' });
+    var g = mk('g', { id: s.id + '-hx-label-g', class: 'hx-tip hx-axis', 'data-skill': s.id });
 
     var nameEl = mk('text', {
       x: s.lx.toFixed(2), y: (s.ly - 16).toFixed(2),
@@ -138,7 +191,7 @@ export function buildSocialUI() {
       x: s.lx.toFixed(2), y: (s.ly + 4).toFixed(2),
       'text-anchor': s.anchor,
       'font-size': '12', 'font-weight': '700', 'letter-spacing': '0.16em',
-      fill: 'var(--accent)'
+      fill: HX.colors[s.id] || 'var(--accent)'
     });
     tierEl.textContent = 'TIER 0';
     g.appendChild(tierEl);
@@ -254,37 +307,76 @@ export function buildSocialUI() {
     if (selectedSkillId) renderPanel(getSkillInfo(selectedSkillId));
   };
 
-  skills.forEach(function(s) {
+  // Destaca um eixo (raio + dot + rótulo) e esmaece os demais.
+  function setAxisFocus(skillId) {
+    if (skillId) svg.classList.add('hx-focusing');
+    else svg.classList.remove('hx-focusing');
+    skills.forEach(function(sk) {
+      var on = (sk.id === skillId);
+      svg.querySelectorAll('[data-skill="' + sk.id + '"]').forEach(function(el) {
+        el.classList.toggle('hx-axis-active', on);
+      });
+      var sel = document.getElementById(sk.id + '-hx-sel');
+      if (sel && sk.id !== selectedSkillId) sel.setAttribute('opacity', on ? '0.35' : '0');
+    });
+  }
+
+  function focusSkillByIndex(idx) {
+    var n = ((idx % skills.length) + skills.length) % skills.length;
+    var hit = document.getElementById(skills[n].id + '-hx-hit');
+    if (hit) hit.focus();
+  }
+
+  function toggleSelect(skillId) {
+    if (selectedSkillId === skillId) hxSelect(null);
+    else hxSelect(skillId);
+  }
+
+  skills.forEach(function(s, i) {
+    var meta = SOCIAL_SKILL_META[s.id];
     var hitCirc = mk('circle', {
       id: s.id + '-hx-hit',
       cx: s.lx.toFixed(2), cy: s.ly.toFixed(2),
-      r: '42', fill: 'transparent', cursor: 'pointer'
+      r: '42', fill: 'transparent', cursor: 'pointer',
+      tabindex: '0', role: 'button',
+      'aria-label': (meta ? meta.name : s.id) + ', Tier 0'
     });
     svg.appendChild(hitCirc);
 
     var halo = document.getElementById(s.id + '-hx-halo');
-    var selRing = document.getElementById(s.id + '-hx-sel');
 
-    // Hover: light ring preview (no panel change) — apenas para ponteiro fino
-    // (mouse/caneta). No toque, o realce vem da seleção ao tocar.
+    // Hover: destaca o eixo (apenas ponteiro fino). No toque, o realce
+    // vem da seleção ao tocar.
     [hitCirc, halo].forEach(function(el) {
       if (!el) return;
       el.addEventListener('pointerenter', function(ev) {
         if (ev.pointerType === 'touch') return;
-        if (selectedSkillId !== s.id && selRing) selRing.setAttribute('opacity', '0.35');
+        if (selectedSkillId !== s.id) setAxisFocus(s.id);
       });
       el.addEventListener('pointerleave', function(ev) {
         if (ev.pointerType === 'touch') return;
-        if (selectedSkillId !== s.id && selRing) selRing.setAttribute('opacity', '0');
+        if (selectedSkillId !== s.id) setAxisFocus(null);
       });
       el.addEventListener('click', function(e) {
         e.stopPropagation();
-        if (selectedSkillId === s.id) {
-          hxSelect(null);
-        } else {
-          hxSelect(s.id);
-        }
+        toggleSelect(s.id);
       });
+    });
+
+    // Acessibilidade por teclado: foco realça o eixo; Enter/Espaço
+    // seleciona; setas navegam entre habilidades.
+    hitCirc.addEventListener('focus', function() { setAxisFocus(s.id); });
+    hitCirc.addEventListener('blur', function() {
+      if (selectedSkillId !== s.id) setAxisFocus(null);
+    });
+    hitCirc.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+        e.preventDefault(); toggleSelect(s.id);
+      } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault(); focusSkillByIndex(i + 1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault(); focusSkillByIndex(i - 1);
+      }
     });
   });
 

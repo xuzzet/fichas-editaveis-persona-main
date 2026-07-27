@@ -52,7 +52,7 @@
 }
 
 /* Skill selection ring */
-[id$="-hx-sel"] {
+[id$='-hx-sel'] {
   transition: opacity 0.18s ease;
 }
 
@@ -168,7 +168,7 @@
   overflow: visible;
 }
 #social-tier-list svg text {
-  font-family: "Barlow Condensed", Inter, sans-serif;
+  font-family: 'Barlow Condensed', Inter, sans-serif;
   pointer-events: none;
 }
 
@@ -220,7 +220,58 @@
   animation: hxFillPulse 0.45s ease-out;
 }
 
-[id$="-hx-tier"],
-[id$="-hx-title"] {
+[id$='-hx-tier'],
+[id$='-hx-title'] {
   transition: opacity 0.28s ease;
+}
+
+/* ── Foco de eixo: destaca a habilidade sob o cursor/foco e esmaece
+   as demais, melhorando a leitura do radar. ── */
+.hx-axis {
+  transition: opacity 0.2s ease;
+}
+#social-tier-list svg.hx-focusing .hx-axis:not(.hx-axis-active) {
+  opacity: 0.22;
+}
+
+/* Número de pontos por eixo */
+.hx-val {
+  font-family: 'Barlow Condensed', Inter, sans-serif;
+  paint-order: stroke;
+  stroke: var(--bg-2);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+/* Alvo de clique/foco acessível: anel de foco por teclado */
+#social-tier-list [id$='-hx-hit'] {
+  outline: none;
+}
+#social-tier-list [id$='-hx-hit']:focus-visible {
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-dasharray: 4 3;
+}
+
+/* Burst: anel que expande na ponta ao subir de tier */
+@keyframes hxBurst {
+  0% {
+    opacity: 0.7;
+    r: 4;
+  }
+  100% {
+    opacity: 0;
+    r: 34;
+  }
+}
+.hx-burst-go {
+  animation: hxBurst 0.6s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hx-tier-flash,
+  .hx-fill-pulse,
+  .hx-burst-go {
+    animation: none;
+  }
 }

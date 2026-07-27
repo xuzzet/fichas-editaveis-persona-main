@@ -170,10 +170,11 @@ export function addSpell(data) {
 
   // Remove
   card.querySelector('.del').addEventListener('click', function() {
-    card.remove();
-    syncSpellsToState();
-    _updateSpellCount();
-    _updateSpellEmpty();
+    (window.animateCardOut || function(el, cb){ el.remove(); cb(); })(card, function() {
+      syncSpellsToState();
+      _updateSpellCount();
+      _updateSpellEmpty();
+    });
   });
 
   // Reorder

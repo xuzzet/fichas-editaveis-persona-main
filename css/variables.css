@@ -28,4 +28,26 @@
   --space-4: 16px;
   --space-5: 24px;
   --space-6: 32px;
+
+  /* ── Tokens de card (contorno/elevação) ──
+     Centralizam a linguagem angular Persona e a profundidade,
+     evitando valores mágicos espalhados pelos módulos. Usam as
+     variáveis de cor do tema, então se adaptam a qualquer skin. */
+  --card-radius-angular: 3px 16px 3px 16px;
+  --card-radius-angular-sm: 3px 12px 3px 12px;
+  --card-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.3), inset 0 1px 0 color-mix(in srgb, var(--accent) 14%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--accent) 6%, transparent);
+  --card-shadow-hover:
+    0 14px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--accent) 24%, transparent);
+
+  /* ── Cores semânticas de estado (unificadas para todos os cards) ── */
+  --state-active: var(--accent);
+  --state-paused: #f0a500;
+  --state-done: var(--ok);
+  --state-blocked: var(--ink-dim);
+  --state-broken: var(--danger);
+  --state-positive: var(--ok);
+  --state-negative: var(--danger);
 }

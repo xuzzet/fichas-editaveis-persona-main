@@ -3,6 +3,8 @@
 // Objeto HX (layout/estado), atualizacao do SVG e animacao RAF.
 // =============================================
 
+var HX_REDUCE = window.matchMedia('(prefers-reduced-motion: reduce)');
+
 // =============================================
 // HEXAGRAMA — LAYOUT & ANIMAÇÃO
 // =============================================
@@ -18,7 +20,19 @@ export var HX = {
   skills: null,        // populated below
   animRadii:   null,
   targetRadii: null,
+  prevTiers:   null,   // tier anterior por eixo (p/ burst ao subir)
+  prevInit:    false,  // evita burst no primeiro render/carregamento
   animRunning: false,
+  // Cor por eixo (paleta de Social Links, saturada para contraste
+  // AA tanto em fundo escuro quanto claro).
+  colors: {
+    KNOPts: '#2f7fc4', // Conhecimento — azul
+    DISPts: '#7a54c0', // Disciplina — roxo
+    EMPpts: '#2f9e5e', // Empatia — verde
+    EXPPts: '#d1741f', // Expressão — laranja
+    COUPts: '#d1453d', // Coragem — vermelho
+    CHAPts: '#c23f92'  // Charme — magenta
+  },
   rad: function(d) { return d * Math.PI / 180; },
   tipR: function(tier) { return HX.Rmin + (tier / HX.TIER_MAX) * (HX.R - HX.Rmin); }
 };
@@ -43,6 +57,7 @@ export var HX = {
   });
   HX.animRadii   = HX.skills.map(function() { return HX.Rmin; });
   HX.targetRadii = HX.skills.map(function() { return HX.Rmin; });
+  HX.prevTiers   = HX.skills.map(function() { return 0; });
 }());
 
 /** Flush current animRadii into the SVG (fill polygon + moving dots/halos). */
@@ -63,11 +78,28 @@ function hxUpdateProgress() {
     var halo = document.getElementById(s.id + '-hx-halo');
     if (dot)  { dot.setAttribute('cx',  cx); dot.setAttribute('cy',  cy); }
     if (halo) { halo.setAttribute('cx', cx); halo.setAttribute('cy', cy); }
+    // Anel de "burst" ao subir de tier segue a ponta.
+    var burst = document.getElementById(s.id + '-hx-burst');
+    if (burst) { burst.setAttribute('cx', cx); burst.setAttribute('cy', cy); }
+    // Número de pontos posicionado logo à frente da ponta.
+    var val = document.getElementById(s.id + '-hx-val');
+    if (val) {
+      var vr = HX.animRadii[i] + 14;
+      val.setAttribute('x', (HX.CX + vr * s.cos).toFixed(2));
+      val.setAttribute('y', (HX.CY - vr * s.sin + 3.5).toFixed(2));
+    }
   });
 }
 
 /** RAF-based exponential ease-out interpolation toward targetRadii. */
 function hxAnimate() {
+  // Respeita preferência por menos movimento: salta direto ao alvo.
+  if (HX_REDUCE.matches) {
+    HX.skills.forEach(function(s, i) { HX.animRadii[i] = HX.targetRadii[i]; });
+    hxUpdateProgress();
+    HX.animRunning = false;
+    return;
+  }
   var done = true;
   HX.skills.forEach(function(s, i) {
     var diff = HX.targetRadii[i] - HX.animRadii[i];

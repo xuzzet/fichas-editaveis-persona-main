@@ -100,7 +100,7 @@ export function buildModifiersUI() {
     card.querySelector('.mod-valor').addEventListener('input', onChange);
     card.querySelector('.mod-alvo').addEventListener('change', onChange);
     card.querySelector('.mod-ativo').addEventListener('change', onChange);
-    card.querySelector('.del').addEventListener('click', function() { card.remove(); onChange(); });
+    card.querySelector('.del').addEventListener('click', function() { (window.animateCardOut || function(el, cb){ el.remove(); cb(); })(card, onChange); });
   }
 
   _addModRow = addModRow;
