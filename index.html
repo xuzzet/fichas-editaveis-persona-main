@@ -105,13 +105,33 @@
           </select>
         </div>
       </section>
+
+      <section class="settings-section">
+        <h3>Ações</h3>
+        <p class="settings-hint">Salvar, importar/exportar, backup e reset da ficha.</p>
+        <div class="settings-actions">
+          <button id="undo-btn" class="btn-feedback" title="Desfazer última alteração (Ctrl+Z)" disabled>Desfazer</button>
+          <button id="redo-btn" class="btn-feedback" title="Refazer alteração (Ctrl+Y)" disabled>Refazer</button>
+          <button id="save" class="btn-feedback">Salvar</button>
+          <button id="load" class="btn-feedback">Carregar</button>
+          <button id="export" class="btn-feedback">Exportar JSON</button>
+          <button id="import" class="btn-feedback">Importar JSON</button>
+          <button id="export-all" class="btn-feedback" title="Exporta TODOS os personagens em um único arquivo de backup">Exportar Tudo</button>
+          <button id="import-all" class="btn-feedback" title="Importa um backup completo (substitui todos os personagens)">Importar Tudo</button>
+          <button id="restore-backup" class="btn-feedback" title="Restaura o último estado salvo automaticamente antes de resetar ou importar">Restaurar Backup</button>
+          <button id="reset" class="btn-feedback settings-btn--danger">Resetar Ficha</button>
+        </div>
+      </section>
     </div>
   </aside>
   <div id="captureRoot" class="wrap">
     <header class="hud">
       <div class="slash" aria-hidden="true"></div>
       <div class="brand">
-        <h1>Ficha • Persona</h1>
+        <h1 class="brand-title">
+          <span class="brand-title__persona" data-text="PERSONA">PERSONA</span>
+          <span class="brand-title__rpg">RPG</span>
+        </h1>
         <div class="sub">“Tu és eu… Eu sou tu. Do oceano da tua alma, emergirei.”</div>
       </div>
     </header>
@@ -281,23 +301,7 @@
 
         <!-- ZONA 7: RESUMO AUTOMÁTICO — inserido por JS via buildAutoSummaryPanel() -->
 
-        <!-- ZONA 8: AÇÕES -->
-        <section class="card" data-span="full">
-          <div class="section-title"><div class="bar"></div><h2>Ações</h2></div>
-          <div class="actions">
-            <button id="undo-btn" class="btn-feedback" title="Desfazer última alteração (Ctrl+Z)" disabled>Desfazer</button>
-            <button id="redo-btn" class="btn-feedback" title="Refazer alteração (Ctrl+Y)" disabled>Refazer</button>
-            <button id="save" class="btn-feedback">Salvar</button>
-            <button id="load" class="btn-feedback">Carregar</button>
-            <button id="export" class="btn-feedback">Exportar JSON</button>
-            <button id="import" class="btn-feedback">Importar JSON</button>
-            <button id="export-all" class="btn-feedback" title="Exporta TODOS os personagens em um único arquivo de backup">Exportar Tudo</button>
-            <button id="import-all" class="btn-feedback" title="Importa um backup completo (substitui todos os personagens)">Importar Tudo</button>
-            <button id="restore-backup" class="btn-feedback" title="Restaura o último estado salvo automaticamente antes de resetar ou importar">Restaurar Backup</button>
-            <button id="reset" class="btn-feedback">Resetar Ficha</button>
-          </div>
-          <p class="hint">Em testes por favor relevar se ocorrer algum erro.</p>
-        </section>
+        <!-- ZONA 8: AÇÕES — movidas para a roda de configurações (engrenagem) -->
 
         <section class="card" id="tests-card" style="display:none">
           <div class="section-title"><div class="bar"></div><h2>Resultados dos Testes</h2></div>

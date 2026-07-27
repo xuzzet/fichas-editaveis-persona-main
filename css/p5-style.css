@@ -47,6 +47,106 @@ body::after {
 }
 
 /* ---------------------------------------------------------------
+   2.5. TÍTULO PRINCIPAL — "PERSONA RPG" estilo P5R (contido)
+   Tipografia condensada com leve inclinação e um bloco angular
+   para "RPG". Discreto, sem excesso de sombras.
+   --------------------------------------------------------------- */
+.brand h1.brand-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  line-height: 1;
+  transform: skewX(-6deg);
+  transform-origin: left center;
+}
+.brand-title__persona {
+  font-family: 'Barlow Condensed', Inter, sans-serif;
+  font-weight: 900;
+  font-style: italic;
+  text-transform: uppercase;
+  font-size: clamp(26px, 4.6vw, 44px);
+  letter-spacing: 0.03em;
+  color: var(--ink);
+  text-shadow: 2px 2px 0 color-mix(in srgb, var(--accent) 65%, transparent);
+}
+.brand-title__rpg {
+  display: inline-block;
+  font-family: 'Barlow Condensed', Inter, sans-serif;
+  font-weight: 900;
+  font-style: italic;
+  text-transform: uppercase;
+  font-size: clamp(15px, 2.8vw, 26px);
+  letter-spacing: 0.1em;
+  padding: 1px 10px 3px;
+  color: color-mix(in srgb, var(--bg) 85%, #000);
+  background: var(--accent);
+  -webkit-clip-path: polygon(7px 0, 100% 0, calc(100% - 7px) 100%, 0 100%);
+  clip-path: polygon(7px 0, 100% 0, calc(100% - 7px) 100%, 0 100%);
+  box-shadow: 3px 3px 0 color-mix(in srgb, var(--ink) 28%, transparent);
+}
+/* Temas claros: usa o acento no texto para manter contraste. */
+body.theme-claro .brand-title__persona,
+body.theme-rosa .brand-title__persona {
+  color: var(--accent);
+  text-shadow: 2px 2px 0 color-mix(in srgb, var(--ink) 18%, transparent);
+}
+
+/* No modo dislexia, remove o skew/itálico do título por legibilidade. */
+body.a11y-dyslexia .brand h1.brand-title {
+  transform: none;
+}
+body.a11y-dyslexia .brand-title__persona,
+body.a11y-dyslexia .brand-title__rpg {
+  font-style: normal;
+}
+
+/* ---------------------------------------------------------------
+   2.6. CARDS — refino P5R (contido, elegante)
+   Melhora a leitura da hierarquia sem exageros: sublinhado do
+   título em gradiente de acento, canto recortado mais nítido e
+   realce sutil do topo ao passar o mouse. Só usa variáveis do tema.
+   --------------------------------------------------------------- */
+.card {
+  border-top-color: color-mix(in srgb, var(--accent) 80%, var(--stroke));
+  transition:
+    box-shadow 0.25s ease,
+    transform 0.25s ease,
+    border-color 0.25s ease;
+}
+@media (hover: hover) {
+  .card:hover {
+    border-top-color: var(--accent);
+  }
+}
+
+/* Sublinhado do título com gradiente de acento que esvanece. */
+.card > .section-title {
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(
+      90deg,
+      var(--accent) 0%,
+      color-mix(in srgb, var(--accent) 18%, transparent) 65%,
+      transparent 100%
+    )
+    1;
+}
+
+/* Marcador angular do título (a "barra") mais definido. */
+.section-title .bar {
+  box-shadow:
+    0 0 10px color-mix(in srgb, var(--accent) 35%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--ink) 12%, transparent);
+}
+
+/* Realce interno sutil no topo, dando profundidade de "painel". */
+.card-primary {
+  box-shadow:
+    0 6px 22px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+/* ---------------------------------------------------------------
    3. ENTRADA CINÉTICA DOS CARDS ao trocar de aba
    Cada card entra deslizando na diagonal, em cascata — a "energia
    de menu" do Persona 5. Sem overflow horizontal (deslocamento

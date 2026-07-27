@@ -197,6 +197,36 @@ body.settings-open .settings-gear {
 .settings-btn:active {
   transform: scale(0.98);
 }
+.settings-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Grade de botões da seção Ações */
+.settings-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.settings-actions .settings-btn,
+.settings-actions .btn-feedback {
+  width: 100%;
+  margin: 0;
+  font-size: 12px;
+  padding: 9px 8px;
+}
+.settings-btn--danger {
+  grid-column: 1 / -1;
+}
+.settings-actions .settings-btn--danger {
+  border-color: color-mix(in srgb, #e0464b 60%, var(--stroke));
+  background: color-mix(in srgb, #e0464b 16%, transparent);
+  color: var(--ink);
+}
+.settings-actions .settings-btn--danger:hover {
+  background: color-mix(in srgb, #e0464b 30%, transparent);
+}
 
 /* Não aplica o filtro de daltonismo ao próprio painel/overlay, para
    que os controles fiquem previsíveis (o filtro age no #captureRoot). */
