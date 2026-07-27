@@ -35,6 +35,27 @@ body.bg-city-4 {
 body.bg-city-5 {
   --bg-city-image: url('../Elements/background-image5.jpeg');
 }
+body.bg-city-6 {
+  --bg-city-image: url('../Elements/background-image6.webp');
+}
+body.bg-city-7 {
+  --bg-city-image: url('../Elements/background-image7.jpg');
+}
+body.bg-city-8 {
+  --bg-city-image: url('../Elements/background-image8.webp');
+}
+body.bg-city-9 {
+  --bg-city-image: url('../Elements/background-image9.jpeg');
+}
+body.bg-city-10 {
+  --bg-city-image: url('../Elements/background-image10.jpg');
+}
+body.bg-city-11 {
+  --bg-city-image: url('../Elements/background-image11.jpg');
+}
+body.bg-city-12 {
+  --bg-city-image: url('../Elements/background-image12.avif');
+}
 body.bg-city-none::before {
   display: none;
 }

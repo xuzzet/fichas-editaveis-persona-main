@@ -13,6 +13,13 @@ export var backgroundMap = {
   cidade3: 'bg-city-3',
   cidade4: 'bg-city-4',
   cidade5: 'bg-city-5',
+  cidade6: 'bg-city-6',
+  cidade7: 'bg-city-7',
+  cidade8: 'bg-city-8',
+  cidade9: 'bg-city-9',
+  cidade10: 'bg-city-10',
+  cidade11: 'bg-city-11',
+  cidade12: 'bg-city-12',
   nenhum:  'bg-city-none'
 };
 
