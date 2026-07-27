@@ -493,6 +493,348 @@ export const AWAKENING_OVERRIDES = {
     }
   },
 
+  // ── O Imperador (IV) ──
+  emperor: {
+    impeto: {
+      main: {
+        name: 'Decreto de Execução',
+        desc: 'Uma vez por rodada, no início do seu turno, escolha um inimigo perceptível. Ele recebe Condenado até o início da sua próxima rodada.\n' +
+              'A primeira Ofensiva realizada por cada Súdito contra o Condenado, seguindo uma ordem do Imperador, recebe +1 Dado de Dano e +1 de Margem Crítica.\n' +
+              'Somente ações realizadas por ordem direta recebem os benefícios; ações voluntárias dos Súditos não recebem bônus.'
+      },
+      amp1: {
+        name: 'Ataque Coordenado',
+        desc: 'Quando pelo menos 2 Súditos diferentes atingirem o mesmo Condenado na mesma rodada, o alvo possui 50% de chance de ficar Derrubado por 1 Rodada.\n' +
+              'Apenas uma rolagem por rodada.'
+      },
+      amp2: {
+        name: 'Exemplo Público',
+        desc: 'Quando um inimigo Condenado for derrotado, todos os inimigos que presenciarem possuem 50% de chance de receber Medo por 1d3 Rodadas.'
+      }
+    },
+    autocuidado: {
+      main: {
+        name: 'Sua Vida pela Coroa',
+        desc: 'Uma vez por rodada, quando um Ataque ou Magia de alvo único confirmar acerto contra você, antes do dano pode utilizar uma Ação de Interromper e ordenar que um Súdito intercepte o ataque.\n' +
+              'O Súdito torna-se o novo alvo, recebe todo o dano e todos os efeitos da ofensiva.\n' +
+              'O Súdito precisa: perceber você, possuir Reação disponível e conseguir alcançá-lo utilizando metade do Movimento.'
+      },
+      amp1: {
+        name: 'Guarda Real',
+        desc: 'O Súdito utilizado recebe RD Bônus equivalente ao Tier de Charme contra o dano redirecionado.\n' +
+              'Também recebe Vantagem para resistir às Condições aplicadas.'
+      },
+      amp2: {
+        name: 'A Coroa Não Pode Cair',
+        desc: 'Uma vez por combate, quando uma ofensiva reduziria seu PV a zero, pode utilizar Sua Vida pela Coroa mesmo que já tenha usado naquela rodada.\n' +
+              'Ainda precisa possuir um Súdito válido.'
+      }
+    },
+    artificio: {
+      main: {
+        name: 'Tributo ao Trono',
+        desc: 'No início do combate, pode substituir o controle normal dos Súditos pelo Regime de Tributo.\n' +
+              'Enquanto ativo, não pode ordenar ações dos Súditos. Em troca, uma vez por rodada, como Ação Rápida, escolha um Súdito perceptível:\n' +
+              '\u2022 Tributo de Sangue: o Súdito perde 10 × Tier de Charme de PV Máximo; você recebe o mesmo valor como PV Bônus Máximo.\n' +
+              '\u2022 Tributo do Espírito: o Súdito perde 10 × Tier de Charme de PM Máximo; você recebe o mesmo valor como PM Bônus Máximo.\n' +
+              'PV Bônus recebe dano antes do PV Atual; PM Bônus é consumido antes do PM normal. Não é considerado Dano, Cura ou Sacrifício voluntário.\n' +
+              'Limite: armazena até 20 × Tier de Charme em PV Bônus e PM Bônus.'
+      },
+      amp1: {
+        name: 'Dízimo Coletivo',
+        desc: 'Pode dividir o Tributo entre um número de Súditos igual ao seu Tier de Charme.\n' +
+              'O limite de armazenamento aumenta para 15 × Tier de Charme.'
+      },
+      amp2: {
+        name: 'Tudo Pertence à Coroa',
+        desc: 'Permite manipular os recursos armazenados.\n' +
+              'Pode converter PV → PM ou PM → PV.'
+      }
+    },
+    elo: {
+      main: {
+        name: 'Voto do Coração',
+        desc: 'Ao adquirir este Despertar Trama, pode Melhorar sua Habilidade Natural ou Habilidade de Combate.\n' +
+              'Pode adicionar um terceiro efeito ou aprimorar uma capacidade já existente.'
+      },
+      amp1: {
+        name: 'Coração de Batalha',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade de Combate.'
+      },
+      amp2: {
+        name: 'Coração com o Mundo',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade Natural.'
+      }
+    },
+    cognicao: {
+      main: {
+        name: 'Vassalo da Coroa',
+        desc: 'Substitui Autoridade Subjugada. Ao invés de afetar todos, escolha apenas um alvo e realize Charme vs Conhecimento.\n' +
+              'Caso falhe, o alvo se torna Súdito durante todo o combate.\n' +
+              'Enquanto agir sob controle direto, recebe Imunidade contra Condições Negativas. Condições existentes ficam Suspensas durante a ação controlada.'
+      },
+      amp1: {
+        name: 'Obediência Imaculada',
+        desc: 'Uma vez por rodada, após um Súdito concluir uma ação controlada, pode remover permanentemente uma Condição Negativa suspensa.'
+      },
+      amp2: {
+        name: 'Linha de Sucessão',
+        desc: 'Uma vez por combate, caso o Vassalo escolhido seja derrotado, escolha outro alvo e realize novamente Charme vs Conhecimento.\n' +
+              'Caso falhe, ele se torna o novo Vassalo até o final do combate.'
+      }
+    },
+    resolucao: {
+      main: {
+        name: '"Quem eu Devo ser..."',
+        level: 10,
+        desc: 'O personagem atingiu o ponto em que sua Trama finalmente começou a chegar em uma Resolução graças aos seus Vínculos.\n' +
+              'Desperta um novo poder.\n' +
+              'Pode ser adquirido após: Persona Nível 10 ou decisão narrativa do Narrador.'
+      },
+      amp1: {
+        name: '"Ó Mundo Meu..."',
+        narrativeOnly: true,
+        desc: 'A Persona atinge o ápice de sua forma.\n' +
+              'Alcança a Forma Verdadeira do Coração.\n' +
+              'Requisito: somente narrativo.'
+      },
+      amp2: {
+        name: '"... Ó Fome que me Consome"',
+        narrativeOnly: true,
+        desc: 'A Persona atinge uma forma corrompida da sua verdadeira forma.\n' +
+              'Torna-se uma Persona Suprimida da Fome.\n' +
+              'Requisito: somente narrativo.'
+      }
+    }
+  },
+
+  // ── O Hierofante (V) ──
+  hierophant: {
+    impeto: {
+      main: {
+        name: 'Fé que Move Montanhas',
+        desc: 'Uma vez por rodada, antes de um aliado afetado por Tradição Acima de Tudo realizar um Ataque ou Magia Ofensiva, ele pode converter parte do bônus de Acerto em poder ofensivo.\n' +
+              'Cada +1 de Acerto removido gera +1 Dado de Dano, caso a ofensiva acerte.\n' +
+              'Limite: máximo de Dados convertidos igual ao Tier de Charme ou Conhecimento.'
+      },
+      amp1: {
+        name: 'Convicção Absoluta',
+        desc: 'Caso o aliado converta o máximo permitido pelo Tier, a ofensiva não recebe Desvantagem e recebe +1 de Margem Crítica.'
+      },
+      amp2: {
+        name: 'A Fé se Propaga',
+        desc: 'Quando uma ofensiva fortalecida por Fé que Move Montanhas derrotar um inimigo, escolha outro aliado.\n' +
+              'Ele recebe Tradição Acima de Tudo por 2 Turnos, sem pagar PM.'
+      }
+    },
+    autocuidado: {
+      main: {
+        name: 'A Fé é um Escudo',
+        desc: 'Sempre que utilizar Tradição Acima de Tudo em um aliado, você e o aliado recebem Vida Temporária.\n' +
+              'Valor: 10 × Tier de Charme ou Conhecimento.\n' +
+              'A Vida Temporária recebe dano antes do PV, não acumula, e reaplicar apenas restaura o valor.'
+      },
+      amp1: {
+        name: 'Comunhão dos Fiéis',
+        desc: 'Quando a Vida Temporária de um dos ligados chegar a zero, o outro pode transferir sua própria Vida Temporária utilizando uma Ação de Interromper.'
+      },
+      amp2: {
+        name: 'Dogma Inabalável',
+        desc: 'Enquanto possuir Vida Temporária de A Fé é um Escudo, recebe Vantagem contra Condições Negativas.\n' +
+              'Além disso, Crer em Algo Maior também protege contra Encanto e Dominação.'
+      }
+    },
+    artificio: {
+      main: {
+        name: 'Liturgia da Consagração',
+        desc: 'Uma vez por rodada, antes de realizar uma ação, pode pagar um Rito para aprimorá-la.\n' +
+              '\n' +
+              'RITOS:\n' +
+              '\u2694\uFE0F Arma Consagrada (5 PM) — O próximo Ataque Básico recebe +1 Dado de Dano e pode causar Dano de Luz.\n' +
+              '\u2728 Milagre Intensificado (10 PM) — Aumenta em +1 QD o Dano ou a Cura de uma Magia.\n' +
+              '\u23F3 Palavra Duradoura (10 PM) — Aumenta em +1 Rodada a duração de uma Melhoria ou Condição.\n' +
+              '\uD83D\uDCDC Dogma Irrefutável (10 PM) — Os efeitos utilizados recebem +15% de Chance de Aplicação.'
+      },
+      amp1: {
+        name: 'Liturgia Composta',
+        desc: 'Pode aplicar 2 Ritos diferentes na mesma ação, pagando ambos normalmente.'
+      },
+      amp2: {
+        name: 'Coro dos Fiéis',
+        desc: 'Um aliado afetado por Tradição Acima de Tudo pode receber um Rito aplicado pelo Hierofante, utilizando uma Ação de Interromper.\n' +
+              'O custo é pago normalmente.'
+      }
+    },
+    elo: {
+      main: {
+        name: 'Voto do Coração',
+        desc: 'Ao adquirir este Despertar Trama, pode Melhorar sua Habilidade Natural ou Habilidade de Combate.\n' +
+              'Pode adicionar um novo efeito ou aprimorar uma capacidade já existente.'
+      },
+      amp1: {
+        name: 'Coração de Batalha',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade de Combate.'
+      },
+      amp2: {
+        name: 'Coração com o Mundo',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade Natural.'
+      }
+    },
+    cognicao: {
+      main: {
+        name: 'Amparo da Comunidade',
+        desc: 'Enquanto estiver consciente e presente na Cena, todos os aliados recebem Bem-Estar.\n' +
+              'As Curas recebidas recebem +5 por Tier de Charme ou Conhecimento.\n' +
+              'A chance natural de remover Condições Negativas aumenta em +5% × Tier de Charme ou Conhecimento.'
+      },
+      amp1: {
+        name: 'Palavras de Conforto',
+        desc: 'Uma vez por rodada, quando um aliado falhar ao remover uma Condição Negativa, permite uma nova rolagem.'
+      },
+      amp2: {
+        name: 'Corpo e Espírito',
+        desc: 'Ao final de um Combate ou Descanso Curto, os aliados recebem:\n' +
+              'PV: 10 × Tier de Charme ou Conhecimento.\n' +
+              'PM: 5 × Tier de Charme ou Conhecimento.'
+      }
+    },
+    resolucao: {
+      main: {
+        name: '"Quem eu Devo ser..."',
+        level: 10,
+        desc: 'O personagem atingiu o ponto em que sua Trama finalmente começou a chegar em uma Resolução graças aos seus Vínculos.\n' +
+              'Desperta um novo poder.\n' +
+              'Pode ser adquirido após: Persona Nível 10 ou decisão narrativa do Narrador.'
+      },
+      amp1: {
+        name: '"Ó Mundo Meu..."',
+        narrativeOnly: true,
+        desc: 'A Persona atinge o ápice de sua forma.\n' +
+              'Alcança a Forma Verdadeira do Coração.\n' +
+              'Requisito: somente narrativo.'
+      },
+      amp2: {
+        name: '"... Ó Fome que me Consome"',
+        narrativeOnly: true,
+        desc: 'A Persona atinge uma forma corrompida da sua verdadeira forma.\n' +
+              'Torna-se uma Persona Suprimida da Fome.\n' +
+              'Requisito: somente narrativo.'
+      }
+    }
+  },
+
+  // ── Os Enamorados (VI) ──
+  lovers: {
+    impeto: {
+      main: {
+        name: 'Paixão Transbordante',
+        desc: 'Uma vez por rodada, antes de um aliado realizar um Ataque ou Magia Ofensiva, ele pode consumir a Vida Extra recebida por Escolhas por Amor.\n' +
+              'A cada 10 Pontos de Vida Extra consumidos, recebe +1 Dado de Dano.\n' +
+              'Limite: máximo de Dados igual ao Tier de Expressão.'
+      },
+      amp1: {
+        name: 'Corações em Sintonia',
+        desc: 'Permite utilizar a Vida Extra de outro personagem voluntário.\n' +
+              'A Vida Extra pode ser dividida entre até dois personagens.'
+      },
+      amp2: {
+        name: 'Do Amor ao Amargor',
+        desc: 'Quando uma ofensiva fortalecida por Paixão Transbordante atingir um inimigo, pode aplicar Amargor até o início da próxima rodada.'
+      }
+    },
+    autocuidado: {
+      main: {
+        name: 'Amor Recíproco',
+        desc: 'Uma vez por rodada, após utilizar Cura em si mesmo ou em um aliado, compartilha 50% da Cura com outro personagem.\n' +
+              'Ao curar um aliado, você recebe metade da Cura; ao curar a si mesmo, escolhe um aliado para receber metade.\n' +
+              'A Cura excedente vira Vida Extra.'
+      },
+      amp1: {
+        name: 'Amor sem Medidas',
+        desc: 'Caso você ou o aliado esteja sob Amor, a Cura compartilhada aumenta de 50% para 100%.'
+      },
+      amp2: {
+        name: 'Na Saúde e na Doença',
+        desc: 'Quando alguém receber Cura compartilhada por Amor Recíproco, pode remover uma Condição Negativa.'
+      }
+    },
+    artificio: {
+      main: {
+        name: 'Afeto Invertido',
+        desc: 'Uma vez por rodada, como Ação Rápida + 12 PM, pode trocar entre Amor ou Amargor.\n' +
+              '\n' +
+              '\uD83D\uDC95 Aspecto do Amor — As Curas funcionam normalmente: pode recuperar PV, criar Vida Extra e, caso o alvo esteja com PV completo, recebe PM e PV Temporário equivalente à metade da Cura.\n' +
+              '\uD83D\uDC94 Aspecto do Amargor — As Curas tornam-se Magias Ofensivas de Psy: o valor que seria curado torna-se dano. Não afeta aliados; mantém Custo, Alcance, Ação e Quantidade de alvos; necessita teste de Acerto de Magia.'
+      },
+      amp1: {
+        name: 'Remédio Amargo',
+        desc: 'Caso a Cura invertida removesse Condições Negativas, ela passa a remover Melhorias dos inimigos atingidos.'
+      },
+      amp2: {
+        name: 'Coração Dividido',
+        desc: 'Uma vez por combate, mantém Amor e Amargor simultaneamente durante 2 Rodadas.\n' +
+              'Cada alvo pode receber Cura ou Dano Psy.'
+      }
+    },
+    elo: {
+      main: {
+        name: 'Voto do Coração',
+        desc: 'Ao adquirir este Despertar Trama, pode Melhorar sua Habilidade Natural ou Habilidade de Combate.\n' +
+              'Pode adicionar um novo efeito ou aprimorar uma capacidade já existente.'
+      },
+      amp1: {
+        name: 'Coração de Batalha',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade de Combate.'
+      },
+      amp2: {
+        name: 'Coração com o Mundo',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade Natural.'
+      }
+    },
+    cognicao: {
+      main: {
+        name: 'Mediação dos Corações',
+        desc: 'Uma vez por cena, pode utilizar sua capacidade de mediação.\n' +
+              '\n' +
+              'ENTRE PESSOAS — Teste: Expressão vs Conhecimento ou Disciplina. Em caso de sucesso, descobre uma concessão que cada lado aceitaria e todos os testes para alcançar acordo recebem Vantagem.\n' +
+              'COM SOMBRAS — Quando uma Sombra estiver Derrubada, pode iniciar Negociação. Teste: Expressão vs MAG ou Conhecimento da Sombra.\n' +
+              'Concessões: 1) a Sombra abandona o combate; 2) entrega Item/Recurso; 3) responde sinceramente uma pergunta; 4) realiza uma ação razoável pelo grupo.'
+      },
+      amp1: {
+        name: 'Mesmo Corações Partidos podem se Curar',
+        desc: 'Uma vez por combate, pode negociar com uma Sombra ainda não Derrubada, utilizando uma Ação Completa.\n' +
+              'A Sombra interrompe ações hostis até o resultado.'
+      },
+      amp2: {
+        name: 'Uma Escolha sem Violência',
+        desc: 'Ao vencer uma Negociação, escolhe até 2 Concessões.'
+      }
+    },
+    resolucao: {
+      main: {
+        name: '"Quem eu Devo ser..."',
+        level: 10,
+        desc: 'O personagem atingiu o ponto em que sua Trama finalmente começou a chegar em uma Resolução graças aos seus Vínculos.\n' +
+              'Desperta um novo poder.\n' +
+              'Pode ser adquirido após: Persona Nível 10 ou decisão narrativa do Narrador.'
+      },
+      amp1: {
+        name: '"Ó Mundo Meu..."',
+        narrativeOnly: true,
+        desc: 'A Persona atinge o ápice de sua forma.\n' +
+              'Alcança a Forma Verdadeira do Coração.\n' +
+              'Requisito: somente narrativo.'
+      },
+      amp2: {
+        name: '"... Ó Fome que me Consome"',
+        narrativeOnly: true,
+        desc: 'A Persona atinge uma forma corrompida da sua verdadeira forma.\n' +
+              'Torna-se uma Persona Suprimida da Fome.\n' +
+              'Requisito: somente narrativo.'
+      }
+    }
+  },
+
   // ── A Carruagem (VII) ──
   chariot: {
     impeto: {
@@ -1607,6 +1949,572 @@ export const AWAKENING_OVERRIDES = {
         desc: 'A Persona alcança uma forma corrompida da sua verdadeira forma.\n' +
               'Torna-se uma Persona Suprimida da Fome.\n' +
               'Aquisição exclusivamente narrativa.'
+      }
+    }
+  },
+
+  // ── A Roda da Fortuna (X) ──
+  fortune: {
+    impeto: {
+      main: {
+        name: 'Dobro ou Nada',
+        desc: 'Uma vez por rodada, após acertar um Ataque ou Magia Ofensiva, antes de calcular o dano pode gastar 1 Ponto de Sorte e rolar 1d6.\n' +
+              'Resultado Par: dobra o Dano Final. Resultado Ímpar: a ofensiva não causa dano e o Narrador recebe 1 Ponto de Azar.\n' +
+              'Não pode ser usado em ataques que já sejam Acerto Crítico, nem acumula com efeitos de multiplicação de dano.'
+      },
+      amp1: {
+        name: 'Giro Extra',
+        desc: 'Após um resultado Ímpar, pode gastar outro Ponto de Sorte e rolar novamente o d6.\n' +
+              'O novo resultado deve ser mantido.'
+      },
+      amp2: {
+        name: 'Jackpot!',
+        desc: 'Caso o resultado natural seja 6, o dano é aumentado para o Triplo e você recupera o Ponto de Sorte utilizado.'
+      }
+    },
+    autocuidado: {
+      main: {
+        name: 'Cara ou Coroa',
+        desc: 'Uma vez por rodada, quando for alvo de um Ataque ou Magia Ofensiva, pode usar uma Ação de Interromper, gastar 1 Ponto de Sorte e rolar 1d6.\n' +
+              'Par: esquiva automática. Ímpar: o ataque acerta automaticamente e é considerado Acerto Crítico.'
+      },
+      amp1: {
+        name: 'Passando por um Triz',
+        desc: 'Após esquivar, pode se mover até metade do Movimento sem provocar Reações.'
+      },
+      amp2: {
+        name: 'A Roda Gira Outra Vez',
+        desc: 'Uma vez por combate, após falhar em Cara ou Coroa, pode repetir o d6 sem gastar Ponto de Sorte.'
+      }
+    },
+    artificio: {
+      main: {
+        name: 'A Sorte Está Lançada',
+        desc: 'Uma vez por combate, com uma Ação Padrão + 10 PM, escolhe um inimigo e cria o estado Jogo do Destino por 3 Rodadas.\n' +
+              'Todo dano entre os dois participantes, após aplicar Afinidades, RD e Modificadores, vai para o Prêmio Acumulado.\n' +
+              'Ao final da rodada, ambos rolam 1d6. O usuário pode gastar até 2 Pontos de Sorte (+1 na rolagem cada) e o Narrador até 2 Pontos de Azar (+1 cada).\n' +
+              'O maior resultado recebe todo o Prêmio Acumulado como Dano Onipotente. Em caso de empate, o Prêmio continua acumulado.'
+      },
+      amp1: {
+        name: 'Dados Marcados',
+        desc: 'Uma vez durante o Jogo do Destino, após ver os resultados, pode gastar 1 Ponto de Sorte para obrigar uma nova rolagem.'
+      },
+      amp2: {
+        name: 'Aposta Máxima',
+        desc: 'Antes da rolagem, dobra todo o Prêmio Acumulado.'
+      }
+    },
+    elo: {
+      main: {
+        name: 'Voto do Coração',
+        desc: 'Ao adquirir este Despertar Trama, pode Melhorar sua Habilidade Natural ou Habilidade de Combate.\n' +
+              'Pode adicionar um novo efeito ou aprimorar uma capacidade já existente.'
+      },
+      amp1: {
+        name: 'Coração de Batalha',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade de Combate.'
+      },
+      amp2: {
+        name: 'Coração com o Mundo',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade Natural.'
+      }
+    },
+    cognicao: {
+      main: {
+        name: 'A Fortuna Está nos Detalhes',
+        desc: 'Ao final de uma Cena no Mundo Real, recupera metade dos Pontos de Sorte utilizados naquela cena (arredondando sempre para cima).\n' +
+              'Limite máximo: 5 Pontos de Sorte.\n' +
+              'Tabela: 1 gasto → recupera 1; 2 gastos → 1; 3 gastos → 2; 4 gastos → 2; 5 gastos → 3.'
+      },
+      amp1: {
+        name: 'Juros da Fortuna',
+        desc: 'Caso 3 ou mais Pontos de Sorte sejam utilizados, recupera +1 Ponto adicional.'
+      },
+      amp2: {
+        name: 'Coincidência Conveniente',
+        desc: 'Uma vez por cena, gasta 1 Ponto de Sorte para criar uma pequena coincidência favorável.\n' +
+              'Exemplos: encontrar um objeto comum, chegar no momento certo, encontrar alguém por acaso ou evitar um contratempo simples.\n' +
+              'Não pode: resolver uma investigação inteira, criar itens raros ou alterar eventos importantes.'
+      }
+    },
+    resolucao: {
+      main: {
+        name: '"Quem eu Devo ser..."',
+        level: 10,
+        desc: 'O personagem atingiu o ponto em que sua Trama finalmente começou a chegar em uma Resolução graças aos seus Vínculos.\n' +
+              'Desperta um novo poder.\n' +
+              'Pode ser adquirido após: Persona Nível 10 ou decisão narrativa do Narrador.'
+      },
+      amp1: {
+        name: '"Ó Mundo Meu..."',
+        narrativeOnly: true,
+        desc: 'A Persona atinge o ápice de sua forma.\n' +
+              'Alcança a Forma Verdadeira do Coração.\n' +
+              'Requisito: somente narrativo.'
+      },
+      amp2: {
+        name: '"... Ó Fome que me Consome"',
+        narrativeOnly: true,
+        desc: 'A Persona atinge uma forma corrompida da sua verdadeira forma.\n' +
+              'Torna-se uma Persona Suprimida da Fome.\n' +
+              'Requisito: somente narrativo.'
+      }
+    }
+  },
+
+  // ── O Diabo (XV) ──
+  devil: {
+    impeto: {
+      main: {
+        name: 'As Correntes da Minha Obsessão',
+        desc: 'Uma vez por rodada, quando um inimigo afetado por Aprisionamento utilizar uma Ação ou Reação, recebe 10 × Tier de Charme como Dano Fixo de Trevas.\n' +
+              'Não necessita teste de acerto e não causa crítico.\n' +
+              'Também ativa quando o alvo tenta escapar do Aprisionamento.'
+      },
+      amp1: {
+        name: 'Pânico do Cativeiro',
+        desc: 'Após sofrer o dano de As Correntes da Minha Obsessão, o inimigo possui 40% de chance de receber Medo por 1d3 Rodadas.'
+      },
+      amp2: {
+        name: 'Execução Acorrentada',
+        desc: 'Quando o Aprisionamento for consumido para criar um Acerto Automático contra um alvo com Medo, o ataque recebe +2 Dados de Dano.'
+      }
+    },
+    autocuidado: {
+      main: {
+        name: 'Banquete dos Condenados',
+        desc: 'Uma vez por rodada, quando um inimigo sob Aprisionamento sofrer dano, recupera 10 × Tier de Charme em PV.'
+      },
+      amp1: {
+        name: 'Nunca é o Bastante',
+        desc: 'A Cura excedente vira Vida Temporária.\n' +
+              'Limite: 10 × Tier de Charme.'
+      },
+      amp2: {
+        name: 'Vício Insaciável',
+        desc: 'Caso o inimigo possua uma Condição Mental Negativa, recupera também 5 × Tier de Charme em PM.'
+      }
+    },
+    artificio: {
+      main: {
+        name: 'Contrato de Letra Miúda',
+        desc: 'Uma vez por combate por alvo, com uma Ação Padrão, pode oferecer um Contrato a um aliado voluntário ou a um inimigo sob Aprisionamento.\n' +
+              '\n' +
+              'TENTAÇÕES (duram 2 Rodadas):\n' +
+              '\u2022 Poder — +5 de Acerto e +2 Dados de Dano em Ofensivas.\n' +
+              '\u2022 Liberdade — remove todas as Condições Negativas e concede Imunidade contra elas até o fim do combate.\n' +
+              '\u2022 Sobrevida — recupera 50% do PV Máximo e 25% do PM Máximo.\n' +
+              '\n' +
+              'PAGAMENTOS (após 2 Rodadas, escolha um):\n' +
+              '\u2022 Sangue — o alvo perde 25% do PV Máximo como Dano Onipotente.\n' +
+              '\u2022 Alma — o alvo perde 25% do PM Máximo.\n' +
+              '\u2022 Serviço — você controla imediatamente 1 Ação Padrão do alvo.'
+      },
+      amp1: {
+        name: 'Cláusula Oculta',
+        desc: 'Pode escolher 2 Pagamentos diferentes.'
+      },
+      amp2: {
+        name: 'Juros Infernais',
+        desc: 'Recebe um benefício conforme o Pagamento cobrado:\n' +
+              '\u2022 Sangue — recupera metade do dano causado.\n' +
+              '\u2022 Alma — recupera metade do PM perdido pelo alvo.\n' +
+              '\u2022 Serviço — recebe uma Ação de Interromper Bônus.'
+      }
+    },
+    elo: {
+      main: {
+        name: 'Voto do Coração',
+        desc: 'Ao adquirir este Despertar Trama, pode Melhorar sua Habilidade Natural ou Habilidade de Combate.\n' +
+              'Pode adicionar um novo efeito ou aprimorar uma capacidade já existente.'
+      },
+      amp1: {
+        name: 'Coração de Batalha',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade de Combate.'
+      },
+      amp2: {
+        name: 'Coração com o Mundo',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade Natural.'
+      }
+    },
+    cognicao: {
+      main: {
+        name: 'Todo Desejo Tem um Preço',
+        desc: 'Uma vez por cena, após conversar ou observar um personagem por 1 minuto, realize um teste de Charme vs Conhecimento ou Disciplina.\n' +
+              'Em caso de sucesso, descobre o desejo imediato do alvo, algo que ele teme perder e um benefício que valoriza.\n' +
+              'Pode solicitar Concessões: informação; acesso a local/pessoa/recurso; serviço razoável; ou interrupção temporária de hostilidade.\n' +
+              'Não é controle mental e não força ações contra os valores pessoais do alvo.'
+      },
+      amp1: {
+        name: 'Letras Miúdas',
+        desc: 'Após cumprir sua parte, cria um Favor.\n' +
+              'Durante 30 dias pode cobrar ajuda adicional razoável.'
+      },
+      amp2: {
+        name: 'Tentação Universal',
+        desc: 'Pode utilizar Todo Desejo Tem um Preço contra Sombras capazes de comunicação, mesmo que não estejam Derrubadas.\n' +
+              'Pode conseguir: um Item, uma Informação ou o abandono do combate.'
+      }
+    },
+    resolucao: {
+      main: {
+        name: '"Quem eu Devo ser..."',
+        level: 10,
+        desc: 'O personagem atingiu o ponto em que sua Trama finalmente começou a chegar em uma Resolução graças aos seus Vínculos.\n' +
+              'Desperta um novo poder.\n' +
+              'Pode ser adquirido após: Persona Nível 10 ou decisão narrativa do Narrador.'
+      },
+      amp1: {
+        name: '"Ó Mundo Meu..."',
+        narrativeOnly: true,
+        desc: 'A Persona atinge o ápice de sua forma.\n' +
+              'Alcança a Forma Verdadeira do Coração.\n' +
+              'Requisito: somente narrativo.'
+      },
+      amp2: {
+        name: '"... Ó Fome que me Consome"',
+        narrativeOnly: true,
+        desc: 'A Persona atinge uma forma corrompida da sua verdadeira forma.\n' +
+              'Torna-se uma Persona Suprimida da Fome.\n' +
+              'Requisito: somente narrativo.'
+      }
+    }
+  },
+
+  // ── A Torre (XVI) ──
+  tower: {
+    impeto: {
+      main: {
+        name: 'Queda Inevitável',
+        desc: 'Uma vez por rodada, ao causar dano em um inimigo afetado por Mudança Súbita, pode Desmoronar um Buff invertido.\n' +
+              'Remove o efeito invertido e recebe Tier de Conhecimento em Dados de Dano Bônus Onipotente.\n' +
+              'Não conta como dano crítico. Somente Buffs originalmente aplicados podem ser Desmoronados.'
+      },
+      amp1: {
+        name: 'Efeito Dominó',
+        desc: 'Após Desmoronar um efeito, escolha outro inimigo.\n' +
+              'Ele possui 50% de chance de receber o mesmo Debuff por 1 Rodada.'
+      },
+      amp2: {
+        name: 'Tudo Vem Abaixo',
+        desc: 'Após Desmoronar, se o alvo possuir 2 ou mais Efeitos Negativos, possui 50% de chance de ficar Derrubado.\n' +
+              'Com 4 ou mais, a aplicação é automática.'
+      }
+    },
+    autocuidado: {
+      main: {
+        name: 'Reconstrução Súbita',
+        desc: 'Uma vez por rodada, quando um Buff, Debuff, Melhoria ou Penalidade que esteja afetando você for removido, dissipado ou invertido, recebe 10 × Tier de Conhecimento em Vida Temporária.\n' +
+              'Não acumula, pode renovar o valor e desaparece ao final do combate.'
+      },
+      amp1: {
+        name: 'Estrutura Reforçada',
+        desc: 'Enquanto possuir Vida Temporária, todas as Afinidades Elementais aumentam em 1 Categoria.\n' +
+              'Máximo: Anula.'
+      },
+      amp2: {
+        name: 'Erguer-se dos Escombros',
+        desc: 'No início da rodada, pode consumir toda a Vida Temporária, recuperando esse valor como PV e removendo um Debuff ou Penalidade.'
+      }
+    },
+    artificio: {
+      main: {
+        name: 'Demolição Controlada',
+        desc: 'Adiciona uma nova utilização para Desastre Iminente, criando Ruptura Estrutural.\n' +
+              '\n' +
+              'CONTRA INIMIGOS — Remove Buffs e Efeitos de Melhoria (quantidade igual ao Tier de Conhecimento). Cada efeito removido causa +25 de Dano Onipotente.\n' +
+              'CONTRA ALIADOS — Remove Debuffs e Penalidades. Cada efeito removido permite escolher entre recuperar 25 PV ou 15 PM.'
+      },
+      amp1: {
+        name: 'Demolição Total',
+        desc: 'Os Buffs destruídos não podem ser reaplicados até o final da próxima rodada.\n' +
+              'Caso destrua 3 efeitos, o alvo fica Derrubado automaticamente.'
+      },
+      amp2: {
+        name: 'Reconstrução Planejada',
+        desc: 'Após usar Ruptura Estrutural em um aliado, ele recebe Vantagem no próximo teste ou reação e Imunidade ao primeiro Debuff recebido.'
+      }
+    },
+    elo: {
+      main: {
+        name: 'Voto do Coração',
+        desc: 'Ao adquirir este Despertar Trama, pode Melhorar sua Habilidade Natural ou Habilidade de Combate.\n' +
+              'Pode adicionar um novo efeito ou aprimorar uma capacidade já existente.'
+      },
+      amp1: {
+        name: 'Coração de Batalha',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade de Combate.'
+      },
+      amp2: {
+        name: 'Coração com o Mundo',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade Natural.'
+      }
+    },
+    cognicao: {
+      main: {
+        name: 'A Culpa Pesa em Seu Coração',
+        desc: 'Uma vez por cena, escolhe um alvo capaz de compreender consequências e realiza um teste de Conhecimento vs Disciplina.\n' +
+              'Em caso de sucesso, aplica Peso da Culpa por 2 Rodadas ou pelo restante da Cena Social.\n' +
+              '\n' +
+              'PESO DA CULPA — Desvantagem em Mentir, Intimidar, Justificar ações e Prejudicar intencionalmente. Antes da primeira ação hostil, possui 25% de chance de Hesitar (a ação é perdida). Também revela uma emoção, uma memória ou um fragmento relacionado à culpa.'
+      },
+      amp1: {
+        name: 'Confissão Tardia',
+        desc: 'Recebe Vantagem ao usar Caindo em Desespero contra alguém com Peso da Culpa.\n' +
+              'Em caso de sucesso, o alvo deve explicar completamente uma ação passada.'
+      },
+      amp2: {
+        name: 'O Passado se Repete',
+        desc: 'Uma vez por alvo por cena, caso alguém com Peso da Culpa prejudique outra pessoa, recebe Desespero até o final da próxima rodada.\n' +
+              'Depois, o Peso da Culpa retorna caso ainda possua duração.'
+      }
+    },
+    resolucao: {
+      main: {
+        name: '"Quem eu Devo ser..."',
+        level: 10,
+        desc: 'O personagem atingiu o ponto em que sua Trama finalmente começou a chegar em uma Resolução graças aos seus Vínculos.\n' +
+              'Desperta um novo poder.\n' +
+              'Pode ser adquirido após: Persona Nível 10 ou decisão narrativa do Narrador.'
+      },
+      amp1: {
+        name: '"Ó Mundo Meu..."',
+        narrativeOnly: true,
+        desc: 'A Persona atinge o ápice de sua forma.\n' +
+              'Alcança a Forma Verdadeira do Coração.\n' +
+              'Requisito: somente narrativo.'
+      },
+      amp2: {
+        name: '"... Ó Fome que me Consome"',
+        narrativeOnly: true,
+        desc: 'A Persona atinge uma forma corrompida da sua verdadeira forma.\n' +
+              'Torna-se uma Persona Suprimida da Fome.\n' +
+              'Requisito: somente narrativo.'
+      }
+    }
+  },
+
+  // ── O Julgamento (XX) — Arcana Especial ──
+  judgement: {
+    impeto: {
+      main: {
+        name: 'A Verdadeira Justiça, é Aquela que Pune!',
+        desc: 'Custo: 30 PM.\n' +
+              'Permite adicionar uma Fraqueza em um alvo. Também pode alterar suas próprias Reações Elementais, aumentando uma categoria (limite: Reflete).\n' +
+              'Duração: até o alvo utilizar uma habilidade especial ou magia que remova todos os Debuffs.'
+      },
+      amp1: {
+        name: 'Coração Pesado...',
+        desc: 'Pode adicionar Fraquezas em uma quantidade de inimigos igual ao Tier de Disciplina.'
+      },
+      amp2: {
+        name: 'Pena de Morte!',
+        desc: 'Quando um alvo receber Morte Instantânea de uma de suas Fraquezas, role 1d100.\n' +
+              'Acima de 50%: sobrevive e perde a Fraqueza aplicada por A Verdadeira Justiça. Abaixo de 50%: Morte Instantânea.\n' +
+              'Exceção — Chefes, Lordes e alvos narrativos importantes não recebem Morte Instantânea; recebem MAGd10 de Dano Onipotente.'
+      }
+    },
+    autocuidado: {
+      main: {
+        name: 'Prenúncio d\'A Última Trombeta',
+        desc: 'Recebe Anular Luz e Anular Trevas nas Reações Elementais.\n' +
+              'Uma vez por combate, quando chegar a 0 PV, pode usar uma Ação de Interromper para permanecer com 1 PV, remover todas as Condições Negativas e receber 15 × Tier de Disciplina em Vida Temporária.\n' +
+              'Não funciona para perda voluntária de PV. A Vida Temporária desaparece no final do combate.'
+      },
+      amp1: {
+        name: 'Levanta-te e Caminha!',
+        desc: 'Ao ativar, recupera imediatamente 25% do PV Máximo e mantém a Vida Temporária.'
+      },
+      amp2: {
+        name: 'Nenhuma Alma Será Deixada para Trás',
+        desc: 'Pode utilizar em um aliado reduzido a 0 PV. O aliado recebe todos os efeitos.\n' +
+              'Consome o uso da habilidade no combate.'
+      }
+    },
+    artificio: {
+      main: {
+        name: 'As Vozes do Rio de Almas',
+        desc: 'Uma vez por combate, como Ação de Interromper (Custo: 20 PM), escolhe um aliado e cria um Eco de Arcana até o final do combate.\n' +
+              'Permite acessar uma Habilidade de Combate da Arcana do aliado, usando seus próprios atributos, recursos e custos.\n' +
+              'Não pode copiar: Características de Arcana, aumento permanente de atributos, PV/PM máximos, Elo, Resolução ou a própria habilidade.'
+      },
+      amp1: {
+        name: 'Um Coro de Vinte Vozes',
+        desc: 'Permite escolher dois aliados e criar dois Ecos.\n' +
+              'Somente um Eco fica ativo por vez; pode alternar como Ação Rápida.'
+      },
+      amp2: {
+        name: 'O Legado dos Despertos',
+        desc: 'Pode copiar uma Habilidade Principal de Despertar Trama do aliado.\n' +
+              'Não copia: Amplificações, Artifício, Elo ou Resolução.'
+      }
+    },
+    elo: {
+      main: {
+        name: 'Voto do Coração',
+        desc: 'Ao adquirir este Despertar Trama, pode Melhorar sua Habilidade Natural ou Habilidade de Combate.\n' +
+              'Pode adicionar um novo efeito ou aprimorar uma capacidade já existente.'
+      },
+      amp1: {
+        name: 'Coração de Batalha',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade de Combate.'
+      },
+      amp2: {
+        name: 'Coração com o Mundo',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade Natural.'
+      }
+    },
+    cognicao: {
+      main: {
+        name: 'Nenhuma Alma Antes da Hora',
+        desc: 'Enquanto estiver consciente, os aliados não podem ser alvo de Morte Instantânea.\n' +
+              'Caso seja um efeito de alvo único, ele é redirecionado para você e anulado pela sua imunidade.\n' +
+              'Caso seja em área, somente a Morte Instantânea é anulada; os demais efeitos continuam.'
+      },
+      amp1: {
+        name: 'O Último Dia Pode Esperar',
+        desc: 'Impede efeitos que reduziriam automaticamente um aliado a 0 PV (exemplo: Desespero).\n' +
+              'Uma vez por aliado, ele permanece com 1 PV e remove a condição responsável.'
+      },
+      amp2: {
+        name: 'O Carrasco Também Será Julgado!',
+        desc: 'Quando um inimigo tentar causar Morte Instantânea, ele recebe Fraqueza ao elemento utilizado até o final da próxima rodada.\n' +
+              'Pode usar uma Ação de Interromper para conjurar uma Magia de Luz ou Trevas contra ele.\n' +
+              'A Fraqueza conta como aplicada por A Verdadeira Justiça, é Aquela que Pune!'
+      }
+    },
+    resolucao: {
+      main: {
+        name: '"Quem eu Devo ser..."',
+        level: 10,
+        desc: 'O personagem atingiu o ponto em que sua Trama finalmente começou a chegar em uma Resolução graças aos seus Vínculos.\n' +
+              'Desperta um novo poder.\n' +
+              'Pode ser adquirido após: Persona Nível 10 ou decisão narrativa do Narrador.'
+      },
+      amp1: {
+        name: '"Ó Mundo Meu..."',
+        narrativeOnly: true,
+        desc: 'A Persona atinge o ápice de sua forma.\n' +
+              'Alcança a Forma Verdadeira do Coração.\n' +
+              'Requisito: somente narrativo.'
+      },
+      amp2: {
+        name: '"... Ó Fome que me Consome"',
+        narrativeOnly: true,
+        desc: 'A Persona atinge uma forma corrompida da sua verdadeira forma.\n' +
+              'Torna-se uma Persona Suprimida da Fome.\n' +
+              'Requisito: somente narrativo.'
+      }
+    }
+  },
+
+  // ── O Enforcado (XII) ──
+  'hanged-man': {
+    impeto: {
+      main: {
+        name: 'Milagre pelo Martírio',
+        desc: 'Uma vez por rodada, ao conjurar uma Magia Ofensiva fora do Deck através de Auto Sacrifício, pode aumentar o custo em +50%.\n' +
+              'O custo adicional torna-se Dano Incurável.\n' +
+              'Benefícios: +1 QD de dano (limite: D12) e +15% de Chance de Aplicação.'
+      },
+      amp1: {
+        name: 'Aperte Mais a Corda',
+        desc: 'Pode aumentar o custo em 100%.\n' +
+              'Bônus: +2 QD e +25% de Chance de Aplicação.'
+      },
+      amp2: {
+        name: 'Toda Dádiva Tem seu Preço',
+        desc: 'Permite usar Milagre pelo Martírio em Magias do próprio Deck.\n' +
+              'O custo normal é pago em PM e o custo adicional vira Dano Incurável.'
+      }
+    },
+    autocuidado: {
+      main: {
+        name: 'Entre o Corpo e a Alma',
+        desc: 'Uma vez por rodada, quando receber Dano Incurável causado pelas próprias habilidades, pode usar uma Ação de Interromper e escolher:\n' +
+              '\u2022 Sacrifício Espiritual — converte até 50% do Dano Incurável em perda de PM (proporção 1 PM = 1 Dano).\n' +
+              '\u2022 Dor Suspensa — adia todo o Dano Incurável para o início da próxima rodada.'
+      },
+      amp1: {
+        name: 'A Alma Assume o Fardo',
+        desc: 'Sacrifício Espiritual pode converter 100% do Dano Incurável.\n' +
+              'Caso não tenha PM suficiente, o valor restante vira Dano Incurável.'
+      },
+      amp2: {
+        name: 'O Tempo na Corda',
+        desc: 'Dor Suspensa divide o dano em duas parcelas, aplicadas nas próximas duas rodadas.'
+      }
+    },
+    artificio: {
+      main: {
+        name: 'Cabo de Guerra com a Morte',
+        desc: 'Uma vez por combate, ao usar Com a Corda no Pescoço, pode escolher uma Sombra e alterar a conexão: os custos de magia deixam de ser transferidos.\n' +
+              'Novo efeito: todo dano direto entre os dois vira Dano Onipotente e, após o cálculo, também reduz o PV Máximo (ex.: 200 PV Máx. recebendo 40 de dano → novo PV Máx. 160).\n' +
+              'Durante a conexão, ambos recebem Anular Elemento. Termina quando alguém chega a 0 PV, morre ou fica Incapacitado.'
+      },
+      amp1: {
+        name: 'A Corda se Aperta',
+        desc: 'No início da rodada, recebe Cura Persistente, removendo VIT × 5 de Dano Incurável.'
+      },
+      amp2: {
+        name: 'Ao Vencedor, a Vida',
+        desc: 'Caso vença, recupera o PV Máximo perdido.\n' +
+              'Além disso, recupera metade da redução sofrida e recebe Nível de Persona como Vida Permanente.'
+      }
+    },
+    elo: {
+      main: {
+        name: 'Voto do Coração',
+        desc: 'Ao adquirir este Despertar Trama, pode Melhorar sua Habilidade Natural ou Habilidade de Combate.\n' +
+              'Pode adicionar um novo efeito ou aprimorar uma capacidade já existente.'
+      },
+      amp1: {
+        name: 'Coração de Batalha',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade de Combate.'
+      },
+      amp2: {
+        name: 'Coração com o Mundo',
+        desc: 'Recebe uma Melhoria Adicional para sua Habilidade Natural.'
+      }
+    },
+    cognicao: {
+      main: {
+        name: 'Uma Perspectiva Emprestada',
+        desc: 'Durante um Descanso Curto ou antes do Combate, pode escolher uma quantidade de aliados igual ao Tier de Empatia. Cada aliado empresta uma Magia do Deck.\n' +
+              'A Magia entra temporariamente no seu Deck, usa PM normalmente e não causa Dano Incurável.\n' +
+              'Não pode emprestar: Magias Únicas, exclusivas de Persona, Transformações ou capacidades intransferíveis.'
+      },
+      amp1: {
+        name: 'O Mesmo Mundo por Outros Olhos',
+        desc: 'O dono da Magia continua podendo utilizá-la.'
+      },
+      amp2: {
+        name: 'Carregando o Fardo Juntos',
+        desc: 'Ao conjurar uma Magia emprestada, pode dividir o custo em PM entre você e o dono.\n' +
+              'Requisitos: o aliado deve estar consciente, ser perceptível e aceitar pagar.'
+      }
+    },
+    resolucao: {
+      main: {
+        name: '"Quem eu Devo ser..."',
+        level: 10,
+        desc: 'O personagem atingiu o ponto em que sua Trama finalmente começou a chegar em uma Resolução graças aos seus Vínculos.\n' +
+              'Desperta um novo poder.\n' +
+              'Pode ser adquirido após: Persona Nível 10 ou decisão narrativa do Narrador.'
+      },
+      amp1: {
+        name: '"Ó Mundo Meu..."',
+        narrativeOnly: true,
+        desc: 'A Persona atinge o ápice de sua forma.\n' +
+              'Alcança a Forma Verdadeira do Coração.\n' +
+              'Requisito: somente narrativo.'
+      },
+      amp2: {
+        name: '"... Ó Fome que me Consome"',
+        narrativeOnly: true,
+        desc: 'A Persona atinge uma forma corrompida da sua verdadeira forma.\n' +
+              'Torna-se uma Persona Suprimida da Fome.\n' +
+              'Requisito: somente narrativo.'
       }
     }
   }
