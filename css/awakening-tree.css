@@ -23,7 +23,7 @@
   border-left: 4px solid var(--accent);
 }
 .awakening-arcana-name {
-  font-family: "Barlow Condensed", Inter, sans-serif;
+  font-family: 'Barlow Condensed', Inter, sans-serif;
   font-weight: 900;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -170,7 +170,7 @@
 }
 .awakening-panel-name {
   margin: 0;
-  font-family: "Barlow Condensed", Inter, sans-serif;
+  font-family: 'Barlow Condensed', Inter, sans-serif;
   font-weight: 900;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -236,7 +236,7 @@
   background: color-mix(in srgb, var(--stroke) 45%, transparent);
 }
 .awakening-upgrade-name {
-  font-family: "Barlow Condensed", Inter, sans-serif;
+  font-family: 'Barlow Condensed', Inter, sans-serif;
   font-weight: 800;
   font-size: 16px;
   color: var(--ink);

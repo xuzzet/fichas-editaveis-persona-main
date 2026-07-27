@@ -6,7 +6,7 @@
    Ao publicar mudanças, incremente CACHE_VERSION.
    ============================================================= */
 
-const CACHE_VERSION = 'persona-ficha-v16';
+const CACHE_VERSION = 'persona-ficha-v26';
 
 // Assets essenciais para a app abrir offline. Os CSS/JS são
 // carregados sob demanda e cacheados dinamicamente no fetch.

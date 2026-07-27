@@ -54,13 +54,6 @@
     font-size: 9.5px;
     letter-spacing: 0.1em;
   }
-  .awakening-card-symbol {
-    width: 40px;
-    height: 40px;
-  }
-  .awakening-card-roman {
-    font-size: 16px;
-  }
   .awakening-card-arcana {
     font-size: 8.5px;
   }
@@ -94,13 +87,6 @@
   .awakening-deck .awakening-card {
     width: clamp(68px, 23vw, 84px);
     margin: 0 -16px;
-  }
-  .awakening-card-symbol {
-    width: 36px;
-    height: 36px;
-  }
-  .awakening-card-roman {
-    font-size: 14px;
   }
 }
 

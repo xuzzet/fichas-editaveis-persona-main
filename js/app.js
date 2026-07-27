@@ -1,333 +1,44 @@
 // =============================================
 // ENTRY POINT — JS/APP.JS
-// Importa e inicializa todos os módulos
+// Bootstrap: importa modulos, conecta eventos e inicializa a app.
+// Estado/perfis/retrato foram extraidos para ./app/.
 // =============================================
 
-import { state, FIELD_IDS, NUMBER_FIELDS, RECALC_FIELDS, _rendering, setRendering } from './state.js';
+import { state, FIELD_IDS, NUMBER_FIELDS, RECALC_FIELDS, _rendering } from './state.js';
 import { SOCIAL_IDS } from './constants.js';
 import { recalcState, validateState } from './calculations.js';
 import {
-  ids, render, renderFields, renderBadges, renderAffinities, renderPortrait,
-  renderBackground, buildAffinityTable, showToast, buildAutoSummaryPanel,
-  renderAutoSummary, initArcanaSelects, autoResizeTextarea, initAutoResizeTextareas,
-  initLoreCollapse
+  ids, render, buildAffinityTable, showToast, buildAutoSummaryPanel,
+  initArcanaSelects, autoResizeTextarea, initAutoResizeTextareas, initLoreCollapse
 } from './ui.js';
-import { renderSocial, buildSocialUI } from './social-skills.js';
+import { buildSocialUI } from './social-skills.js';
 import {
-  renderTables, initInventoryButtons,
-  addInventoryItem, addSpell, addLink, addClue, addCtt,
+  initInventoryButtons, addInventoryItem, addSpell, addLink, addClue, addCtt,
   syncEquipToState, syncSpellsToState, syncLinksToState,
-  syncCluesToState, syncContactsToState, renderInventoryStatus,
-  initLinkFilters, renderLinkSummary
+  syncCluesToState, syncContactsToState, renderInventoryStatus, initLinkFilters
 } from './inventory.js';
-import { buildFeitosUI, renderFeitos } from './feats.js';
-import { buildConditionsUI, renderConditions } from './conditions.js';
-import { buildModifiersUI, renderModifiers, renderModSummary } from './modifiers.js';
-import { snapshot, applySnapshot, setRenderAll } from './storage.js';
-import {
-  loadProfileStore, getActiveProfile, saveActiveSnapshot,
-  createProfile, duplicateProfile, deleteProfile, renameProfile,
-  setProfileAvatar, switchProfile, getActiveId, isFull
-} from './profiles.js';
+import { buildFeitosUI } from './feats.js';
+import { buildConditionsUI } from './conditions.js';
+import { buildModifiersUI } from './modifiers.js';
+import { snapshot, applySnapshot } from './storage.js';
+import { loadProfileStore, getActiveProfile, saveActiveSnapshot } from './profiles.js';
 import { initProfilesUI, refreshProfilesUI } from './profiles-ui.js';
 import { initTheme } from './themes.js';
 import { initAccessibility } from './accessibility.js';
 import { initSettings } from './settings.js';
 import { initTabs } from './tabs.js';
 import { initImportExport } from './import-export.js';
-import { saveSafetyBackup, getSafetyBackup } from './backup.js';
+import { getSafetyBackup } from './backup.js';
 import { initHistory, recordHistory, undo, redo } from './history.js';
-import { initDiceSystem, renderDiceHistory, rollDamage, rollQuick } from './dice.js';
-import { initAwakening, renderAwakening } from './awakening.js';
+import { initDiceSystem, rollDamage, rollQuick } from './dice.js';
+import { initAwakening } from './awakening.js';
+import { setState, getState } from './app/core.js';
+import {
+  resetFicha, switchToProfile, createNewProfile, duplicateExistingProfile,
+  deleteExistingProfile, renameExistingProfile, changeProfileAvatar
+} from './app/profile-flows.js';
+import { initPortrait } from './app/portrait.js';
 
-// =============================================
-// RENDERIZAÇÃO COMPLETA
-// =============================================
-
-export function renderAll() {
-  setRendering(true);
-  try {
-    renderFields();
-    renderBadges();
-    renderSocial();
-    renderTables();
-    renderFeitos();
-    renderConditions();
-    renderModifiers();
-    renderAffinities();
-    renderPortrait();
-    renderBackground();
-    renderModSummary();
-    buildAutoSummaryPanel();
-    renderAutoSummary();
-    renderDiceHistory();
-    renderAwakening();
-    initAutoResizeTextareas();
-  } finally {
-    setRendering(false);
-  }
-}
-
-// Injetar renderAll em storage.js (evita dependência circular)
-setRenderAll(renderAll);
-
-// =============================================
-// setState / getState
-// =============================================
-
-export function setState(partial, options) {
-  if (!partial || typeof partial !== 'object') return;
-  options = options || {};
-  var needsRecalc = false;
-  Object.keys(partial).forEach(function(key) {
-    if (key.charAt(0) === '_') return;
-    state[key] = NUMBER_FIELDS.has(key) ? (Number(partial[key]) || 0) : partial[key];
-    if (RECALC_FIELDS.has(key)) needsRecalc = true;
-  });
-  if (needsRecalc && !options.skipRecalc) recalcState();
-  validateState();
-  if (!options.skipRender) render(options.renderOptions || {});
-  if (!options.skipSave && window.debouncedAutoSave) window.debouncedAutoSave();
-}
-
-export function getState() {
-  var copy = {};
-  Object.keys(state).forEach(function(k) {
-    if (k.charAt(0) === '_') return;
-    var v = state[k];
-    copy[k] = (v && typeof v === 'object') ? JSON.parse(JSON.stringify(v)) : v;
-  });
-  return copy;
-}
-
-// Recalcula atributos finais + valida + renderiza.
-// Exposto para módulos que alteram fontes de bônus fora do fluxo de setState
-// (ex.: bônus automáticos de equipamentos no inventário).
-window.recalcAndRender = function() {
-  recalcState();
-  validateState();
-  render();
-};
-
-// =============================================
-// RESET / ESTADO PADRÃO DA FICHA
-// =============================================
-
-// Zera o `state` para os valores padrão de uma ficha nova.
-// NÃO mexe em localStorage nem na interface — apenas nos dados.
-function resetStateToDefaults() {
-  FIELD_IDS.forEach(function(key) {
-    state[key] = NUMBER_FIELDS.has(key) ? (RECALC_FIELDS.has(key) ? 1 : 0) : '';
-  });
-  state.CharLvl = 1; state.PerLvl = 1;
-  state.spells = []; state.equip = []; state.links = [];
-  state.clues = []; state.contacts = [];
-  state.feitos = []; state.conditions = []; state.modifiers = [];
-  state.feitoConfig = {};
-  state.affinities = {};
-  state.portrait = { src: '' };
-  state.background = {};
-  state.rollHistory = [];
-  state.personaAwakenings = {};
-
-  recalcState();
-  state.CurrentHP = state.MaxHP;
-  state.CurrentPM = state.EnergyMax;
-  validateState();
-}
-
-// Reconstrói a tabela de afinidades (selects) e re-renderiza tudo.
-function rebuildSheetUI() {
-  var afGrid = document.getElementById('af-grid');
-  if (afGrid) afGrid.innerHTML = '';
-  var afSum = document.getElementById('af-summary');
-  if (afSum) afSum.innerHTML = '';
-  buildAffinityTable();
-  renderAll();
-}
-
-function resetFicha() {
-  if (!confirm('Tem certeza que deseja resetar a ficha?\nTodos os dados serão perdidos permanentemente.')) return;
-
-  // Backup de segurança antes de destruir os dados (restaurável depois).
-  try { saveSafetyBackup(snapshot()); } catch (e) {}
-
-  resetStateToDefaults();
-  rebuildSheetUI();
-
-  var testsOut = document.getElementById('tests-out');
-  if (testsOut) testsOut.textContent = 'Clique em Testes para rodar as verificações.';
-
-  // Persiste a ficha resetada no perfil ativo (não remove outros perfis).
-  try { saveActiveSnapshot(snapshot()); } catch (e) {}
-  refreshProfilesUI();
-  showToast('Ficha resetada', 'info');
-}
-
-// =============================================
-// FLUXOS DE PERFIL
-// =============================================
-
-// Troca de perfil: salva o atual, carrega o alvo, re-renderiza.
-function switchToProfile(id) {
-  if (id === getActiveId()) return true;
-  try {
-    saveActiveSnapshot(snapshot());
-    var r = switchProfile(id);
-    if (!r || !r.ok) return false;
-    applySnapshot(r.sheetData || {});
-    return true;
-  } catch (e) {
-    console.error('[Perfil] Erro ao trocar de perfil:', e);
-    showToast('Erro ao trocar de perfil', 'error');
-    return false;
-  }
-}
-
-// Cria um novo perfil com ficha limpa (não copia o personagem ativo).
-function createNewProfile(name, avatarDataUrl) {
-  if (isFull()) return { ok: false, error: 'limit' };
-  try {
-    // 1. Salva o estado atual no perfil ativo.
-    saveActiveSnapshot(snapshot());
-    // 2. Ficha limpa nos valores padrão.
-    resetStateToDefaults();
-    if (name) state.CharPlayer = name;
-    state.portrait = { src: avatarDataUrl || '' };
-    // 3. Atualiza a UI para refletir a ficha limpa antes de fotografar.
-    rebuildSheetUI();
-    // 4. Cria o perfil a partir do snapshot já limpo.
-    var res = createProfile(name || 'Novo Personagem', avatarDataUrl || '', snapshot());
-    return res;
-  } catch (e) {
-    console.error('[Perfil] Erro ao criar ficha:', e);
-    return { ok: false, error: 'exception' };
-  }
-}
-
-// Duplica um perfil existente.
-function duplicateExistingProfile(id) {
-  // Garante que o perfil ativo esteja salvo antes de copiar.
-  try { saveActiveSnapshot(snapshot()); } catch (e) {}
-  return duplicateProfile(id);
-}
-
-// Exclui um perfil; se era o ativo, carrega o novo ativo.
-function deleteExistingProfile(id) {
-  var wasActive = (id === getActiveId());
-  var res = deleteProfile(id);
-  if (res && res.ok && res.switched && res.newActive) {
-    applySnapshot(res.newActive.sheetData || {});
-  }
-  return res;
-}
-
-// Renomeia; se for o perfil ativo, reflete no estado ao vivo.
-function renameExistingProfile(id, name) {
-  var res = renameProfile(id, name);
-  if (res && res.ok && id === getActiveId()) {
-    setState({ CharPlayer: res.profile.name });
-  }
-  return res;
-}
-
-// Altera o avatar; se for o perfil ativo, reflete no retrato ao vivo.
-function changeProfileAvatar(id, dataUrl) {
-  var res = setProfileAvatar(id, dataUrl);
-  if (res && res.ok && id === getActiveId()) {
-    state.portrait = { src: dataUrl || '' };
-    renderPortrait();
-    if (window.debouncedAutoSave) window.debouncedAutoSave();
-  }
-  return res;
-}
-
-
-// =============================================
-// PORTRAIT
-// =============================================
-
-function initPortrait() {
-  var portraitBtn        = document.getElementById('portraitBtn');
-  var portraitInput      = document.getElementById('portraitInput');
-  var portraitPreview    = document.getElementById('portraitPreview');
-  var portraitZoomBtn    = document.getElementById('portraitZoomBtn');
-  var portraitModal      = document.getElementById('portraitModal');
-  var portraitModalImg   = document.getElementById('portraitModalImg');
-  var portraitModalClose = document.getElementById('portraitModalClose');
-  var backdrop = portraitModal ? portraitModal.querySelector('.portrait-modal__backdrop') : null;
-
-  // ── Upload ──────────────────────────────────────────────
-  if (portraitBtn && portraitInput) {
-    portraitBtn.addEventListener('click', function () { portraitInput.click(); });
-  }
-  if (portraitInput && portraitPreview) {
-    portraitInput.addEventListener('change', function () {
-      var file = portraitInput.files[0];
-      if (!file) { portraitPreview.innerHTML = ''; return; }
-      var reader = new FileReader();
-      reader.onload = function (e) {
-        portraitPreview.innerHTML = '';
-        var img = document.createElement('img');
-        img.src = e.target.result;
-        img.alt = 'Retrato';
-        portraitPreview.appendChild(img);
-      };
-      reader.readAsDataURL(file);
-    });
-  }
-
-  // ── Abrir modal ──────────────────────────────────────────
-  function openModal() {
-    if (!portraitModal || !portraitModalImg) return;
-    var imgEl = portraitPreview ? portraitPreview.querySelector('img') : null;
-    if (!imgEl) return;
-    var src = imgEl.getAttribute('src') || '';
-    if (!src || !src.startsWith('data:')) return;
-    portraitModalImg.src = src;
-    portraitModal.classList.add('is-open');
-    portraitModal.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('modal-open');
-  }
-
-  // ── Fechar modal ─────────────────────────────────────────
-  function closeModal() {
-    if (!portraitModal) return;
-    portraitModal.classList.remove('is-open');
-    portraitModal.setAttribute('aria-hidden', 'true');
-    if (portraitModalImg) portraitModalImg.src = '';
-    document.body.classList.remove('modal-open');
-  }
-
-  // Botão "Ampliar Imagem"
-  if (portraitZoomBtn) {
-    portraitZoomBtn.addEventListener('click', openModal);
-  }
-
-  // Clique direto no preview da imagem
-  if (portraitPreview) {
-    portraitPreview.addEventListener('click', function (e) {
-      if (e.target.tagName === 'IMG') openModal();
-    });
-  }
-
-  // Botão X do modal
-  if (portraitModalClose) {
-    portraitModalClose.addEventListener('click', closeModal);
-  }
-
-  // Clique no backdrop (fora da imagem)
-  if (backdrop) {
-    backdrop.addEventListener('click', closeModal);
-  }
-
-  // Tecla Esc
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && portraitModal && portraitModal.classList.contains('is-open')) {
-      closeModal();
-    }
-  });
-}
 
 // =============================================
 // INICIALIZAÇÃO DA APP
