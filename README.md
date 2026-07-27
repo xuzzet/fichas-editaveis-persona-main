@@ -66,7 +66,9 @@ O código é organizado em **módulos ES nativos** de responsabilidade isolada, 
 - ★ **Rolador de dados** integrado (1d20 + atributo) com histórico.
 - ★ Auto-save inteligente com debounce, `MutationObserver` e proteção no fechamento.
 - ★ Exportar/Importar JSON, **backup completo**, preencher PDF e capturar PNG.
-- ★ 9 temas visuais com troca instantânea e persistência.
+- ★ 9 temas visuais + escolha de **cenário de fundo**, com troca instantânea e persistência.
+- ★ Painel de **Configurações** (engrenagem): perfis, tema, cenário, acessibilidade e ações.
+- ★ **PWA instalável** e funcional offline via Service Worker.
 - ★ Camada estética **estilo Persona 5** e layout responsivo em duas colunas.
 - ★ Retrocompatível — saves antigos são migrados automaticamente.
 
@@ -98,6 +100,9 @@ O código é organizado em **módulos ES nativos** de responsabilidade isolada, 
 | **Preencher PDF** | Carrega um PDF modelo e preenche os campos via `pdf-lib`. |
 | **Exportar PNG** | Captura visual da ficha via `html2canvas`. |
 | **Bibliotecas sob demanda** | `pdf-lib` e `html2canvas` são **locais** (`js/vendor/`) e carregadas só quando usadas — evita baixar ~700 KB no load inicial. |
+| **Painel de Configurações** | Engrenagem no topo abre um painel com Perfis, Tema, **Cenário**, Acessibilidade (modo dislexia + daltonismo) e Ações. |
+| **Cenário / Plano de fundo** | Escolha entre 5 imagens de ambientação urbana ou desative o fundo — persistido no `localStorage`. |
+| **PWA / Offline** | Instalável como app (`manifest.json`) e funciona offline via Service Worker (`sw.js`, cache-first). |
 | **API de Debug** | `window.state`, `window.getState()`, `window.setState()`, `window.autoSave()`, `window.recalcAndRender()` no console. |
 
 ---
@@ -150,9 +155,11 @@ python -m http.server 8080
 fichas-editaveis-persona-main/
 │
 ├── index.html                  # Estrutura da aplicação — 5 abas, formulários, cards, modais
+├── manifest.json               # Manifesto PWA (nome, ícones, cores, instalação)
+├── sw.js                       # Service Worker — cache offline (cache-first)
 ├── package.json                # Scripts de dev (test/lint/format) — a ficha roda sem ele
 │
-├── Elements/                   # Ícones PNG dos elementos e imagem de fundo
+├── Elements/                   # Ícones PNG dos elementos e imagens de fundo
 │
 ├── css/                        # Módulos CSS (orquestrados por css/main.css)
 │   ├── main.css                #   @import de todos os módulos, na ordem correta
@@ -190,19 +197,46 @@ fichas-editaveis-persona-main/
 │       ├── navigation-mobile.css · ficha-mobile.css
 │       └── cards-mobile.css · persona-mobile.css
 │
-└── js/                         # Módulos ES nativos
-    ├── app.js                  #   Entry point — init, render, setState, auto-save, atalhos
+└── js/                         # Módulos ES nativos (arquitetura modular por pastas)
+    ├── app.js                  #   Bootstrap — initApp, eventos, auto-save, atalhos, API global
+    ├── app/                    #   Núcleo da app (extraído de app.js)
+    │   ├── core.js             #     renderAll, setState, getState
+    │   ├── profile-flows.js    #     Fluxos de reset/troca/CRUD de perfis
+    │   └── portrait.js         #     Upload e modal do retrato
     ├── constants.js            #   Dados estáticos: arcanas, elementos, feitos, condições, social
+    ├── data/                   #   Dados de conteúdo
+    │   └── awakening-data.js   #     Mapa de arcanas, vertentes e tiers do Despertar
     ├── utils.js                #   Utilitários: $, $$, clampInt, debounce
     ├── state.js                #   Estado centralizado e conjuntos de field IDs
     ├── calculations.js         #   Cálculos puros: HP, PM, modificadores, feitos, social, condições
-    ├── ui.js                   #   Cache DOM, render de campos/badges/afinidades, toast, resumo
-    ├── social-skills.js        #   UI e render das habilidades sociais
-    ├── inventory.js            #   Cards de inventário, peso, magias, vínculos, pistas, contatos
+    ├── ui.js                   #   Barrel de UI + render() (orquestrador)
+    ├── ui/                     #   Submódulos de UI
+    │   ├── dom-cache.js        #     Cache de elementos DOM (ids)
+    │   ├── fields.js           #     render de campos e badges
+    │   ├── auto-summary.js     #     Painel de Resumo Automático
+    │   ├── affinities.js       #     Afinidades elementais e arcanos
+    │   ├── portrait-bg.js      #     Render de retrato, background e lore
+    │   ├── toast.js            #     Notificações toast
+    │   └── textareas.js        #     Auto-resize de textareas
+    ├── social-skills.js        #   Barrel das habilidades sociais
+    ├── social/                 #   Submódulos das habilidades sociais
+    │   ├── hexagram.js         #     Geometria e animação do hexagrama
+    │   ├── render.js           #     renderSocial
+    │   └── build.js            #     Construção do SVG do hexagrama
+    ├── inventory.js            #   Barrel do inventário + renderTables/initInventoryButtons
+    ├── inventory/              #   Submódulos por domínio
+    │   ├── items.js            #     Itens, peso e capacidade de carga
+    │   ├── spells.js           #     Magias & técnicas + filtros
+    │   ├── links.js            #     Social Links / Confidentes
+    │   ├── clues.js            #     Pistas & Âncoras
+    │   └── contacts.js         #     Contatos & Locais
+    ├── dice.js                 #   Barrel do rolador de dados
+    ├── dice/                   #   Submódulos do rolador
+    │   ├── engine.js           #     Motor puro: rolagens, fórmulas, stats
+    │   └── ui.js               #     Histórico, ações e interface do rolador
     ├── feats.js                #   UI, render e sync dos feitos
     ├── conditions.js           #   UI, render e sync das condições
     ├── modifiers.js            #   UI, render e resumo dos modificadores
-    ├── dice.js                 #   Rolador 1d20, dano de arma e histórico
     ├── awakening.js            #   Árvore de Despertar / Trama
     ├── profiles.js             #   Sistema de perfis (até 6) e persistência
     ├── profiles-ui.js          #   Barra de perfil, menus e modais
@@ -210,6 +244,9 @@ fichas-editaveis-persona-main/
     ├── backup.js               #   Backup de segurança antes de ações destrutivas
     ├── history.js              #   Pilha de Desfazer / Refazer
     ├── themes.js               #   themeMap, applyTheme, initTheme
+    ├── background.js           #   Seletor de cenário de fundo (initBackground)
+    ├── settings.js             #   Painel de Configurações (engrenagem)
+    ├── accessibility.js        #   Modo dislexia e filtros de daltonismo
     ├── tabs.js                 #   Navegação entre abas + atalhos de teclado
     ├── import-export.js        #   Exportar/importar JSON, backup total, PDF, PNG
     ├── vendor-loader.js        #   Carregamento sob demanda de pdf-lib / html2canvas
@@ -234,6 +271,8 @@ app.js        ──────────────────────
 ```
 
 Sem dependências circulares — funções de render são passadas por injeção quando necessário.
+
+> **Arquitetura modular:** os módulos maiores foram divididos por responsabilidade em subpastas (`js/ui/`, `js/inventory/`, `js/dice/`, `js/social/`, `js/app/`, `js/data/`). O arquivo homônimo (ex.: `js/ui.js`) atua como *barrel*, re-exportando a API pública — os importadores continuam usando `./ui.js` sem alterações.
 
 ---
 
@@ -330,7 +369,7 @@ Camada puramente estética e de layout — **aditiva**, sem tocar em lógica, c�
 - **Estilo Persona 5 Royal** (`p5-style.css`): títulos de seção como "legendas" inclinadas em itálico, textura halftone sutil no fundo, **entrada cinética dos cards** ao trocar de aba, **estrela de seleção** na aba ativa e hover com leve inclinação.
 - **Layout adaptável** (`layout-enhancements.css`): **navegação fixa** (sticky) ao rolar e **duas colunas** na aba Jogo em telas largas — com colapso inteligente dos campos.
 - **Barras de PV/PM** (`visual-enhancements.js`): preenchimento animado, com alerta visual quando o PV fica baixo.
-- **Acessibilidade** (`a11y.css`): estados de foco visíveis, `role`/`aria` na navegação e nas abas, navegação por setas.
+- **Acessibilidade** (`a11y.css` + `accessibility.js`): **modo dislexia** (fonte legível, mais espaçamento), filtros de **daltonismo** (protanopia/deuteranopia/tritanopia), estados de foco visíveis, `role`/`aria` na navegação e nas abas, navegação por setas.
 - **Movimento responsável:** tudo respeita `prefers-reduced-motion` e a exportação PNG permanece limpa (texturas ficam fora da captura).
 
 > Cores saem sempre das **variáveis do tema** — o estilo P5R se adapta ao tema selecionado, sem paleta fixa.
@@ -339,7 +378,7 @@ Camada puramente estética e de layout — **aditiva**, sem tocar em lógica, c�
 
 ## Temas Visuais
 
-9 temas com troca instantânea via dropdown no cabeçalho; a escolha é persistida no `localStorage`.
+9 temas com troca instantânea via seletor no **painel de Configurações** (engrenagem no topo); a escolha é persistida no `localStorage`.
 
 | Tema | Paleta |
 |---|---|
@@ -354,6 +393,10 @@ Camada puramente estética e de layout — **aditiva**, sem tocar em lógica, c�
 | **Amarelo** | Dourado e âmbar |
 
 Todos via CSS custom properties (`--bg`, `--bg-2`, `--accent`, `--ink`, …). Para um novo tema: adicione a classe em `css/themes.css` e registre o mapeamento em `js/themes.js` (`themeMap`).
+
+### Cenário de Fundo
+
+O painel de Configurações também permite trocar a **imagem de ambientação** (camada `body::before`): 5 cenários urbanos ou **Nenhum** para um fundo limpo do tema. A escolha é aplicada por classe no `<body>` e persistida no `localStorage` (`ficha-background`). Definida em `css/background.css` e `js/background.js`.
 
 ---
 
@@ -407,6 +450,8 @@ Aplicados em duas passagens: **Flat** (`+N` ao valor base) primeiro, depois **Pe
 | `ficha-yby-p3r-skin` | Ficha ativa (armazenamento principal). |
 | `personaProfiles` | Todos os perfis de personagem (até 6). |
 | `personaSafetyBackup` | Último estado válido antes de resetar/importar. |
+| `ficha-theme` | Tema visual selecionado. |
+| `ficha-background` | Cenário de fundo selecionado. |
 | **Auto-save** | Debounce 500 ms, `MutationObserver` em tabelas, `beforeunload`. |
 | **Exportar/Importar JSON** | Backup externo da ficha ativa (migração de formato legado incluída). |
 | **Exportar/Importar Tudo** | Backup completo de todos os perfis. |
@@ -479,7 +524,7 @@ Os testes cobrem funções **puras** (cálculo de HP/PM, tiers sociais, utilitá
 ## FAQ
 
 **A ficha funciona offline?**
-Sim. Toda a lógica é local. Apenas as fontes do Google exigem conexão; `pdf-lib` e `html2canvas` são locais. Sem internet, o resto continua funcionando normalmente.
+Sim. É um **PWA**: um Service Worker (`sw.js`) faz cache dos assets (estratégia cache-first) e o `manifest.json` permite instalá-la como app. Toda a lógica é local; apenas as fontes do Google exigem conexão na primeira carga. `pdf-lib` e `html2canvas` são locais.
 
 **Posso usar em celular ou tablet?**
 Sim. Layout responsivo, alvos de toque de 44 px e `font-size` 16 px nos inputs para evitar zoom automático no iOS.
