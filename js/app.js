@@ -24,6 +24,7 @@ import { snapshot, applySnapshot } from './storage.js';
 import { loadProfileStore, getActiveProfile, saveActiveSnapshot } from './profiles.js';
 import { initProfilesUI, refreshProfilesUI } from './profiles-ui.js';
 import { initTheme } from './themes.js';
+import { initBackground } from './background.js';
 import { initAccessibility } from './accessibility.js';
 import { initSettings } from './settings.js';
 import { initTabs } from './tabs.js';
@@ -47,6 +48,7 @@ import { initPortrait } from './app/portrait.js';
 function initApp() {
   // Tabs e tema são críticos — inicializar primeiro
   try { initTheme(); } catch(e) { console.error('[initApp] initTheme:', e); }
+  try { initBackground(); } catch(e) { console.error('[initApp] initBackground:', e); }
   try { initAccessibility(); } catch(e) { console.error('[initApp] initAccessibility:', e); }
   try { initTabs(); } catch(e) { console.error('[initApp] initTabs:', e); }
 

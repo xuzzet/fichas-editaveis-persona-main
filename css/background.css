@@ -17,6 +17,28 @@
   --bg-city-scale: 1.06;
 }
 
+/* ── Seletor de cenário (configurável nas Configurações) ──
+   Cada classe apenas troca a imagem lida por body::before via a
+   variável --bg-city-image. "none" desliga toda a camada. */
+body.bg-city-1 {
+  --bg-city-image: url('../Elements/background-image.jpg');
+}
+body.bg-city-2 {
+  --bg-city-image: url('../Elements/background-image.png');
+}
+body.bg-city-3 {
+  --bg-city-image: url('../Elements/background-image3.jpg');
+}
+body.bg-city-4 {
+  --bg-city-image: url('../Elements/background-image4.jpeg');
+}
+body.bg-city-5 {
+  --bg-city-image: url('../Elements/background-image5.jpeg');
+}
+body.bg-city-none::before {
+  display: none;
+}
+
 /* ── Camada fixa do cenário ──
    Pintada ACIMA do fundo do body, porém ATRÁS de todo o
    conteúdo (z-index: -1). O `position: fixed` mantém a cidade
