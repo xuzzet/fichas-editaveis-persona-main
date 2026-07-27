@@ -1,0 +1,18 @@
+# Regras de cache para Cloudflare Pages (e também compatível com Netlify).
+# O service worker e o manifesto não podem ser cacheados pelo CDN,
+# senão atualizações do site não chegam aos usuários.
+
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/manifest.json
+  Cache-Control: no-cache
+
+/*.html
+  Cache-Control: no-cache
+
+/js/vendor/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/Elements/*
+  Cache-Control: public, max-age=2592000

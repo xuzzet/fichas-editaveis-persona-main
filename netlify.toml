@@ -1,0 +1,35 @@
+# Configuração de deploy para Netlify (https://netlify.com)
+# Site estático puro — nada para "buildar", apenas publicar a raiz.
+
+[build]
+  publish = "."
+  command = ""
+
+# O service worker e o manifesto NUNCA devem ficar em cache do CDN/navegador,
+# caso contrário atualizações do site não chegam aos usuários.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+# HTML sempre revalidado (network-first já é a estratégia do app).
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+# Bibliotecas e imagens quase nunca mudam — cache longo e imutável.
+[[headers]]
+  for = "/js/vendor/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/Elements/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
