@@ -1,7 +1,7 @@
 {
   "name": "Ficha Automatizada — Persona",
   "short_name": "Ficha Persona",
-  "description": "Ficha de personagem automatizada para RPG temático de Persona.",
+  "description": "Desperte sua Persona — crie e gerencie fichas de personagem.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
