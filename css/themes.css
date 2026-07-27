@@ -75,16 +75,154 @@ body.theme-vermelho {
 }
 
 body.theme-degrade {
-  --ink: #def0e4;
-  --ink-dim: #88b898;
-  --bg: #0a1610;
-  --bg-2: #10201a;
-  --bg-3: #182c22;
-  --stroke: #2e5040;
-  --accent: #4cb870;
-  --accent-2: #6cd090;
-  --danger: #d05848;
-  --ok: #4cb870;
+  --ink: #d9ffe8;
+  --ink-dim: #6fbf8f;
+  --bg: #040a07;
+  --bg-2: #07120d;
+  --bg-3: #0b1c14;
+  --stroke: #1b4d35;
+  --accent: #2cff7a;
+  --accent-2: #8dffb5;
+  --danger: #ff5d74;
+  --ok: #2cff7a;
+  --tooltip-border: #2cff7a;
+}
+
+body.theme-degrade {
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(transparent 97%, rgba(44, 255, 122, 0.08) 100%),
+    radial-gradient(900px 500px at 80% 0%, rgba(44, 255, 122, 0.12), transparent 62%),
+    radial-gradient(1100px 700px at 0% 100%, rgba(141, 255, 181, 0.06), transparent 65%),
+    linear-gradient(180deg, #030806 0%, #050d09 60%, #030806 100%);
+  background-size:
+    100% 4px,
+    cover,
+    cover,
+    cover;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+body.theme-degrade,
+body.theme-degrade input,
+body.theme-degrade select,
+body.theme-degrade textarea,
+body.theme-degrade button,
+body.theme-degrade .tab {
+  font-family: 'Share Tech Mono', 'Consolas', 'Courier New', monospace;
+}
+
+body.theme-degrade label {
+  color: var(--accent);
+}
+
+body.theme-degrade input::placeholder,
+body.theme-degrade textarea::placeholder {
+  color: #4c9a6b;
+  opacity: 1;
+}
+
+body.theme-degrade input:focus::placeholder,
+body.theme-degrade textarea:focus::placeholder {
+  color: #6fbe8e;
+  opacity: 0.9;
+}
+
+body.theme-degrade input,
+body.theme-degrade select,
+body.theme-degrade textarea {
+  border-color: color-mix(in srgb, var(--stroke) 70%, var(--accent) 30%);
+  background: color-mix(in srgb, var(--bg-2) 88%, #000 12%);
+}
+
+body.theme-degrade input:focus,
+body.theme-degrade select:focus,
+body.theme-degrade textarea:focus {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--bg-3) 82%, #000 18%);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent),
+    0 0 18px color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+body.theme-degrade .tabs {
+  position: relative;
+  overflow: hidden;
+  border-color: color-mix(in srgb, var(--stroke) 45%, var(--accent) 55%);
+  background: linear-gradient(
+    120deg,
+    color-mix(in srgb, var(--bg-2) 82%, #000),
+    color-mix(in srgb, var(--bg-3) 74%, var(--accent) 26%)
+  );
+}
+
+body.theme-degrade .tabs::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    110deg,
+    transparent 0%,
+    transparent 40%,
+    color-mix(in srgb, var(--accent) 26%, transparent) 50%,
+    transparent 60%,
+    transparent 100%
+  );
+  transform: translateX(-120%);
+  animation: degrade-hacker-scan 4.8s linear infinite;
+}
+
+body.theme-degrade .tab {
+  color: color-mix(in srgb, var(--ink) 65%, var(--accent) 35%);
+}
+
+body.theme-degrade .tab:hover {
+  background: color-mix(in srgb, var(--bg-3) 68%, var(--accent) 32%);
+  color: #031008;
+}
+
+body.theme-degrade .tab.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #031008;
+  box-shadow:
+    0 2px 14px color-mix(in srgb, var(--accent) 44%, transparent),
+    0 0 20px color-mix(in srgb, var(--accent) 34%, transparent);
+  animation: degrade-hacker-pulse 2.6s ease-in-out infinite;
+}
+
+body.theme-degrade button:hover,
+body.theme-degrade .btn-feedback:hover {
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--accent) 25%, transparent),
+    0 0 16px color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+@keyframes degrade-hacker-scan {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes degrade-hacker-pulse {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.07);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.theme-degrade .tabs::after,
+  body.theme-degrade .tab.active {
+    animation: none;
+  }
 }
 
 body.theme-corinthians {
