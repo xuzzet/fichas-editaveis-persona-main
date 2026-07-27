@@ -91,9 +91,14 @@ export function applySnapshot(data) {
   var g = data.acessoRapido || {};
 
   // Campos simples do acessoRapido
+  // IMPORTANTE: sempre reatribui (inclusive quando vazio/ausente) para
+  // evitar vazamento de valores do perfil anterior ao trocar de perfil.
   FIELD_IDS.forEach(function(key) {
-    if (g[key] !== undefined && g[key] !== '') {
-      state[key] = NUMBER_FIELDS.has(key) ? (Number(g[key]) || 0) : g[key];
+    var raw = g[key];
+    if (raw !== undefined && raw !== '') {
+      state[key] = NUMBER_FIELDS.has(key) ? (Number(raw) || 0) : raw;
+    } else {
+      state[key] = NUMBER_FIELDS.has(key) ? 0 : '';
     }
   });
 

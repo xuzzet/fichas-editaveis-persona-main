@@ -893,7 +893,20 @@
     if ('serviceWorker' in navigator &&
         (location.protocol === 'https:' || location.protocol === 'http:')) {
       window.addEventListener('load', function () {
-        navigator.serviceWorker.register('./sw.js').catch(function (e) {
+        // Se já havia um SW controlando a página no carregamento, uma troca
+        // de controller significa que uma nova versão assumiu → recarrega
+        // uma vez para aplicar as atualizações automaticamente.
+        var hadController = !!navigator.serviceWorker.controller;
+        var refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', function () {
+          if (!hadController || refreshing) return; // 1ª instalação: não recarrega
+          refreshing = true;
+          window.location.reload();
+        });
+        navigator.serviceWorker.register('./sw.js').then(function (reg) {
+          // Checa por atualização a cada abertura.
+          reg.update();
+        }).catch(function (e) {
           console.warn('[SW] Falha ao registrar service worker:', e);
         });
       });
