@@ -20,9 +20,7 @@
     position: sticky !important;
     top: 8px;
     z-index: 9999;
-    background: color-mix(in srgb, var(--bg-2) 96%, transparent);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
+    background: color-mix(in srgb, var(--bg-2) 99%, transparent);
   }
 
   /* Agora são só 5 abas: deixamos cada uma ocupar o espaço de forma
@@ -46,7 +44,7 @@
   position: relative;
 }
 .view.active ~ .view.active::before {
-  content: "";
+  content: '';
   position: absolute;
   top: -1px;
   left: 0;

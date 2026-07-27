@@ -20,23 +20,18 @@ body {
       color-mix(in srgb, var(--accent) 10%, transparent) 0%,
       transparent 55%
     ),
-    linear-gradient(
-      200deg,
-      color-mix(in srgb, var(--bg-2) 60%, transparent) 0%,
-      transparent 40%
-    );
+    linear-gradient(200deg, color-mix(in srgb, var(--bg-2) 60%, transparent) 0%, transparent 40%);
   background-size:
     22px 22px,
     100% 100%,
     100% 100%;
-  background-attachment: fixed;
   font:
-    500 16px/1.45 "Montserrat",
+    500 16px/1.45 'Montserrat',
     Inter,
-    "Noto Sans JP",
+    'Noto Sans JP',
     system-ui,
     -apple-system,
-    "Segoe UI",
+    'Segoe UI',
     Roboto,
     Helvetica,
     Arial;

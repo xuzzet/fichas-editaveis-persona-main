@@ -31,6 +31,8 @@ import {
 } from './profiles.js';
 import { initProfilesUI, refreshProfilesUI } from './profiles-ui.js';
 import { initTheme } from './themes.js';
+import { initAccessibility } from './accessibility.js';
+import { initSettings } from './settings.js';
 import { initTabs } from './tabs.js';
 import { initImportExport } from './import-export.js';
 import { saveSafetyBackup, getSafetyBackup } from './backup.js';
@@ -335,6 +337,7 @@ function initPortrait() {
 function initApp() {
   // Tabs e tema são críticos — inicializar primeiro
   try { initTheme(); } catch(e) { console.error('[initApp] initTheme:', e); }
+  try { initAccessibility(); } catch(e) { console.error('[initApp] initAccessibility:', e); }
   try { initTabs(); } catch(e) { console.error('[initApp] initTabs:', e); }
 
   try { initArcanaSelects(); } catch(e) { console.error('[initApp] initArcanaSelects:', e); }
@@ -730,6 +733,9 @@ try {
 } catch (e) {
   console.error('[Perfis] Erro ao inicializar interface de perfis:', e);
 }
+
+// Painel de configurações (engrenagem) — depende da barra de perfil já existir.
+try { initSettings(); } catch (e) { console.error('[initApp] initSettings:', e); }
 
 // =============================================
 // HISTÓRICO — DESFAZER / REFAZER (camada aditiva)

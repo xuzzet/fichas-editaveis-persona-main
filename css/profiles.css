@@ -5,8 +5,13 @@
    interfere no layout da ficha existente.
    ============================================= */
 
-/* ── Barra de perfil (acima da ficha) ── */
+/* ── Barra de perfil (acima da ficha) ──
+   Oculta: o acesso a perfis agora vive na roda de configurações.
+   Mantida no DOM para reutilizar os modais de criação/gerenciamento. */
 .profile-bar {
+  display: none;
+}
+.profile-bar--visible {
   display: flex;
   align-items: center;
   gap: var(--space-3, 12px);
@@ -308,6 +313,11 @@
   color: var(--ink-dim, #8ea8c2);
   text-align: right;
   margin-bottom: 10px;
+}
+.profile-manage__create {
+  display: block;
+  width: 100%;
+  margin-bottom: 14px;
 }
 .profile-manage__row {
   display: flex;

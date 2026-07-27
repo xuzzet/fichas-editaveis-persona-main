@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="./Elements/card-back.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Barlow+Condensed:wght@600;700;800;900&family=Inter:wght@400;500;600;700;800;900&family=Lexend:wght@400;500;600;700&family=Noto+Sans+JP:wght@500;700&display=swap" rel="stylesheet">
   <!-- Pré-carrega o cenário urbano de fundo para render mais rápido -->
   <link rel="preload" as="image" href="./Elements/background-image.jpg" fetchpriority="low">
   <!-- Bibliotecas pesadas (pdf-lib, html2canvas) carregadas sob demanda
@@ -20,26 +20,99 @@
   <link rel="stylesheet" href="./css/main.css" />
 </head>
 <body>
+  <!-- Filtros SVG de daltonização (correção assistiva). Ficam ocultos;
+       são referenciados pelas classes .cb-* aplicadas ao <body>. -->
+  <svg class="a11y-cb-filters" aria-hidden="true" focusable="false" width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden;">
+    <defs>
+      <filter id="cb-protanopia" color-interpolation-filters="linearRGB">
+        <feColorMatrix type="matrix" in="SourceGraphic" result="sim"
+          values="0.567 0.433 0 0 0  0.558 0.442 0 0 0  0 0.242 0.758 0 0  0 0 0 1 0" />
+        <feComposite in="SourceGraphic" in2="sim" operator="arithmetic" k1="0" k2="1" k3="-1" k4="0" result="err" />
+        <feColorMatrix type="matrix" in="err" result="shift"
+          values="0 0 0 0 0  0.7 1 0 0 0  0.7 0 1 0 0  0 0 0 1 0" />
+        <feComposite in="SourceGraphic" in2="shift" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" />
+      </filter>
+      <filter id="cb-deuteranopia" color-interpolation-filters="linearRGB">
+        <feColorMatrix type="matrix" in="SourceGraphic" result="sim"
+          values="0.625 0.375 0 0 0  0.7 0.3 0 0 0  0 0.3 0.7 0 0  0 0 0 1 0" />
+        <feComposite in="SourceGraphic" in2="sim" operator="arithmetic" k1="0" k2="1" k3="-1" k4="0" result="err" />
+        <feColorMatrix type="matrix" in="err" result="shift"
+          values="0 0 0 0 0  0.7 1 0 0 0  0.7 0 1 0 0  0 0 0 1 0" />
+        <feComposite in="SourceGraphic" in2="shift" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" />
+      </filter>
+      <filter id="cb-tritanopia" color-interpolation-filters="linearRGB">
+        <feColorMatrix type="matrix" in="SourceGraphic" result="sim"
+          values="0.95 0.05 0 0 0  0 0.433 0.567 0 0  0 0.475 0.525 0 0  0 0 0 1 0" />
+        <feComposite in="SourceGraphic" in2="sim" operator="arithmetic" k1="0" k2="1" k3="-1" k4="0" result="err" />
+        <feColorMatrix type="matrix" in="err" result="shift"
+          values="0 0 0.7 0 0  0 0 0.7 0 0  0 0 0 0 0  0 0 0 1 0" />
+        <feComposite in="SourceGraphic" in2="shift" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" />
+      </filter>
+    </defs>
+  </svg>
+  <!-- RODA DE CONFIGURAÇÕES (canto superior) -->
+  <button type="button" id="settingsGear" class="settings-gear" aria-haspopup="dialog" aria-expanded="false" aria-controls="settingsPanel" title="Configurações" aria-label="Abrir configurações">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/>
+    </svg>
+  </button>
+  <div id="settingsOverlay" class="settings-overlay" hidden></div>
+  <aside id="settingsPanel" class="settings-panel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle" hidden>
+    <div class="settings-panel__head">
+      <h2 id="settingsTitle">Configurações</h2>
+      <button type="button" id="settingsClose" class="settings-close" aria-label="Fechar configurações" title="Fechar">&times;</button>
+    </div>
+    <div class="settings-panel__body">
+      <section class="settings-section">
+        <h3>Perfis</h3>
+        <p class="settings-hint">Troque de ficha, crie uma nova ou gerencie as existentes.</p>
+        <button type="button" id="settingsProfiles" class="settings-btn">Trocar / Gerenciar fichas</button>
+      </section>
+
+      <section class="settings-section">
+        <h3>Tema</h3>
+        <div class="settings-row">
+          <label for="themeSelect">Aparência</label>
+          <select id="themeSelect">
+            <option value="padrao">Padrão</option>
+            <option value="roxo">Roxo</option>
+            <option value="claro">Claro</option>
+            <option value="vermelho">Vermelho</option>
+            <option value="degrade">Verde</option>
+            <option value="corinthians">Corinthians</option>
+            <option value="rosa">Rosa Pastel</option>
+            <option value="kamenrider">Kamen Rider</option>
+            <option value="amarelo">Amarelo</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="settings-section" role="group" aria-label="Opções de acessibilidade">
+        <h3>Acessibilidade</h3>
+        <label class="settings-toggle" for="a11yDyslexia" title="Fonte de alta legibilidade e espaçamento maior, para dislexia">
+          <input type="checkbox" id="a11yDyslexia" />
+          <span>Modo dislexia</span>
+        </label>
+        <p class="settings-hint">Fonte legível, mais espaçamento e menos itálico.</p>
+        <div class="settings-row">
+          <label for="a11yColorblind">Daltonismo</label>
+          <select id="a11yColorblind" title="Ajusta as cores para melhor distinção">
+            <option value="none">Nenhum</option>
+            <option value="protanopia">Protanopia</option>
+            <option value="deuteranopia">Deuteranopia</option>
+            <option value="tritanopia">Tritanopia</option>
+          </select>
+        </div>
+      </section>
+    </div>
+  </aside>
   <div id="captureRoot" class="wrap">
     <header class="hud">
       <div class="slash" aria-hidden="true"></div>
       <div class="brand">
         <h1>Ficha • Persona</h1>
         <div class="sub">“Tu és eu… Eu sou tu. Do oceano da tua alma, emergirei.”</div>
-      </div>
-      <div class="theme-switcher">
-        <label for="themeSelect" style="font-size:11px;font-weight:900;margin-right:6px;letter-spacing:0.16em;">Tema:</label>
-        <select id="themeSelect">
-          <option value="padrao">Padrão</option>
-          <option value="roxo">Roxo</option>
-          <option value="claro">Claro</option>
-          <option value="vermelho">Vermelho</option>
-          <option value="degrade">Verde</option>
-          <option value="corinthians">Corinthians</option>
-          <option value="rosa">Rosa Pastel</option>
-          <option value="kamenrider">Kamen Rider</option>
-          <option value="amarelo">Amarelo</option>
-        </select>
       </div>
     </header>
 

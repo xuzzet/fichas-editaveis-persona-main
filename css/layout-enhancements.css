@@ -15,15 +15,14 @@
   .tabs {
     position: sticky !important;
     top: 8px;
-    /* fundo mais opaco + desfoque para legibilidade
-       quando o conteúdo passa por baixo */
+    /* fundo opaco garante legibilidade quando o conteúdo passa
+       por baixo (sem backdrop-filter: desfocar a cada frame de
+       scroll derruba o FPS). */
     background: linear-gradient(
       120deg,
-      color-mix(in srgb, var(--bg-2) 97%, transparent),
-      color-mix(in srgb, var(--bg-3) 88%, transparent)
+      color-mix(in srgb, var(--bg-2) 99%, transparent),
+      color-mix(in srgb, var(--bg-3) 96%, transparent)
     );
-    -webkit-backdrop-filter: blur(8px) saturate(1.1);
-    backdrop-filter: blur(8px) saturate(1.1);
   }
 }
 

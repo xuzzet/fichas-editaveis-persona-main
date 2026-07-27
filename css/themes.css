@@ -17,19 +17,10 @@ body.theme-padrao {
 body.theme-padrao {
   background-color: var(--bg);
   background-image:
-    radial-gradient(
-      1000px 600px at 80% 0%,
-      rgba(75, 168, 230, 0.12),
-      transparent 60%
-    ),
-    radial-gradient(
-      1200px 700px at 0% 100%,
-      rgba(124, 196, 240, 0.06),
-      transparent 60%
-    ),
+    radial-gradient(1000px 600px at 80% 0%, rgba(75, 168, 230, 0.12), transparent 60%),
+    radial-gradient(1200px 700px at 0% 100%, rgba(124, 196, 240, 0.06), transparent 60%),
     linear-gradient(180deg, #060b18 0%, #070e1e 60%, #060b18 100%);
   background-repeat: no-repeat;
-  background-attachment: fixed, fixed, fixed;
   background-size: cover, cover, cover;
 }
 
@@ -41,7 +32,6 @@ body.theme-corinthians,
 body.theme-rosa {
   background: var(--bg);
   background-repeat: no-repeat;
-  background-attachment: fixed;
   background-size: cover;
 }
 
@@ -165,19 +155,10 @@ body.theme-kamenrider {
 body.theme-kamenrider {
   background-color: var(--bg);
   background-image:
-    radial-gradient(
-      900px 500px at 75% 0%,
-      rgba(46, 221, 106, 0.1),
-      transparent 60%
-    ),
-    radial-gradient(
-      800px 600px at 10% 100%,
-      rgba(139, 48, 224, 0.12),
-      transparent 60%
-    ),
+    radial-gradient(900px 500px at 75% 0%, rgba(46, 221, 106, 0.1), transparent 60%),
+    radial-gradient(800px 600px at 10% 100%, rgba(139, 48, 224, 0.12), transparent 60%),
     linear-gradient(180deg, #07100a 0%, #0a160e 60%, #07100a 100%);
   background-repeat: no-repeat;
-  background-attachment: fixed, fixed, fixed;
   background-size: cover, cover, cover;
 }
 body.theme-kamenrider input::placeholder,

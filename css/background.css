@@ -12,7 +12,7 @@
    ============================================================= */
 
 :root {
-  --bg-city-image: url("../Elements/background-image.jpg");
+  --bg-city-image: url('../Elements/background-image.jpg');
   --bg-city-blur: 2px;
   --bg-city-scale: 1.06;
 }
@@ -23,7 +23,7 @@
    parada enquanto o conteúdo rola → efeito parallax leve, sem JS.
    O `filter` é aplicado só nesta camada, nunca no conteúdo. */
 body::before {
-  content: "";
+  content: '';
   position: fixed;
   inset: 0;
   z-index: -1;
@@ -46,40 +46,22 @@ body::before {
   background-position: center, center, center;
   background-repeat: no-repeat;
   /* integra a foto à paleta: leve blur, menos saturação, contraste sutil */
-  filter: blur(var(--bg-city-blur)) saturate(0.85) brightness(0.9)
-    contrast(1.05);
+  filter: blur(var(--bg-city-blur)) saturate(0.85) brightness(0.9) contrast(1.05);
   /* o scale esconde as bordas transparentes geradas pelo blur */
   transform: scale(var(--bg-city-scale));
 }
 
 /* ── Movimento sutil (parallax/drift) ──
-   Apenas transform (barato para a GPU). Respeita quem pediu
-   redução de movimento no sistema. */
-@media (prefers-reduced-motion: no-preference) {
-  body::before {
-    will-change: transform;
-    animation: bgCityDrift 70s ease-in-out infinite alternate;
-  }
-}
-
-@keyframes bgCityDrift {
-  from {
-    transform: scale(var(--bg-city-scale)) translate3d(0, 0, 0);
-  }
-  to {
-    transform: scale(calc(var(--bg-city-scale) + 0.04))
-      translate3d(-1.6%, -1.1%, 0);
-  }
-}
+   Desativado por padrão: animar uma camada com `filter: blur()`
+   força a re-rasterização do desfoque a cada frame, o que derruba
+   o FPS em GPUs mais modestas. O cenário permanece estático. */
 
 /* ── Painéis flutuantes (efeito de camadas Persona) ──
    Cards ganham leve transparência + desfoque do que está atrás,
    deixando a cidade "vazar" nas bordas sem prejudicar a leitura.
    Só é aplicado onde há suporte real a backdrop-filter; caso
    contrário, mantém-se o fundo sólido original (legibilidade). */
-@supports (
-  (backdrop-filter: blur(6px)) or (-webkit-backdrop-filter: blur(6px))
-) {
+@supports ((backdrop-filter: blur(6px)) or (-webkit-backdrop-filter: blur(6px))) {
   .card {
     /* 88% de opacidade: o "vidro" vem principalmente do blur (só em
        tela), mantendo a exportação PNG/PDF (html2canvas ignora

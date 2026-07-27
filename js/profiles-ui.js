@@ -267,6 +267,7 @@ function renderManage() {
   }
 
   body.innerHTML = '<div class="profile-manage__count">' + profiles.length + ' / ' + MAX_PROFILES + ' fichas</div>' +
+    '<button type="button" class="btn-feedback btn-primary profile-manage__create" data-mact="create"' + (full ? ' disabled title="Limite de ' + MAX_PROFILES + ' fichas atingido"' : '') + '>\u2795 Criar Nova Ficha</button>' +
     profiles.map(function (p) {
       var isActive = p.id === activeId;
       return '<div class="profile-manage__row" data-id="' + escapeHtml(p.id) + '">' +
@@ -275,6 +276,7 @@ function renderManage() {
           '<div class="profile-manage__name">' + escapeHtml(p.name) + (isActive ? ' <span class="profile-manage__badge">ativa</span>' : '') + '</div>' +
         '</div>' +
         '<div class="profile-manage__buttons">' +
+          (isActive ? '' : '<button type="button" class="btn-feedback btn-primary" data-mact="switch">Usar</button>') +
           '<button type="button" class="btn-feedback" data-mact="rename">Editar Nome</button>' +
           '<button type="button" class="btn-feedback" data-mact="avatar">Alterar Imagem</button>' +
           '<button type="button" class="btn-feedback" data-mact="duplicate"' + (full ? ' disabled title="Limite atingido"' : '') + '>Duplicar</button>' +
@@ -287,6 +289,13 @@ function renderManage() {
   body.querySelectorAll('.profile-manage__row').forEach(function (row) {
     var id = row.getAttribute('data-id');
     var fileInput = row.querySelector('[data-avatar-input]');
+
+    var switchBtn = row.querySelector('[data-mact="switch"]');
+    if (switchBtn) switchBtn.addEventListener('click', function () {
+      if (id === getActiveId()) return;
+      var ok = api.onSwitch(id);
+      if (ok) { renderManage(); renderBar(); api.toast('\u2714 Perfil alterado', 'success'); }
+    });
 
     row.querySelector('[data-mact="rename"]').addEventListener('click', function () {
       var current = (function () { var list = getProfiles(); for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i].name; return ''; })();
@@ -319,6 +328,16 @@ function renderManage() {
       if (res && res.ok) { renderManage(); renderBar(); api.toast('Ficha exclu\u00edda', 'info'); }
     });
   });
+
+  var createBtn = body.querySelector('[data-mact="create"]');
+  if (createBtn) createBtn.addEventListener('click', function () {
+    if (isFull()) {
+      api.toast('Limite m\u00e1ximo de ' + MAX_PROFILES + ' fichas atingido. Remova uma ficha existente para criar outra.', 'error', 4500);
+      return;
+    }
+    closeModal(manageModal);
+    openCreateModal();
+  });
 }
 
 // ── Init público ─────────────────────────────────────────
@@ -333,4 +352,9 @@ export function initProfilesUI(callbacks) {
 // Re-renderiza a barra (nome/avatar) — chamado após auto-save.
 export function refreshProfilesUI() {
   if (currentBtn) renderBar();
+}
+
+// Abre o modal de gerenciamento de fichas (usado pela roda de configurações).
+export function openProfileManager() {
+  if (manageModal) openManageModal();
 }

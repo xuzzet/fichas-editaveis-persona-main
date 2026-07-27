@@ -33,16 +33,13 @@ body::after {
    --------------------------------------------------------------- */
 .section-title h2 {
   display: inline-block;
-  padding: 2px 12px 3px;
-  background: color-mix(in srgb, var(--ink) 90%, var(--accent));
-  color: var(--bg);
+  padding: 2px 0 3px;
+  background: none;
+  color: var(--accent);
   font-style: italic;
   letter-spacing: 0.05em;
   transform: skewX(-9deg);
   transform-origin: left center;
-  box-shadow: 3px 3px 0 color-mix(in srgb, var(--accent) 65%, transparent);
-  -webkit-clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
-  clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
 }
 /* Compensa o skew para o texto não colar na borda esquerda */
 .section-title h2 {
