@@ -1,6 +1,6 @@
 // =============================================
 // SISTEMA DE PERFIS DE FICHA — camada de persistência
-// Gerencia múltiplas fichas independentes (máx. 6) e migra o
+// Gerencia múltiplas fichas independentes (máx. 8) e migra o
 // formato antigo (localStorage['ficha-yby-p3r-skin']) automaticamente.
 //
 // Esta camada NÃO altera o `state`, os cálculos, mecânicas ou a
@@ -18,7 +18,7 @@
 
 export const PROFILES_KEY = 'personaProfiles';
 export const LEGACY_KEY = 'ficha-yby-p3r-skin';
-export const MAX_PROFILES = 6;
+export const MAX_PROFILES = 8;
 
 // Estado em memória do repositório de perfis.
 var store = { activeId: null, profiles: [] };
