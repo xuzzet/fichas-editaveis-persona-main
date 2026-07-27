@@ -1,6 +1,7 @@
 // =============================================
-// APP — NUCLEO (renderAll / setState / getState)
-// Fachada de estado e render completo. Injeta renderAll no storage.
+// APP — NÚCLEO (aqui eu junto renderAll / setState / getState)
+// Essa é minha fachada de estado e render completo. É aqui também que
+// eu injeto o renderAll lá no storage.
 // =============================================
 
 import { state, NUMBER_FIELDS, RECALC_FIELDS, setRendering } from '../state.js';
@@ -19,7 +20,7 @@ import { renderAwakening } from '../awakening.js';
 import { setRenderAll } from '../storage.js';
 
 // =============================================
-// RENDERIZAÇÃO COMPLETA
+// RENDERIZAÇÃO COMPLETA (quando eu quero redesenhar tudo de uma vez)
 // =============================================
 
 export function renderAll() {
@@ -46,11 +47,12 @@ export function renderAll() {
   }
 }
 
-// Injetar renderAll em storage.js (evita dependencia circular)
+// Aqui eu injeto o renderAll dentro do storage.js — fiz assim pra fugir
+// da dependência circular entre os dois módulos.
 setRenderAll(renderAll);
 
 // =============================================
-// setState / getState
+// setState / getState (como eu leio e escrevo no estado)
 // =============================================
 
 export function setState(partial, options) {
@@ -78,9 +80,9 @@ export function getState() {
   return copy;
 }
 
-// Recalcula atributos finais + valida + renderiza.
-// Exposto para módulos que alteram fontes de bônus fora do fluxo de setState
-// (ex.: bônus automáticos de equipamentos no inventário).
+// Aqui eu recalculo os atributos finais, valido e renderizo de novo.
+// Deixei isso exposto pros módulos que mexem em fontes de bônus fora do
+// fluxo do setState (ex.: os bônus automáticos de equipamento no inventário).
 window.recalcAndRender = function() {
   recalcState();
   validateState();

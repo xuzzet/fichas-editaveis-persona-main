@@ -1,7 +1,7 @@
 // =============================================
-// INVENTARIO — BARREL / ORQUESTRACAO
-// Reune os modulos de dominio (itens, magias, vinculos, pistas, contatos)
-// e preserva a API publica usada por app.js, storage.js e ui.js.
+// INVENTÁRIO — MEU BARREL / ORQUESTRAÇÃO
+// Aqui eu junto os módulos de domínio (itens, magias, vínculos, pistas, contatos)
+// num lugar só e mantenho a API pública que uso em app.js, storage.js e ui.js.
 // =============================================
 
 import { state } from './state.js';
@@ -18,11 +18,11 @@ export * from './inventory/clues.js';
 export * from './inventory/contacts.js';
 
 // =============================================
-// RENDER TODAS AS TABELAS A PARTIR DO STATE
+// AQUI EU DESENHO TODAS AS TABELAS A PARTIR DO STATE
 // =============================================
 
 export function renderTables() {
-  // Inventário: migrar e renderizar nas duas seções
+  // Inventário: primeiro eu migro cada item e depois desenho nas duas seções.
   if (eqBodyEquipado) eqBodyEquipado.innerHTML = '';
   if (eqBodyMochila) eqBodyMochila.innerHTML = '';
   (state.equip || []).forEach(function(item) {
@@ -38,7 +38,7 @@ export function renderTables() {
 }
 
 // =============================================
-// BOTÕES DE ADICIONAR LINHAS
+// AQUI EU LIGO OS BOTÕES DE ADICIONAR LINHAS
 // =============================================
 
 export function initInventoryButtons() {
