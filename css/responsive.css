@@ -37,11 +37,11 @@
   .tabs {
     gap: 6px;
     flex-wrap: wrap;
-    font-size: 13px;
+    font-size: 14px;
   }
   .tab {
     padding: 10px 12px 9px;
-    font-size: 13px;
+    font-size: 14px;
     min-width: 90px;
   }
   .section-title h2 {
@@ -54,12 +54,12 @@
   input,
   select,
   textarea {
-    font-size: 14px;
+    font-size: 16px;
     padding: 10px 10px;
     border-radius: 10px;
   }
   button {
-    font-size: 13px;
+    font-size: 14px;
     padding: 10px 12px;
     border-radius: 10px;
   }
@@ -85,6 +85,16 @@
     display: block;
     overflow-x: auto;
     width: 100%;
+    -webkit-overflow-scrolling: touch;
+    /* Sombras nas bordas sinalizam que a tabela rola na horizontal */
+    background:
+      linear-gradient(to right, var(--bg-2), transparent) 0 0 / 24px 100% no-repeat,
+      linear-gradient(to left, var(--bg-2), transparent) 100% 0 / 24px 100% no-repeat,
+      radial-gradient(farthest-side at 0 50%, rgba(0, 0, 0, 0.28), transparent) 0 0 / 12px 100%
+        no-repeat,
+      radial-gradient(farthest-side at 100% 50%, rgba(0, 0, 0, 0.28), transparent) 100% 0 / 12px
+        100% no-repeat;
+    background-attachment: local, local, scroll, scroll;
   }
   th,
   td {
@@ -119,9 +129,9 @@
     font-size: 13px;
   }
   .toast {
-    bottom: 16px;
-    left: 12px;
-    right: 12px;
+    bottom: max(16px, env(safe-area-inset-bottom));
+    left: max(12px, env(safe-area-inset-left));
+    right: max(12px, env(safe-area-inset-right));
     border-radius: 10px;
     padding: 14px 16px;
   }
@@ -135,27 +145,27 @@
   }
 
   .montserrat-300 {
-    font-family: "Montserrat", sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 300;
   }
   .montserrat-400 {
-    font-family: "Montserrat", sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 400;
   }
   .montserrat-500 {
-    font-family: "Montserrat", sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 500;
   }
   .montserrat-600 {
-    font-family: "Montserrat", sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 600;
   }
   .montserrat-700 {
-    font-family: "Montserrat", sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 700;
   }
   .montserrat-800 {
-    font-family: "Montserrat", sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 800;
   }
 

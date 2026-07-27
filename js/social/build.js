@@ -265,13 +265,16 @@ export function buildSocialUI() {
     var halo = document.getElementById(s.id + '-hx-halo');
     var selRing = document.getElementById(s.id + '-hx-sel');
 
-    // Hover: light ring preview (no panel change)
+    // Hover: light ring preview (no panel change) — apenas para ponteiro fino
+    // (mouse/caneta). No toque, o realce vem da seleção ao tocar.
     [hitCirc, halo].forEach(function(el) {
       if (!el) return;
-      el.addEventListener('mouseenter', function() {
+      el.addEventListener('pointerenter', function(ev) {
+        if (ev.pointerType === 'touch') return;
         if (selectedSkillId !== s.id && selRing) selRing.setAttribute('opacity', '0.35');
       });
-      el.addEventListener('mouseleave', function() {
+      el.addEventListener('pointerleave', function(ev) {
+        if (ev.pointerType === 'touch') return;
         if (selectedSkillId !== s.id && selRing) selRing.setAttribute('opacity', '0');
       });
       el.addEventListener('click', function(e) {

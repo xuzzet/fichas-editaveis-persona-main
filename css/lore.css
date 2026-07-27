@@ -101,7 +101,7 @@
 }
 
 .lore-field textarea,
-.lore-field input[type="text"],
+.lore-field input[type='text'],
 .lore-field input:not([type]) {
   resize: vertical;
   min-height: 48px;
@@ -151,7 +151,7 @@
   display: inline-block;
 }
 
-.lore-collapse-btn[aria-expanded="false"] .lore-collapse-arrow {
+.lore-collapse-btn[aria-expanded='false'] .lore-collapse-arrow {
   transform: rotate(180deg);
 }
 
@@ -198,20 +198,8 @@
   display: block;
   cursor: zoom-in;
   /* Moldura angular estilo tela de personagem */
-  -webkit-clip-path: polygon(
-    0 0,
-    100% 0,
-    100% calc(100% - 22px),
-    calc(100% - 22px) 100%,
-    0 100%
-  );
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    100% calc(100% - 22px),
-    calc(100% - 22px) 100%,
-    0 100%
-  );
+  -webkit-clip-path: polygon(0 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%);
   box-shadow:
     0 8px 26px rgba(0, 0, 0, 0.45),
     0 0 0 6px color-mix(in srgb, var(--bg) 80%, transparent),
@@ -220,12 +208,14 @@
     transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
     box-shadow 0.25s ease;
 }
-.portrait-preview img:hover {
-  transform: translateY(-3px) scale(1.01);
-  box-shadow:
-    0 12px 34px rgba(0, 0, 0, 0.55),
-    0 0 0 6px color-mix(in srgb, var(--bg) 80%, transparent),
-    0 0 0 8px var(--accent);
+@media (hover: hover) {
+  .portrait-preview img:hover {
+    transform: translateY(-3px) scale(1.01);
+    box-shadow:
+      0 12px 34px rgba(0, 0, 0, 0.55),
+      0 0 0 6px color-mix(in srgb, var(--bg) 80%, transparent),
+      0 0 0 8px var(--accent);
+  }
 }
 
 /* ── Modal de ampliação do retrato ── */

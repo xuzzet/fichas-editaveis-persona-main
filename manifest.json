@@ -9,12 +9,19 @@
   "background_color": "#0a1120",
   "theme_color": "#0a1120",
   "lang": "pt-BR",
+  "categories": ["games", "entertainment", "utilities"],
   "icons": [
+    {
+      "src": "./Elements/card-back.png",
+      "sizes": "192x192 256x256 384x384 512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "./Elements/card-back.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "maskable"
     }
   ]
 }

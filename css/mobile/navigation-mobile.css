@@ -20,7 +20,7 @@
     scrollbar-width: none;
     scroll-snap-type: x proximity;
     gap: 6px;
-    padding: 8px;
+    padding: 8px max(8px, env(safe-area-inset-right)) 8px max(8px, env(safe-area-inset-left));
     margin: 4px 0 16px;
     background: color-mix(in srgb, var(--bg) 90%, var(--bg-2));
     -webkit-backdrop-filter: blur(6px);
@@ -35,7 +35,7 @@
     min-width: max-content;
     min-height: 44px;
     padding: 10px 16px 9px;
-    font-size: 13px;
+    font-size: 14px;
     scroll-snap-align: start;
   }
 }
@@ -44,8 +44,8 @@
 @media (hover: none) and (pointer: coarse) {
   /* Botões pequenos ("+ Item", setas, ✕, filtros) com alvo de toque decente */
   .mini {
-    min-height: 40px;
-    padding: 8px 14px;
+    min-height: 44px;
+    padding: 10px 16px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -53,7 +53,7 @@
   .spell-card-actions .mini,
   .eq-card-actions .mini,
   .row-actions .mini {
-    min-width: 40px;
+    min-width: 44px;
   }
   /* Espaçamento maior entre ações para evitar toques acidentais */
   .actions,
@@ -70,13 +70,13 @@
   /* Nomes clicáveis (rolagem 1d20) — área de toque confortável */
   .attr-roll,
   .social-roll {
-    min-height: 32px;
-    padding: 4px 4px 4px 0;
+    min-height: 44px;
+    padding: 8px 4px 8px 0;
   }
   /* O ícone de dado auxiliar aparece sempre no toque (não há hover) */
   .attr-roll::after,
   .social-roll::after {
-    opacity: 0.55;
+    opacity: 0.85;
     transform: translateX(0);
   }
 }
