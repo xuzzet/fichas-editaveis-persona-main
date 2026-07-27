@@ -149,7 +149,6 @@ export function addSpell(data) {
   spellBody.appendChild(card);
 
   // Obs toggle (hidden by default unless obs already has content)
-  var obsWrap   = card.querySelector('.spell-obs-wrap');
   var obsTA     = card.querySelector('.sp-obs');
   var obsArrow  = card.querySelector('.spell-obs-arrow');
   if (!data.obs) {

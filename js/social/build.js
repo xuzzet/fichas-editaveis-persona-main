@@ -16,7 +16,7 @@ export function buildSocialUI() {
   container.innerHTML = '';
 
   var NS = 'http://www.w3.org/2000/svg';
-  var CX = HX.CX, CY = HX.CY, R = HX.R;
+  var CX = HX.CX, CY = HX.CY;
   var skills = HX.skills;
 
   function mk(tag, attrs) {

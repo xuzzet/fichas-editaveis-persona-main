@@ -120,7 +120,6 @@ export function duplicateExistingProfile(id) {
 
 // Exclui um perfil; se era o ativo, carrega o novo ativo.
 export function deleteExistingProfile(id) {
-  var wasActive = (id === getActiveId());
   var res = deleteProfile(id);
   if (res && res.ok && res.switched && res.newActive) {
     applySnapshot(res.newActive.sheetData || {});

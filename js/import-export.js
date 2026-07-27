@@ -5,7 +5,7 @@
 
 import { state } from './state.js';
 import { snapshot, applySnapshot } from './storage.js';
-import { showToast, ids } from './ui.js';
+import { showToast } from './ui.js';
 import { saveSafetyBackup } from './backup.js';
 import { ensurePdfLib, ensureHtml2canvas } from './vendor-loader.js';
 import { getStore, saveActiveSnapshot, PROFILES_KEY } from './profiles.js';
