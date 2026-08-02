@@ -254,41 +254,6 @@
   color: var(--danger);
 }
 
-/* ── Bônus de equipamento (inventário) ─────── */
-
-.eq-bonus-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
-  padding-top: var(--space-2);
-  border-top: 1px dashed var(--stroke);
-}
-
-.eq-bonus-toggle {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--ink-dim);
-  white-space: nowrap;
-}
-
-.eq-bonus-row select,
-.eq-bonus-row input {
-  background: var(--bg-2);
-  border: 1px solid var(--stroke);
-  color: var(--ink);
-  border-radius: 6px;
-  padding: 4px 7px;
-  font-size: 13px;
-}
-
-.eq-bonus-row .eq-bonus-valor {
-  width: 70px;
-}
-
 @media (max-width: 560px) {
   .dice-field {
     flex: 1 1 100%;
@@ -333,7 +298,7 @@
   line-height: 1.5;
 }
 .last-roll-name {
-  font-family: "Barlow Condensed", Inter, sans-serif;
+  font-family: 'Barlow Condensed', Inter, sans-serif;
   font-weight: 900;
   font-size: 22px;
   letter-spacing: 0.14em;
@@ -342,7 +307,7 @@
   line-height: 1.1;
 }
 .last-roll-formula {
-  font-family: "Barlow Condensed", Inter, sans-serif;
+  font-family: 'Barlow Condensed', Inter, sans-serif;
   font-size: 16px;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -363,7 +328,7 @@
   color: var(--ink-dim);
 }
 .last-roll-total {
-  font-family: "Barlow Condensed", Inter, sans-serif;
+  font-family: 'Barlow Condensed', Inter, sans-serif;
   font-weight: 900;
   font-size: 50px;
   line-height: 1;
@@ -378,7 +343,7 @@
   color: var(--danger);
 }
 .last-roll-flag {
-  font-family: "Barlow Condensed", Inter, sans-serif;
+  font-family: 'Barlow Condensed', Inter, sans-serif;
   font-weight: 900;
   letter-spacing: 0.16em;
   text-transform: uppercase;

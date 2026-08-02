@@ -3,7 +3,7 @@
 // =============================================
 
 import { state } from '../state.js';
-import { MOD_TARGETS } from '../constants.js';
+import { MOD_TARGETS, SOCIAL_IDS, SOCIAL_SKILL_META } from '../constants.js';
 
 export var eqBodyEquipado = document.querySelector('#tbl-eq-equipado');
 export var eqBodyMochila  = document.querySelector('#tbl-eq-mochila');
@@ -108,34 +108,55 @@ export function addInventoryItem(data, targetLocal) {
   card.dataset.local = local;
   var moveLabel = (local === 'equipado') ? '↓ Mochila' : '↑ Equipar';
 
-  var bonusAlvoOpts = MOD_TARGETS.map(function(t) {
+  var combatOpts = MOD_TARGETS.map(function(t) {
     return '<option value="' + t + '">' + t + '</option>';
   }).join('');
+  var socialOpts = SOCIAL_IDS.map(function(id) {
+    var nome = (SOCIAL_SKILL_META[id] && SOCIAL_SKILL_META[id].name) || id;
+    return '<option value="' + id + '">' + nome + '</option>';
+  }).join('');
+  var bonusAlvoOpts =
+    '<optgroup label="Combate">' + combatOpts + '</optgroup>' +
+    '<optgroup label="Social">' + socialOpts + '</optgroup>';
 
   card.innerHTML =
-    '<div class="eq-card-name-row">' +
-      '<input class="eq-nome" placeholder="Nome do item"/>' +
-      '<div class="eq-card-actions">' +
-        '<button class="eq-move-btn">' + moveLabel + '</button>' +
-        '<button class="mini del">✕</button>' +
+    '<div class="eq-card-header">' +
+      '<div class="eq-card-name-row">' +
+        '<input class="eq-nome" placeholder="Nome do item"/>' +
+        '<div class="eq-card-actions">' +
+          '<button type="button" class="eq-move-btn">' + moveLabel + '</button>' +
+          '<button type="button" class="mini del" title="Remover">✕</button>' +
+        '</div>' +
       '</div>' +
     '</div>' +
-    '<div class="eq-card-stats-row">' +
+    '<div class="eq-card-stats">' +
       '<label class="eq-stat"><span class="eq-stat-label">Peso</span>' +
         '<input class="eq-peso" type="number" min="0" step="0.1" value="0"/></label>' +
       '<label class="eq-stat"><span class="eq-stat-label">Qtd</span>' +
         '<input class="eq-qtd" type="number" min="1" step="1" value="1"/></label>' +
-      '<span class="eq-total-display">= 0</span>' +
+      '<label class="eq-stat eq-stat-total"><span class="eq-stat-label">Total</span>' +
+        '<span class="eq-total-display">0</span></label>' +
     '</div>' +
-    '<textarea class="eq-ef" rows="2" placeholder="Efeito / Notas (opcional)"></textarea>' +
-    '<div class="eq-bonus-row">' +
-      '<label class="eq-bonus-toggle"><input type="checkbox" class="eq-bonus-ativo"/> Bônus automático</label>' +
-      '<select class="eq-bonus-alvo">' + bonusAlvoOpts + '</select>' +
-      '<select class="eq-bonus-tipo">' +
-        '<option value="flat">Fixo</option>' +
-        '<option value="percentual">%</option>' +
-      '</select>' +
-      '<input class="eq-bonus-valor" type="number" step="1" value="0" title="Valor do bônus"/>' +
+    '<div class="eq-card-desc">' +
+      '<label class="eq-desc-label">Efeito / Notas</label>' +
+      '<textarea class="eq-ef" rows="2" placeholder="Descreva o efeito ou anotações…"></textarea>' +
+    '</div>' +
+    '<div class="eq-bonus-wrap">' +
+      '<button type="button" class="eq-bonus-toggle">' +
+        '<span class="eq-bonus-toggle-label">Bônus automático</span>' +
+        '<span class="eq-bonus-arrow">▾</span>' +
+      '</button>' +
+      '<div class="eq-bonus-body">' +
+        '<label class="eq-bonus-active"><input type="checkbox" class="eq-bonus-ativo"/> Aplicar bônus à ficha</label>' +
+        '<div class="eq-bonus-controls">' +
+          '<select class="eq-bonus-alvo" title="Atributo ou Habilidade alvo">' + bonusAlvoOpts + '</select>' +
+          '<select class="eq-bonus-tipo" title="Tipo de bônus">' +
+            '<option value="flat">Fixo</option>' +
+            '<option value="percentual">%</option>' +
+          '</select>' +
+          '<input class="eq-bonus-valor" type="number" step="1" value="0" title="Valor do bônus"/>' +
+        '</div>' +
+      '</div>' +
     '</div>';
 
   container.appendChild(card);
@@ -145,16 +166,60 @@ export function addInventoryItem(data, targetLocal) {
   card.querySelector('.eq-qtd').value = data.qtd != null ? data.qtd : 1;
   card.querySelector('.eq-ef').value = data.efeito || '';
   card.querySelector('.eq-bonus-ativo').checked = !!data.bonusAtivo;
-  if (data.bonusAlvo && MOD_TARGETS.indexOf(data.bonusAlvo) >= 0) card.querySelector('.eq-bonus-alvo').value = data.bonusAlvo;
+  var alvoSel = card.querySelector('.eq-bonus-alvo');
+  if (data.bonusAlvo && Array.prototype.some.call(alvoSel.options, function(o) { return o.value === data.bonusAlvo; })) {
+    alvoSel.value = data.bonusAlvo;
+  }
   card.querySelector('.eq-bonus-tipo').value = data.bonusTipo === 'percentual' ? 'percentual' : 'flat';
   card.querySelector('.eq-bonus-valor').value = data.bonusValor != null ? data.bonusValor : 0;
 
   function updateTotal() {
     var w = Number(card.querySelector('.eq-peso').value) || 0;
     var q = Number(card.querySelector('.eq-qtd').value) || 1;
-    card.querySelector('.eq-total-display').textContent = '= ' + Math.round(w * q * 100) / 100;
+    card.querySelector('.eq-total-display').textContent = Math.round(w * q * 100) / 100;
   }
   updateTotal();
+
+  // --- Seção de bônus recolhível (oculta por padrão) ---
+  var bonusWrap    = card.querySelector('.eq-bonus-wrap');
+  var bonusBody    = card.querySelector('.eq-bonus-body');
+  var bonusToggle  = card.querySelector('.eq-bonus-toggle');
+  var bonusArrow   = card.querySelector('.eq-bonus-arrow');
+  var bonusLabelEl = card.querySelector('.eq-bonus-toggle-label');
+  var bonusAtivoEl = card.querySelector('.eq-bonus-ativo');
+
+  function updateBonusSummary() {
+    var ativo = bonusAtivoEl.checked;
+    var alvo  = card.querySelector('.eq-bonus-alvo').value;
+    var tipo  = card.querySelector('.eq-bonus-tipo').value;
+    var valor = Number(card.querySelector('.eq-bonus-valor').value) || 0;
+    var alvoNome = (SOCIAL_SKILL_META[alvo] && SOCIAL_SKILL_META[alvo].name) || alvo;
+    if (ativo && valor !== 0) {
+      var sinal = valor > 0 ? '+' : '';
+      var txt = (tipo === 'percentual')
+        ? sinal + valor + '% ' + alvoNome
+        : sinal + valor + ' ' + alvoNome;
+      bonusLabelEl.textContent = 'Bônus: ' + txt;
+      bonusWrap.classList.add('eq-bonus-wrap--active');
+    } else {
+      bonusLabelEl.textContent = 'Bônus automático';
+      bonusWrap.classList.remove('eq-bonus-wrap--active');
+    }
+  }
+
+  function setBonusOpen(open) {
+    card.classList.toggle('eq-bonus-open', open);
+    bonusBody.style.display = open ? '' : 'none';
+    bonusArrow.textContent = open ? '▴' : '▾';
+  }
+
+  // Abre por padrão apenas quando já há bônus configurado.
+  setBonusOpen(!!data.bonusAtivo || (Number(data.bonusValor) || 0) !== 0);
+  updateBonusSummary();
+
+  bonusToggle.addEventListener('click', function() {
+    setBonusOpen(!card.classList.contains('eq-bonus-open'));
+  });
 
   card.querySelector('.eq-peso').addEventListener('input', function() { updateTotal(); syncEquipToState(); renderInventoryStatus(); });
   card.querySelector('.eq-qtd').addEventListener('input', function() { updateTotal(); syncEquipToState(); renderInventoryStatus(); });
@@ -166,6 +231,7 @@ export function addInventoryItem(data, targetLocal) {
     if (!el) return;
     var evt = (el.type === 'checkbox') ? 'change' : 'input';
     el.addEventListener(evt, function() {
+      updateBonusSummary();
       syncEquipToState();
       if (window.recalcAndRender) window.recalcAndRender();
       if (window.debouncedAutoSave) window.debouncedAutoSave();

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
-  applyModifiers, computeNaturalAbilityModifiers, getEffectiveSocial, recalcState
+  applyModifiers, computeNaturalAbilityModifiers, getEffectiveSocial, recalcState,
+  computeEquipModifiers
 } from '../js/calculations.js';
 import { SOCIAL_IDS } from '../js/constants.js';
 import { state } from '../js/state.js';
@@ -135,5 +136,36 @@ describe('pontos sociais efetivos', () => {
     recalcState();
     // Sem Hierofante o PM não recebe o bônus dinâmico.
     expect(pmSemArcana).toBeGreaterThan(state.EnergyMax);
+  });
+});
+
+// Bônus de itens equipados podem mirar habilidades sociais.
+describe('computeEquipModifiers com alvo social', () => {
+  it('aceita alvo de combate e de habilidade social', () => {
+    state.equip = [
+      { nome: 'Espada', bonusAtivo: true, bonusAlvo: 'STR', bonusTipo: 'flat', bonusValor: 2 },
+      { nome: 'Amuleto', bonusAtivo: true, bonusAlvo: 'CHAPts', bonusTipo: 'flat', bonusValor: 3 }
+    ];
+    const mods = computeEquipModifiers();
+    expect(mods).toContainEqual(
+      expect.objectContaining({ tipo: 'flat', valor: 2, alvo: 'STR', ativo: true })
+    );
+    expect(mods).toContainEqual(
+      expect.objectContaining({ tipo: 'flat', valor: 3, alvo: 'CHAPts', ativo: true })
+    );
+    state.equip = [];
+  });
+
+  it('item com bônus social soma aos pontos sociais efetivos', () => {
+    state.PerArcana = '';
+    state.CHAPts = 2;
+    state.modifiers = [];
+    state.equip = [
+      { nome: 'Amuleto do Carisma', bonusAtivo: true, bonusAlvo: 'CHAPts', bonusTipo: 'flat', bonusValor: 4 }
+    ];
+    recalcState();
+    expect(getEffectiveSocial('CHAPts')).toBe(6); // 2 comprados + 4 do item
+    state.equip = [];
+    state.CHAPts = 0;
   });
 });

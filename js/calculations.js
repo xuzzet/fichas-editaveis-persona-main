@@ -56,7 +56,8 @@ export function computeEquipModifiers() {
     if (!item || !item.bonusAtivo) return;
     var alvo = item.bonusAlvo;
     var valor = Number(item.bonusValor) || 0;
-    if (!alvo || MOD_TARGETS.indexOf(alvo) === -1 || valor === 0) return;
+    var alvoValido = MOD_TARGETS.indexOf(alvo) !== -1 || SOCIAL_IDS.indexOf(alvo) !== -1;
+    if (!alvo || !alvoValido || valor === 0) return;
     mods.push({
       nome: (item.nome || 'Equipamento') + ' (' + alvo + ')',
       tipo: item.bonusTipo === 'percentual' ? 'percentual' : 'flat',
