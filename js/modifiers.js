@@ -4,7 +4,7 @@
 // =============================================
 
 import { state } from './state.js';
-import { MOD_TARGETS } from './constants.js';
+import { MOD_TARGETS, SOCIAL_IDS, SOCIAL_SKILL_META } from './constants.js';
 import { recalcState, validateState } from './calculations.js';
 import { render } from './ui.js';
 
@@ -36,9 +36,16 @@ export function buildModifiersUI() {
     var card = document.createElement('div');
     card.className = 'mod-card' + (isActive ? ' mod-card--active' : ' mod-card--inactive');
 
-    var alvoOpts = MOD_TARGETS.map(function(t) {
+    var combatOpts = MOD_TARGETS.map(function(t) {
       return '<option value="' + t + '">' + t + '</option>';
     }).join('');
+    var socialOpts = SOCIAL_IDS.map(function(id) {
+      var nome = (SOCIAL_SKILL_META[id] && SOCIAL_SKILL_META[id].name) || id;
+      return '<option value="' + id + '">' + nome + '</option>';
+    }).join('');
+    var alvoOpts =
+      '<optgroup label="Combate">' + combatOpts + '</optgroup>' +
+      '<optgroup label="Social">' + socialOpts + '</optgroup>';
 
     card.innerHTML =
       '<div class="mod-card-top">' +

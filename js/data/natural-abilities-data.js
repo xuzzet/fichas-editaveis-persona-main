@@ -86,6 +86,7 @@ export const NATURAL_ABILITIES = {
         name: 'Apenas a Minha Verdade é a Justa!',
         type: 'passive',
         typeLabel: 'Habilidade Natural Passiva',
+        mechanic: { disciplineBonus: 5, attribute: 'MAG', value: 1 },
         blocks: [
           {
             kind: 'bonus',

@@ -5,19 +5,24 @@
 
 import { state } from './state.js';
 import {
-  MOD_TARGETS, CONDITIONS_LIST, SOCIAL_IDS, SOCIAL_EFFECTS, SOCIAL_SKILL_META
+  MOD_TARGETS, CONDITIONS_LIST, SOCIAL_IDS, SOCIAL_EFFECTS, SOCIAL_SKILL_META,
+  SOCIAL_ATTR_TO_ID, CHOICE_VALUE_TO_ATTR
 } from './constants.js';
 import { clampInt } from './utils.js';
+import { getArcanaInfo } from './data/awakening-data.js';
+import { getNaturalAbilities } from './data/natural-abilities-data.js';
 
 /**
  * Aplica modificadores sobre valores base.
  * @param {object} baseValues - {STR, MAG, TEC, AGI, VIT, LCK, HP, PM}
  * @param {Array} modifiers - lista de {nome, tipo, valor, alvo, ativo}
+ * @param {Array} [targets] - lista de alvos válidos (default: MOD_TARGETS)
  * @returns {object} valores modificados
  */
-export function applyModifiers(baseValues, modifiers) {
+export function applyModifiers(baseValues, modifiers, targets) {
+  targets = targets || MOD_TARGETS;
   var result = {};
-  MOD_TARGETS.forEach(function(t) { result[t] = baseValues[t] || 0; });
+  targets.forEach(function(t) { result[t] = baseValues[t] || 0; });
   var actives = (modifiers || []).filter(function(m) { return m.ativo && m.valor !== 0; });
   // Flat primeiro
   actives.filter(function(m) { return m.tipo === 'flat'; }).forEach(function(m) {
@@ -28,7 +33,7 @@ export function applyModifiers(baseValues, modifiers) {
     if (result[m.alvo] !== undefined) result[m.alvo] = Math.round(result[m.alvo] * (1 + m.valor / 100));
   });
   // Clamp mínimo 0
-  MOD_TARGETS.forEach(function(t) { if (result[t] < 0) result[t] = 0; });
+  targets.forEach(function(t) { if (result[t] < 0) result[t] = 0; });
   return result;
 }
 
@@ -88,6 +93,135 @@ export function computeFeitoModifiers() {
 }
 
 /**
+ * Calcula modificadores automáticos derivados das Habilidades Naturais da
+ * Arcana selecionada (state.PerArcana).
+ *
+ * Normaliza as diferentes formas de mecânica (mechanic{}) em modificadores:
+ *  • Vida máx.: mechanic.maxHPPercentBonus / mechanic.effect==='maxHPMultiplier'
+ *    → modificador percentual em HP.
+ *  • Atributos (sociais e VIT): mechanic.attribute (string ou array) + value,
+ *    ou as chaves nomeadas disciplineBonus / charmBonus / initialCourageBonus,
+ *    ou mechanic.attributeBonus combinado a um bloco 'choice' (o atributo é lido
+ *    de state.naturalAbilityConfig[arcanaKey][configKey]) → modificador flat.
+ *
+ * Os alvos sociais (Conhecimento, Disciplina, Empatia, Expressão, Coragem,
+ * Charme) são tratados como alvos de modificador (ver SOCIAL_IDS): o bônus soma
+ * aos pontos efetivos e conta para o Tier.
+ *
+ * NUNCA modifica os dados estáticos das Arcanas.
+ * Retorna array no mesmo formato de state.modifiers.
+ */
+export function computeNaturalAbilityModifiers() {
+  var mods = [];
+  var info = getArcanaInfo(state.PerArcana);
+  if (!info) return mods;
+  var pack = getNaturalAbilities(info.key);
+  if (!pack || !Array.isArray(pack.abilities)) return mods;
+
+  var arcanaLabel = info.display || info.name;
+  var cfg = (state.naturalAbilityConfig && state.naturalAbilityConfig[info.key]) || {};
+  var hpPercent = 0;
+
+  // Acumula bônus flat por alvo (ex.: DISPts +2 de duas habilidades → +4).
+  function pushAttrBonus(attrName, value) {
+    if (!attrName || !value) return;
+    var alvo = SOCIAL_ATTR_TO_ID[attrName];
+    if (!alvo) return;
+    mods.push({
+      nome:  'Arcana ' + arcanaLabel + ' (' + attrName + ')',
+      tipo:  'flat',
+      valor: value,
+      alvo:  alvo,
+      ativo: true
+    });
+  }
+
+  pack.abilities.forEach(function(ab) {
+    var mech = ab && ab.mechanic;
+    if (!mech) return;
+
+    // --- Vida máxima (percentual) ---
+    if (typeof mech.maxHPPercentBonus === 'number') hpPercent += mech.maxHPPercentBonus;
+    if (mech.effect === 'maxHPMultiplier' && typeof mech.value === 'number') hpPercent += mech.value;
+
+    // --- Atributos: mechanic.attribute (string|array) + value ---
+    if (mech.attribute && typeof mech.value === 'number') {
+      var attrs = Array.isArray(mech.attribute) ? mech.attribute : [mech.attribute];
+      attrs.forEach(function(a) { pushAttrBonus(a, mech.value); });
+    }
+
+    // --- Atributos: chaves nomeadas ---
+    if (typeof mech.disciplineBonus === 'number') pushAttrBonus('Disciplina', mech.disciplineBonus);
+    if (typeof mech.charmBonus === 'number') pushAttrBonus('Charme', mech.charmBonus);
+    if (typeof mech.initialCourageBonus === 'number') pushAttrBonus('Coragem', mech.initialCourageBonus);
+
+    // --- Atributos: escolha do jogador (attributeBonus + bloco choice) ---
+    if (typeof mech.attributeBonus === 'number' && Array.isArray(ab.blocks)) {
+      var choice = ab.blocks.find(function(b) { return b.kind === 'choice' && b.configKey; });
+      if (choice) {
+        var chosen = cfg[choice.configKey];
+        var attrName = chosen && CHOICE_VALUE_TO_ATTR[chosen];
+        if (attrName) pushAttrBonus(attrName, mech.attributeBonus);
+      }
+    }
+  });
+
+  if (hpPercent !== 0) {
+    mods.push({
+      nome: 'Arcana ' + arcanaLabel + ' (Vida máx.)',
+      tipo: 'percentual',
+      valor: hpPercent,
+      alvo: 'HP',
+      ativo: true
+    });
+  }
+  return mods;
+}
+
+/**
+ * Bônus de PM derivado de Habilidades Naturais que concedem
+ * "PM bônus = soma de atributos" (ex.: Hierofante — Conhecimento + Charme).
+ * Depende dos pontos sociais EFETIVOS, por isso é calculado à parte,
+ * após o cálculo de socialEff em recalcState().
+ * @param {object} socialEff - pontos sociais efetivos por id
+ * @returns {Array} modificadores no formato de state.modifiers
+ */
+export function computeNaturalPMBonus(socialEff) {
+  var mods = [];
+  var info = getArcanaInfo(state.PerArcana);
+  if (!info) return mods;
+  var pack = getNaturalAbilities(info.key);
+  if (!pack || !Array.isArray(pack.abilities)) return mods;
+
+  var arcanaLabel = info.display || info.name;
+
+  pack.abilities.forEach(function(ab) {
+    var mech = ab && ab.mechanic;
+    if (!mech || !Array.isArray(mech.bonusPM)) return;
+    var total = 0;
+    mech.bonusPM.forEach(function(attrName) {
+      var alvo = SOCIAL_ATTR_TO_ID[attrName];
+      if (!alvo) return;
+      if (SOCIAL_IDS.indexOf(alvo) >= 0) {
+        total += (socialEff && socialEff[alvo] !== undefined)
+          ? socialEff[alvo]
+          : Math.max(0, Number(state[alvo]) || 0);
+      }
+    });
+    if (total > 0) {
+      mods.push({
+        nome:  'Arcana ' + arcanaLabel + ' (PM bônus)',
+        tipo:  'flat',
+        valor: total,
+        alvo:  'PM',
+        ativo: true
+      });
+    }
+  });
+  return mods;
+}
+
+/**
  * Calcula o movimento do personagem em metros.
  * Considera Atleta (STR ao invés de AGI), Prodígio em Corrida (×2) e condição Lento (÷2).
  */
@@ -139,10 +273,10 @@ export function calcSocialTier(pts) {
  * Os tiers são acumulativos: tier atual inclui todos os tiers anteriores.
  * Retorna array no mesmo formato de state.modifiers.
  */
-export function computeSocialModifiers() {
+export function computeSocialModifiers(socialValues) {
   var mods = [];
   SOCIAL_IDS.forEach(function(skillId) {
-    var pts  = state[skillId] || 0;
+    var pts  = socialValues ? (socialValues[skillId] || 0) : (state[skillId] || 0);
     var tier = calcSocialTier(pts);
     var effects = SOCIAL_EFFECTS[skillId];
     if (!effects) return;
@@ -169,11 +303,11 @@ export function computeSocialModifiers() {
  * habilidades sociais, organizados por habilidade e tier.
  * Usado apenas para exibição — não afeta cálculos.
  */
-export function computeSocialEffects() {
+export function computeSocialEffects(socialValues) {
   var result = [];
   var ROMAN = ['0', 'I', 'II', 'III', 'IV', 'V'];
   SOCIAL_IDS.forEach(function(skillId) {
-    var pts  = state[skillId] || 0;
+    var pts  = socialValues ? (socialValues[skillId] || 0) : (state[skillId] || 0);
     var tier = calcSocialTier(pts);
     if (tier === 0) {
       var e0 = SOCIAL_EFFECTS[skillId] && SOCIAL_EFFECTS[skillId][0];
@@ -227,12 +361,34 @@ export function recalcState() {
     PM: basePM
   };
   // Combina modificadores na ordem de cálculo definida:
-  // 1) equipamentos → 2) feitos automáticos → 3) habilidades sociais → 4) modificadores globais
-  var equipMods  = computeEquipModifiers();
-  var feitoMods  = computeFeitoModifiers();
-  var socialMods = computeSocialModifiers();
+  // 1) equipamentos → 2) feitos automáticos → 3) Habilidades Naturais →
+  // 4) habilidades sociais → 5) modificadores globais
+  var equipMods   = computeEquipModifiers();
+  var feitoMods   = computeFeitoModifiers();
+  var naturalMods = computeNaturalAbilityModifiers();
+
+  // --- Pontos sociais EFETIVOS ---
+  // base (pontos comprados) + modificadores que miram habilidades sociais
+  // (Habilidades Naturais, equipamentos, feitos, modificadores globais).
+  // O orçamento (pontos restantes) continua baseado apenas nos pontos comprados.
+  var socialBase = {};
+  SOCIAL_IDS.forEach(function(id) { socialBase[id] = clampInt(state[id] || 0, 0, 999); });
+  var socialTargetMods = equipMods
+    .concat(feitoMods)
+    .concat(naturalMods)
+    .concat(state.modifiers || [])
+    .filter(function(m) { return SOCIAL_IDS.indexOf(m.alvo) >= 0; });
+  var socialEff = applyModifiers(socialBase, socialTargetMods, SOCIAL_IDS);
+
+  // Efeitos automáticos de Tier (HP/PM/…) usam os pontos EFETIVOS.
+  var socialMods  = computeSocialModifiers(socialEff);
+  // Bônus de PM que dependem de atributos sociais efetivos
+  // (ex.: Hierofante — PM bônus = Conhecimento + Charme).
+  var naturalPMMods = computeNaturalPMBonus(socialEff);
   var allMods = equipMods
     .concat(feitoMods)
+    .concat(naturalMods)
+    .concat(naturalPMMods)
     .concat(socialMods)
     .concat(state.modifiers || []);
   var modded = applyModifiers(baseVals, allMods);
@@ -244,15 +400,29 @@ export function recalcState() {
     modded: modded,
     equipMods: equipMods,
     feitoMods: feitoMods,
+    naturalMods: naturalMods.concat(naturalPMMods),
     socialMods: socialMods,
+    socialBase: socialBase,
+    socialEff: socialEff,
     movement: computeMovement(modded),
     conditionAlerts: computeConditionAlerts(),
-    socialEffects: computeSocialEffects(),
+    socialEffects: computeSocialEffects(socialEff),
     flags: {
       rdUniversal:   feitoIsActive('prodigio_protecao'),
       tecReplaceAgi: feitoIsActive('prodigio_defesa')
     }
   };
+}
+
+/**
+ * Retorna os pontos EFETIVOS de uma habilidade social (base + modificadores).
+ * Usado por render/rolagens. Faz fallback para os pontos-base se o recálculo
+ * ainda não tiver populado state._computed.socialEff.
+ */
+export function getEffectiveSocial(skillId) {
+  var eff = state._computed && state._computed.socialEff;
+  if (eff && eff[skillId] !== undefined) return eff[skillId];
+  return Math.max(0, Number(state[skillId]) || 0);
 }
 
 /**

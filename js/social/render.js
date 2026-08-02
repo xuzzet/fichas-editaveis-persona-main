@@ -3,6 +3,7 @@
 // =============================================
 import { state } from '../state.js';
 import { SOCIAL_SKILL_META, INITIAL_SOCIAL_POINTS } from '../constants.js';
+import { getEffectiveSocial } from '../calculations.js';
 import { HX, hxStartAnimation } from './hexagram.js';
 
 // =============================================
@@ -17,10 +18,13 @@ export function renderSocial() {
   var tierChanged = false;
 
   HX.skills.forEach(function(s, i) {
-    var val = Math.max(0, Number(state[s.id]) || 0);
-    // Sincroniza o badge do slider social (não altera o valor de state).
+    var baseVal = Math.max(0, Number(state[s.id]) || 0);
+    // Valor EFETIVO = pontos comprados + modificadores (Arcana, globais, …).
+    var val = Math.max(0, Number(getEffectiveSocial(s.id)) || 0);
+    // Sincroniza o badge do slider social com os pontos COMPRADOS (o controle
+    // reflete o que o jogador alocou; o bônus aparece no hexagrama).
     var badgeEl = document.getElementById('b' + s.id);
-    if (badgeEl) badgeEl.textContent = val;
+    if (badgeEl) badgeEl.textContent = baseVal;
     var tier = Math.min(5, Math.floor(val / 5));
     var meta = SOCIAL_SKILL_META[s.id];
     if (!meta) return;
@@ -74,7 +78,7 @@ export function renderSocial() {
     }
     HX.prevTiers[i] = tier;
 
-    sum += val;
+    sum += baseVal;
   });
 
   HX.prevInit = true;

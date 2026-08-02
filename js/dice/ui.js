@@ -6,7 +6,7 @@
 
 import { state } from '../state.js';
 import { SOCIAL_IDS, SOCIAL_SKILL_META } from '../constants.js';
-import { calcSocialTier } from '../calculations.js';
+import { calcSocialTier, getEffectiveSocial } from '../calculations.js';
 import { showToast } from '../ui.js';
 import { COMBAT_ATTRS, MAX_DICE, rollTest, getComputedStats, evaluateFormula, formulaNeedsHab } from './engine.js';
 
@@ -130,9 +130,10 @@ export function performTestRoll(category, attrKey, extraModifier) {
   var attrValue, label, attrLabel;
   if (category === 'social') {
     var meta = SOCIAL_SKILL_META[attrKey];
-    // Rolagem social usa os PONTOS totais da habilidade (não o Tier).
-    attrValue = Math.trunc(Number(state[attrKey]) || 0);
-    var tier = calcSocialTier(state[attrKey] || 0);
+    // Rolagem social usa os PONTOS EFETIVOS da habilidade (não o Tier).
+    var socPts = Math.max(0, Number(getEffectiveSocial(attrKey)) || 0);
+    attrValue = Math.trunc(socPts);
+    var tier = calcSocialTier(socPts);
     attrLabel = meta ? meta.name : attrKey;
     label = attrLabel + ' — 1d20 + ' + attrValue + ' (Tier ' + ['0','I','II','III','IV','V'][tier] + ')';
   } else {
@@ -153,7 +154,7 @@ export function performTestRoll(category, attrKey, extraModifier) {
     total: res.total,
     crit: res.crit,
     fail: res.fail,
-    tier: (category === 'social') ? calcSocialTier(state[attrKey] || 0) : null
+    tier: (category === 'social') ? calcSocialTier(getEffectiveSocial(attrKey)) : null
   });
   showTestResult(res, category, attrKey, res.extra);
   return res;
@@ -196,8 +197,9 @@ export function rollQuick(category, attrKey) {
   if (category === 'social') {
     var meta = SOCIAL_SKILL_META[attrKey];
     name = meta ? meta.name : attrKey;
-    attrValue = Math.trunc(Number(state[attrKey]) || 0);
-    tier = calcSocialTier(state[attrKey] || 0);
+    var socPts = Math.max(0, Number(getEffectiveSocial(attrKey)) || 0);
+    attrValue = Math.trunc(socPts);
+    tier = calcSocialTier(socPts);
   } else {
     var stats = getComputedStats();
     name = attrKey;

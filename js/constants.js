@@ -166,6 +166,32 @@ export const SOCIAL_SKILL_META = {
 export const SOCIAL_IDS = ['KNOPts','DISPts','EMPpts','EXPPts','COUPts','CHAPts'];
 export const INITIAL_SOCIAL_POINTS = 7;
 
+// Mapeia o NOME de um atributo (como aparece em mechanic.attribute das
+// Habilidades Naturais) para o alvo de modificador correspondente.
+// Habilidades sociais → id social; atributos de combate → o próprio nome.
+export const SOCIAL_ATTR_TO_ID = {
+  'Conhecimento': 'KNOPts',
+  'Disciplina':   'DISPts',
+  'Empatia':      'EMPpts',
+  'Expressão':    'EXPPts',
+  'Coragem':      'COUPts',
+  'Charme':       'CHAPts',
+  'STR': 'STR', 'MAG': 'MAG', 'TEC': 'TEC',
+  'AGI': 'AGI', 'VIT': 'VIT', 'LCK': 'LCK'
+};
+
+// Mapeia o VALOR de uma opção de escolha (choice.options[].value) para o
+// NOME do atributo (usado nas Habilidades Naturais com attributeBonus + choice).
+export const CHOICE_VALUE_TO_ATTR = {
+  'conhecimento': 'Conhecimento',
+  'disciplina':   'Disciplina',
+  'empatia':      'Empatia',
+  'expressao':    'Expressão',
+  'expressão':    'Expressão',
+  'coragem':      'Coragem',
+  'charme':       'Charme'
+};
+
 // =============================================
 // HABILIDADES SOCIAIS — EFEITOS POR TIER
 // Tiers são acumulativos. computeSocialModifiers()

@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { applyModifiers } from '../js/calculations.js';
+import {
+  applyModifiers, computeNaturalAbilityModifiers, getEffectiveSocial, recalcState
+} from '../js/calculations.js';
+import { SOCIAL_IDS } from '../js/constants.js';
+import { state } from '../js/state.js';
 
 // Testes das regras de modificadores (função pura, sem DOM).
 // Protege as mecânicas contra regressões.
@@ -39,5 +43,97 @@ describe('applyModifiers', () => {
     const r = applyModifiers(base, [{ ativo: true, valor: 5, tipo: 'flat', alvo: 'STR' }]);
     expect(r.MAG).toBe(10);
     expect(r.HP).toBe(100);
+  });
+
+  it('aplica sobre alvos sociais quando informado o conjunto de alvos', () => {
+    const socialBase = { DISPts: 3, CHAPts: 0 };
+    const r = applyModifiers(
+      socialBase,
+      [{ ativo: true, valor: 4, tipo: 'flat', alvo: 'DISPts' }],
+      SOCIAL_IDS
+    );
+    expect(r.DISPts).toBe(7);
+    expect(r.CHAPts).toBe(0);
+  });
+});
+
+// Bônus automáticos concedidos pela Arcana (Habilidades Naturais).
+describe('computeNaturalAbilityModifiers', () => {
+  it('não gera modificador quando não há Arcana selecionada', () => {
+    state.PerArcana = '';
+    expect(computeNaturalAbilityModifiers()).toEqual([]);
+  });
+
+  it('gera bônus social (+5 Disciplina) e +1 MAG para O Julgamento', () => {
+    state.PerArcana = 'XX - Julgamento';
+    const mods = computeNaturalAbilityModifiers();
+    expect(mods).toContainEqual(
+      expect.objectContaining({ tipo: 'flat', valor: 5, alvo: 'DISPts', ativo: true })
+    );
+    expect(mods).toContainEqual(
+      expect.objectContaining({ tipo: 'flat', valor: 1, alvo: 'MAG', ativo: true })
+    );
+  });
+
+  it('gera +15% HP e +4 Coragem (social) para A Força', () => {
+    state.PerArcana = 'VIII - Força';
+    const mods = computeNaturalAbilityModifiers();
+    expect(mods).toContainEqual(
+      expect.objectContaining({ tipo: 'percentual', valor: 15, alvo: 'HP' })
+    );
+    expect(mods).toContainEqual(
+      expect.objectContaining({ tipo: 'flat', valor: 4, alvo: 'COUPts' })
+    );
+  });
+
+  it('gera modificador percentual de HP (+25%) para O Enforcado', () => {
+    state.PerArcana = 'XII - Enforcado';
+    const mods = computeNaturalAbilityModifiers();
+    expect(mods).toHaveLength(1);
+    expect(mods[0]).toMatchObject({ tipo: 'percentual', valor: 25, alvo: 'HP' });
+  });
+});
+
+// Pontos sociais efetivos (base comprada + bônus da Arcana) via recalcState.
+describe('pontos sociais efetivos', () => {
+  it('A Justiça soma +4 Disciplina aos pontos comprados', () => {
+    state.PerArcana = 'XI - Justiça';
+    state.DISPts = 2;
+    state.modifiers = [];
+    recalcState();
+    expect(getEffectiveSocial('DISPts')).toBe(6); // 2 comprados + 4 da Arcana
+  });
+
+  it('modificador global social soma ao efetivo', () => {
+    state.PerArcana = '';
+    state.CHAPts = 1;
+    state.modifiers = [{ nome: 'Teste', tipo: 'flat', valor: 3, alvo: 'CHAPts', ativo: true }];
+    recalcState();
+    expect(getEffectiveSocial('CHAPts')).toBe(4);
+    state.modifiers = [];
+  });
+
+  it('O Hierofante concede PM bônus = Conhecimento + Charme efetivos', () => {
+    state.PerArcana = 'V - Hierofante';
+    state.KNOPts = 2;
+    state.CHAPts = 1;
+    state.modifiers = [];
+    recalcState();
+    const pmSemArcana = state.EnergyMax;
+    // Hierofante concede +3 Conhecimento e +3 Charme (inicial) via mechanic,
+    // então efetivo: Conhecimento 2+3=5, Charme 1+3=4 → PM bônus = 9.
+    expect(getEffectiveSocial('KNOPts')).toBe(5);
+    expect(getEffectiveSocial('CHAPts')).toBe(4);
+    const pmMod = (state._computed.naturalMods || []).find(
+      (m) => m.alvo === 'PM' && /PM b[oô]nus/i.test(m.nome)
+    );
+    expect(pmMod).toBeTruthy();
+    expect(pmMod.valor).toBe(9);
+    state.PerArcana = '';
+    state.KNOPts = 0;
+    state.CHAPts = 0;
+    recalcState();
+    // Sem Hierofante o PM não recebe o bônus dinâmico.
+    expect(pmSemArcana).toBeGreaterThan(state.EnergyMax);
   });
 });

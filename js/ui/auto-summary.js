@@ -3,6 +3,7 @@
 // =============================================
 import { state } from '../state.js';
 import { feitoIsActive } from '../calculations.js';
+import { SOCIAL_IDS, SOCIAL_SKILL_META } from '../constants.js';
 
 // =============================================
 // PAINEL DE RESUMO AUTOMÁTICO
@@ -55,6 +56,17 @@ export function renderAutoSummary() {
   // Atributo com nota de base quando diferente do final
   function statStr(key) {
     var fin = m[key], bas = b[key];
+    return fin !== bas
+      ? '<b>' + fin + '</b><span class="autos-base"> (' + bas + ')</span>'
+      : '<b>' + fin + '</b>';
+  }
+
+  // Habilidade social com nota de base quando diferente do efetivo
+  // (mesmo formato dos atributos de combate: efetivo (base)).
+  var socialEff = comp.socialEff || {};
+  var socialBase = comp.socialBase || {};
+  function socialStr(id) {
+    var fin = socialEff[id] || 0, bas = socialBase[id] || 0;
     return fin !== bas
       ? '<b>' + fin + '</b><span class="autos-base"> (' + bas + ')</span>'
       : '<b>' + fin + '</b>';
@@ -145,6 +157,18 @@ export function renderAutoSummary() {
       '</div>';
   }
 
+  // Grade de Atributos Sociais — efetivo (base) igual aos atributos de combate.
+  var socialGridHtml =
+    '<div class="autos-section">' +
+    '<div class="autos-label autos-label-social">Atributos Sociais</div>' +
+    '<div class="autos-grid">' +
+    SOCIAL_IDS.map(function(id) {
+      var name = (SOCIAL_SKILL_META[id] || {}).name || id;
+      return '<div class="autos-stat"><span class="autos-key">' + name + '</span>' + socialStr(id) + '</div>';
+    }).join('') +
+    '</div>' +
+    '</div>';
+
   var html =
     '<div class="autos-grid">' +
       '<div class="autos-stat"><span class="autos-key">STR</span>'   + statStr('STR') + '</div>' +
@@ -159,6 +183,7 @@ export function renderAutoSummary() {
         (flags.rdUniversal ? '<span class="autos-flag"> (univ.)</span>' : '') + '</div>' +
       '<div class="autos-stat"><span class="autos-key">Movimento</span>' + movLabel + '</div>' +
     '</div>' +
+    socialGridHtml +
     feitoBonusHtml +
     flagsHtml +
     alertsHtml +

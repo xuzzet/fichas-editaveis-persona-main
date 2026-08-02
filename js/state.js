@@ -31,7 +31,8 @@ export const NUMBER_FIELDS = new Set([
 
 // Campos que exigem recálculo de HP/PM/badges quando alterados
 export const RECALC_FIELDS = new Set([
-  'CharLvl','CharSTR','CharMAG','CharTEC','CharAGI','CharVIT','CharLCK'
+  'CharLvl','CharSTR','CharMAG','CharTEC','CharAGI','CharVIT','CharLCK',
+  'KNOPts','DISPts','EMPpts','EXPPts','COUPts','CHAPts'
 ]);
 
 export const state = {

@@ -243,7 +243,14 @@ export function renderNaturalAbilities() {
 // =============================================
 export function initNaturalAbilities() {
   var perArc = document.getElementById('PerArcana');
-  var deferred = function () { setTimeout(renderNaturalAbilities, 0); };
+  var deferred = function () {
+    setTimeout(function () {
+      renderNaturalAbilities();
+      // A Arcana pode conceder b\u00f4nus percentual de Vida m\u00e1xima (aplicado em
+      // computeNaturalAbilityModifiers). Recalcula para refletir na ficha.
+      if (window.recalcAndRender) window.recalcAndRender();
+    }, 0);
+  };
   if (perArc) {
     perArc.addEventListener('change', deferred);
     perArc.addEventListener('input', deferred);

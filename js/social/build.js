@@ -2,6 +2,7 @@
 // SOCIAL - CONSTRUCAO DO HEXAGRAMA UI
 // =============================================
 import { SOCIAL_SKILL_META } from '../constants.js';
+import { getEffectiveSocial } from '../calculations.js';
 import { HX } from './hexagram.js';
 
 // =============================================
@@ -220,8 +221,8 @@ export function buildSocialUI() {
 
   function getSkillInfo(skillId) {
     var meta = SOCIAL_SKILL_META[skillId];
-    var inp  = document.getElementById(skillId);
-    var pts  = inp ? (parseInt(inp.value, 10) || 0) : 0;
+    // Pontos EFETIVOS (comprados + modificadores de Arcana/globais).
+    var pts  = Math.max(0, Number(getEffectiveSocial(skillId)) || 0);
     // Same formula used everywhere else in the system
     var tier = Math.min(5, Math.floor(pts / 5));
     var title = meta.titles[tier] || meta.titles[meta.titles.length - 1] || skillId;
