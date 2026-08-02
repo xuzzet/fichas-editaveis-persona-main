@@ -35,6 +35,7 @@ function resetStateToDefaults() {
   state.background = {};
   state.rollHistory = [];
   state.personaAwakenings = {};
+  state.naturalAbilityConfig = {};
 
   recalcState();
   state.CurrentHP = state.MaxHP;

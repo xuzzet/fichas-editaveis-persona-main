@@ -33,6 +33,7 @@ import { getSafetyBackup } from './backup.js';
 import { initHistory, recordHistory, undo, redo } from './history.js';
 import { initDiceSystem, rollDamage, rollQuick } from './dice.js';
 import { initAwakening } from './awakening.js';
+import { initNaturalAbilities } from './natural-abilities.js';
 import { setState, getState } from './app/core.js';
 import {
   resetFicha, switchToProfile, createNewProfile, duplicateExistingProfile,
@@ -62,6 +63,7 @@ function initApp() {
   try { buildAutoSummaryPanel(); } catch(e) { console.error('[initApp] buildAutoSummaryPanel:', e); }
   try { initDiceSystem(); } catch(e) { console.error('[initApp] initDiceSystem:', e); }
   try { initAwakening(); } catch(e) { console.error('[initApp] initAwakening:', e); }
+  try { initNaturalAbilities(); } catch(e) { console.error('[initApp] initNaturalAbilities:', e); }
   try { initInventoryButtons(); } catch(e) { console.error('[initApp] initInventoryButtons:', e); }
   try { initLinkFilters(); } catch(e) { console.error('[initApp] initLinkFilters:', e); }
   try { initLoreCollapse(); } catch(e) { console.error('[initApp] initLoreCollapse:', e); }

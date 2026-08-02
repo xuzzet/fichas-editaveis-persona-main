@@ -17,6 +17,7 @@ import { renderConditions } from '../conditions.js';
 import { renderModifiers, renderModSummary } from '../modifiers.js';
 import { renderDiceHistory } from '../dice.js';
 import { renderAwakening } from '../awakening.js';
+import { renderNaturalAbilities } from '../natural-abilities.js';
 import { setRenderAll } from '../storage.js';
 
 // =============================================
@@ -41,6 +42,7 @@ export function renderAll() {
     renderAutoSummary();
     renderDiceHistory();
     renderAwakening();
+    renderNaturalAbilities();
     initAutoResizeTextareas();
   } finally {
     setRendering(false);

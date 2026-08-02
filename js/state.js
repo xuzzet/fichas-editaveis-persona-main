@@ -71,6 +71,8 @@ export const state = {
   rollHistory: [],
   // Despertar Trama — desbloqueios narrativos por Arcana { arcanaKey: { narrative: [ids] } }
   personaAwakenings: {},
+  // Habilidades Naturais — escolhas de configuração por Arcana { arcanaKey: { elementResistance } }
+  naturalAbilityConfig: {},
   // Valores computados (preenchidos por recalcState)
   _computed: null
 };

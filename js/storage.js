@@ -78,7 +78,8 @@ export function snapshot() {
     modifiers: JSON.parse(JSON.stringify(state.modifiers || [])),
     feitoConfig: JSON.parse(JSON.stringify(state.feitoConfig || {})),
     rollHistory: JSON.parse(JSON.stringify(state.rollHistory || [])),
-    personaAwakenings: JSON.parse(JSON.stringify(state.personaAwakenings || {}))
+    personaAwakenings: JSON.parse(JSON.stringify(state.personaAwakenings || {})),
+    naturalAbilityConfig: JSON.parse(JSON.stringify(state.naturalAbilityConfig || {}))
   };
 }
 
@@ -140,6 +141,8 @@ export function applySnapshot(data) {
   state.rollHistory = Array.isArray(data.rollHistory) ? data.rollHistory : [];
   // Despertar Trama (fallback para saves antigos sem o campo)
   state.personaAwakenings = (data.personaAwakenings && typeof data.personaAwakenings === 'object') ? data.personaAwakenings : {};
+  // Habilidades Naturais — configuração por Arcana (fallback para saves antigos)
+  state.naturalAbilityConfig = (data.naturalAbilityConfig && typeof data.naturalAbilityConfig === 'object') ? data.naturalAbilityConfig : {};
 
   // Recalcular HP/PM com atributos + modificadores restaurados
   recalcState();
