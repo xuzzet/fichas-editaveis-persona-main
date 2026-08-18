@@ -4,12 +4,7 @@
 
 import { state } from '../state.js';
 import { rollSpellFormula, formulaNeedsHab, COMBAT_ATTRS } from '../dice.js';
-
-function _escHtml(s) {
-  return String(s == null ? '' : s)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
+import { escapeHtml as _escHtml } from '../utils.js';
 
 export var spellBody      = document.querySelector('#spell-grid');
 

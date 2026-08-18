@@ -6,6 +6,7 @@
 // =============================================
 
 import { state } from './state.js';
+import { escapeHtml as esc } from './utils.js';
 import {
   ARCANA_MAP, ARCANA_CARD_IMAGES, getArcanaInfo, VERTENTES,
   TIER_LEVELS, CONTENT, AWAKENING_OVERRIDES, TIER_KEYS, TIER_LABELS
@@ -169,11 +170,6 @@ function grantResolucaoNarrative(arcanaKey, nodeId) {
 // =============================================
 // HELPERS DOM
 // =============================================
-function esc(s) {
-  return String(s == null ? '' : s)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
 
 // Estado transitório de UI (não persiste): vertente selecionada + arcana anterior.
 var selectedVertente = null;

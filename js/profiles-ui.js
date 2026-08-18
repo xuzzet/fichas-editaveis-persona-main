@@ -10,6 +10,7 @@ import {
   getProfiles, getActiveProfile, getActiveId, isFull,
   getProfileCount, MAX_PROFILES
 } from './profiles.js';
+import { escapeHtml } from './utils.js';
 
 var api = null;
 
@@ -19,12 +20,6 @@ function el(tag, cls, html) {
   if (cls) e.className = cls;
   if (html != null) e.innerHTML = html;
   return e;
-}
-
-function escapeHtml(s) {
-  return String(s == null ? '' : s)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 function avatarMarkup(profile, sizeCls) {

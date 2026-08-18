@@ -9,6 +9,7 @@ import { SOCIAL_IDS, SOCIAL_SKILL_META } from '../constants.js';
 import { calcSocialTier, getEffectiveSocial } from '../calculations.js';
 import { showToast } from '../ui.js';
 import { COMBAT_ATTRS, MAX_DICE, rollTest, getComputedStats, evaluateFormula, formulaNeedsHab } from './engine.js';
+import { escapeHtml as esc } from '../utils.js';
 
 // =============================================
 // CONSTANTES DE UI
@@ -20,13 +21,6 @@ var COMBAT_LABELS = {
   STR: 'Força (STR)', MAG: 'Magia (MAG)', TEC: 'Técnica (TEC)',
   AGI: 'Agilidade (AGI)', VIT: 'Vitalidade (VIT)', LCK: 'Sorte (LCK)'
 };
-
-/** Escapa HTML para evitar injeção via strings do jogador (fórmulas etc.). */
-function esc(s) {
-  return String(s == null ? '' : s)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
 
 // =============================================
 // HISTÓRICO

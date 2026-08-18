@@ -104,13 +104,13 @@ export function initImportExport() {
       var pdfDoc = await PDFLib.PDFDocument.load(ab);
       var form = pdfDoc.getForm();
 
-      function setTxt(name, val) {
+      var setTxt = function(name, val) {
         try {
           var field = form.getField(name);
           if (field.setText) field.setText(String(val != null ? val : ''));
           else if (field.select) field.select(String(val != null ? val : ''));
         } catch (e) {}
-      }
+      };
 
       var s = snapshot();
       var g = s.acessoRapido || {};

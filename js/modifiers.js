@@ -7,6 +7,7 @@ import { state } from './state.js';
 import { MOD_TARGETS, SOCIAL_IDS, SOCIAL_SKILL_META } from './constants.js';
 import { recalcState, validateState } from './calculations.js';
 import { render } from './ui.js';
+import { escapeHtml } from './utils.js';
 
 // Referência interna ao construtor de linhas (setada por buildModifiersUI)
 var _addModRow = null;
@@ -20,7 +21,7 @@ export function renderModSummary() {
   var parts = actives.map(function(m) {
     var sign = m.valor >= 0 ? '+' : '';
     var suffix = m.tipo === 'percentual' ? '%' : '';
-    return '<b>' + m.alvo + '</b> ' + sign + m.valor + suffix + ' (' + (m.nome || 'sem nome') + ')';
+    return '<b>' + escapeHtml(m.alvo) + '</b> ' + sign + escapeHtml(m.valor) + suffix + ' (' + escapeHtml(m.nome || 'sem nome') + ')';
   });
   summary.innerHTML = '\u26A1 Ativos: ' + parts.join(' \u00B7 ');
 }

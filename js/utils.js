@@ -17,6 +17,18 @@ export function clampInt(v, min, max) {
 }
 
 /**
+ * Escapa caracteres HTML sensíveis para evitar injeção (XSS) ao interpolar
+ * strings do jogador em innerHTML. Fonte única de verdade do projeto.
+ * @param {*} s
+ * @returns {string}
+ */
+export function escapeHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+/**
  * Cria uma versão com debounce da função fn.
  * @param {Function} fn
  * @param {number} ms
