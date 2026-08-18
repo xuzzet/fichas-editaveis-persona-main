@@ -6,6 +6,9 @@
    ============================================= */
 
 .nat-card {
+  /* Realce das habilidades "especiais": tom frio derivado do tema (adapta-se a
+     qualquer skin) em vez do dourado, que destoava do azul do site. */
+  --nat-special: color-mix(in srgb, var(--accent-2) 68%, var(--danger) 32%);
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
@@ -81,14 +84,21 @@
   background: color-mix(in srgb, var(--bg-2) 88%, transparent);
   box-shadow: var(--card-shadow);
   overflow: hidden;
+  transition:
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
+}
+.nat-ability:hover {
+  box-shadow: var(--card-shadow-hover);
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--stroke));
 }
 .nat-ability--special {
-  border-color: color-mix(in srgb, var(--state-paused) 55%, var(--stroke));
+  border-color: color-mix(in srgb, var(--nat-special) 55%, var(--stroke));
 }
 .nat-ability--special .nat-ability-header {
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, var(--state-paused) 22%, transparent),
+    color-mix(in srgb, var(--nat-special) 22%, transparent),
     transparent
   );
 }
@@ -135,8 +145,8 @@
   white-space: nowrap;
 }
 .nat-ability--special .nat-ability-type {
-  color: var(--state-paused);
-  border-color: color-mix(in srgb, var(--state-paused) 50%, var(--stroke));
+  color: var(--nat-special);
+  border-color: color-mix(in srgb, var(--nat-special) 50%, var(--stroke));
 }
 .nat-ability--active .nat-ability-type {
   color: var(--danger);
@@ -179,9 +189,9 @@
 .nat-highlight-chip {
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--state-paused);
-  background: color-mix(in srgb, var(--state-paused) 14%, transparent);
-  border: 1px solid color-mix(in srgb, var(--state-paused) 45%, var(--stroke));
+  color: var(--nat-special);
+  background: color-mix(in srgb, var(--nat-special) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--nat-special) 45%, var(--stroke));
   border-radius: 999px;
   padding: 4px 12px;
 }
@@ -508,11 +518,11 @@
   align-items: flex-start;
   padding: var(--space-3);
   border-radius: 8px;
-  background: color-mix(in srgb, var(--state-paused) 10%, transparent);
-  border: 1px dashed color-mix(in srgb, var(--state-paused) 45%, var(--stroke));
+  background: color-mix(in srgb, var(--nat-special) 10%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--nat-special) 45%, var(--stroke));
 }
 .nat-narrative-icon {
-  color: var(--state-paused);
+  color: var(--nat-special);
   font-size: 1rem;
   line-height: 1.5;
   flex: 0 0 auto;
