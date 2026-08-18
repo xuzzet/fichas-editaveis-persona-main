@@ -6,7 +6,7 @@
 
 import { state } from '../state.js';
 import { SOCIAL_IDS, SOCIAL_SKILL_META } from '../constants.js';
-import { calcSocialTier, getEffectiveSocial } from '../calculations.js';
+import { calcSocialTier, getEffectiveSocial, getConditionRollEffects } from '../calculations.js';
 import { showToast } from '../ui.js';
 import { COMBAT_ATTRS, MAX_DICE, rollTest, getComputedStats, evaluateFormula, formulaNeedsHab } from './engine.js';
 import { escapeHtml as esc } from '../utils.js';
@@ -71,11 +71,15 @@ export function renderDiceHistory() {
     var totalStr = (h.kind === 'formula' && h.type === 'percent') ? (h.total + '%') : h.total;
     var lines = '';
     if (h.kind === 'test') {
+      var modeNote = h.mode === 'dis' ? ' (2d20 pior: ' + esc((h.dice || []).join(', ')) + ')'
+                   : h.mode === 'adv' ? ' (2d20 melhor: ' + esc((h.dice || []).join(', ')) + ')' : '';
       lines =
-        '<div class="dice-hist-line">1d20: <b>' + esc(h.die) + '</b>' +
+        '<div class="dice-hist-line">1d20: <b>' + esc(h.die) + '</b>' + modeNote +
           (h.attribute != null ? ' · ' + esc(h.attrLabel || 'atributo') + ': +' + esc(h.attribute) : '') +
           (h.extra ? ' · extra: ' + (h.extra >= 0 ? '+' : '') + esc(h.extra) : '') +
+          (h.condPenalty ? ' · penalidade: ' + (h.condPenalty >= 0 ? '+' : '') + esc(h.condPenalty) : '') +
           (h.tier != null ? ' · Tier: ' + ['0','I','II','III','IV','V'][h.tier] : '') + '</div>' +
+        (h.condNote ? '<div class="dice-hist-line dice-hist-cond">Condições: ' + esc(h.condNote) + '</div>' : '') +
         (h.crit ? '<div class="dice-hist-flag dice-flag-crit">Crítico!</div>' : '') +
         (h.fail ? '<div class="dice-hist-flag dice-flag-fail">Falha crítica!</div>' : '');
     } else if (h.kind === 'formula') {
@@ -137,20 +141,27 @@ export function performTestRoll(category, attrKey, extraModifier) {
     label = attrKey + ' — 1d20 + ' + attrValue;
   }
 
-  var res = rollTest(attrValue, extraModifier);
+  // Condições ativas podem impor desvantagem e/ou penalidade fixa ao teste.
+  var cond = getConditionRollEffects(category, attrKey);
+  var manualExtra = Math.trunc(Number(extraModifier) || 0);
+  var res = rollTest(attrValue, manualExtra + cond.penalty, cond.mode);
   addRollToHistory({
     kind: 'test',
     label: label,
     attrLabel: attrLabel,
     die: res.die,
+    dice: res.dice,
+    mode: res.mode,
     attribute: res.attribute,
-    extra: res.extra,
+    extra: manualExtra,
+    condPenalty: cond.penalty,
+    condNote: cond.sources.join(' · '),
     total: res.total,
     crit: res.crit,
     fail: res.fail,
     tier: (category === 'social') ? calcSocialTier(getEffectiveSocial(attrKey)) : null
   });
-  showTestResult(res, category, attrKey, res.extra);
+  showTestResult(res, category, attrKey, manualExtra, cond);
   return res;
 }
 
@@ -161,16 +172,23 @@ export function performTestRoll(category, attrKey, extraModifier) {
 // =============================================
 
 /** Renderiza o resultado minimalista no card "Última Rolagem". */
-function showLastRoll(name, attrValue, res) {
+function showLastRoll(name, attrValue, res, cond) {
   var out = document.getElementById('last-roll');
   if (!out) return;
   out.className = 'last-roll' + (res.crit ? ' is-crit' : res.fail ? ' is-fail' : '');
   var flag = res.crit ? '<div class="last-roll-flag last-roll-flag--crit">Crítico!</div>'
            : res.fail ? '<div class="last-roll-flag last-roll-flag--fail">Falha crítica!</div>' : '';
   var sign = attrValue >= 0 ? ' + ' : ' - ';
+  var modeTxt = res.mode === 'dis' ? ' · desv. (2d20 pior: ' + esc((res.dice || []).join(', ')) + ')'
+              : res.mode === 'adv' ? ' · vant. (2d20 melhor: ' + esc((res.dice || []).join(', ')) + ')' : '';
+  var condHtml = (cond && cond.sources && cond.sources.length)
+    ? '<div class="last-roll-cond">Condições: ' + esc(cond.sources.join(' · ')) +
+      (cond.penalty ? ' · penalidade ' + (cond.penalty >= 0 ? '+' : '') + esc(cond.penalty) : '') + '</div>'
+    : '';
   out.innerHTML =
     '<div class="last-roll-name">' + esc(name) + '</div>' +
-    '<div class="last-roll-formula">1d20' + sign + esc(Math.abs(attrValue)) + '</div>' +
+    '<div class="last-roll-formula">1d20' + sign + esc(Math.abs(attrValue)) + modeTxt + '</div>' +
+    condHtml +
     flag +
     '<div class="last-roll-result">' +
       '<span class="last-roll-label">Resultado</span>' +
@@ -199,17 +217,21 @@ export function rollQuick(category, attrKey) {
     name = attrKey;
     attrValue = Math.trunc(Number(stats[attrKey]) || 0);
   }
-  var res = rollTest(attrValue, 0);
+  // Condições ativas afetam apenas testes de combate.
+  var cond = getConditionRollEffects(category, attrKey);
+  var res = rollTest(attrValue, cond.penalty, cond.mode);
   var label = (category === 'social')
     ? name + ' — 1d20 + ' + attrValue + ' (Tier ' + ['0','I','II','III','IV','V'][tier] + ')'
     : name + ' — 1d20 + ' + attrValue;
   addRollToHistory({
     kind: 'test', label: label, attrLabel: name,
-    die: res.die, attribute: res.attribute, extra: res.extra,
+    die: res.die, dice: res.dice, mode: res.mode,
+    attribute: res.attribute, extra: 0,
+    condPenalty: cond.penalty, condNote: cond.sources.join(' · '),
     total: res.total, crit: res.crit, fail: res.fail,
     tier: tier
   });
-  showLastRoll(name, attrValue, res);
+  showLastRoll(name, attrValue, res, cond);
   return res;
 }
 
@@ -337,7 +359,7 @@ function populateAttrSelect(sel, category) {
 }
 
 /** Renderiza o resultado detalhado da última rolagem. */
-function showTestResult(res, category, attrKey, extra) {
+function showTestResult(res, category, attrKey, extra, cond) {
   var out = document.getElementById('dice-result');
   if (!out) return;
   var attrLabel, attrShown, tierInfo = '';
@@ -353,15 +375,25 @@ function showTestResult(res, category, attrKey, extra) {
   attrShown = res.attribute;
   var flag = res.crit ? '<div class="dice-flag dice-flag-crit">Crítico!</div>'
            : res.fail ? '<div class="dice-flag dice-flag-fail">Falha crítica!</div>' : '';
+  var dieLabel = (res.mode === 'dis') ? 'Dado (2d20, pior)'
+               : (res.mode === 'adv') ? 'Dado (2d20, melhor)' : 'Dado';
+  var dieShown = (res.mode && res.mode !== 'normal' && res.dice)
+    ? esc(res.dice.join(', ')) + ' → <b>' + esc(res.die) + '</b>'
+    : '<b>' + esc(res.die) + '</b>';
+  var condLine = (cond && cond.sources && cond.sources.length)
+    ? '<div class="dice-result-cond">Condições: ' + esc(cond.sources.join(' · ')) +
+      (cond.penalty ? ' · penalidade: ' + (cond.penalty >= 0 ? '+' : '') + esc(cond.penalty) : '') + '</div>'
+    : '';
   out.className = 'dice-result' + (res.crit ? ' is-crit' : res.fail ? ' is-fail' : '');
   out.innerHTML =
     '<div class="dice-result-formula">1d20 + ' + esc(attrLabel) + '</div>' +
     '<div class="dice-result-lines">' +
-      '<span>Dado: <b>' + esc(res.die) + '</b></span>' +
+      '<span>' + dieLabel + ': ' + dieShown + '</span>' +
       '<span>' + esc(attrLabel) + ': +' + esc(attrShown) + '</span>' +
       (extra ? '<span>Mod. extra: ' + (extra >= 0 ? '+' : '') + esc(extra) + '</span>' : '') +
       tierInfo +
     '</div>' +
+    condLine +
     flag +
     '<div class="dice-result-total">Total: <b>' + esc(res.total) + '</b></div>';
 }

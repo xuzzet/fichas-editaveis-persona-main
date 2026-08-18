@@ -45,14 +45,26 @@ export function rollDice(quantity, sides) {
  * Rolagem de teste: 1d20 + atributo + modificador extra.
  * @param {number} attributeValue - valor final do atributo (ou Tier social)
  * @param {number} extraModifier - modificador manual opcional
- * @returns {object} { die, attribute, extra, total, crit, fail }
+ * @param {string} [mode] - 'normal' | 'adv' (vantagem) | 'dis' (desvantagem)
+ * @returns {object} { die, dice, mode, attribute, extra, total, crit, fail }
  */
-export function rollTest(attributeValue, extraModifier) {
-  var die = rollDie(20);
+export function rollTest(attributeValue, extraModifier, mode) {
   var attr = Math.trunc(Number(attributeValue) || 0);
   var extra = Math.trunc(Number(extraModifier) || 0);
+  var die, dice;
+  if (mode === 'adv' || mode === 'dis') {
+    var a = rollDie(20), b = rollDie(20);
+    die = (mode === 'adv') ? Math.max(a, b) : Math.min(a, b);
+    dice = [a, b];
+  } else {
+    mode = 'normal';
+    die = rollDie(20);
+    dice = [die];
+  }
   return {
     die: die,
+    dice: dice,
+    mode: mode,
     attribute: attr,
     extra: extra,
     total: die + attr + extra,

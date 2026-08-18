@@ -113,6 +113,15 @@
   opacity: 0.8;
 }
 
+.dice-result-cond,
+.dice-hist-cond,
+.last-roll-cond {
+  font-size: 12px;
+  color: var(--danger, #e8546e);
+  margin: var(--space-1) 0;
+  line-height: 1.4;
+}
+
 .dice-result-dice {
   font-size: 13px;
   color: var(--ink);

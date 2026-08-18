@@ -6,7 +6,7 @@
 import { state } from './state.js';
 import {
   MOD_TARGETS, CONDITIONS_LIST, SOCIAL_IDS, SOCIAL_EFFECTS, SOCIAL_SKILL_META,
-  SOCIAL_ATTR_TO_ID, CHOICE_VALUE_TO_ATTR
+  SOCIAL_ATTR_TO_ID, CHOICE_VALUE_TO_ATTR, CONDITION_ROLL_EFFECTS
 } from './constants.js';
 import { clampInt } from './utils.js';
 import { getArcanaInfo } from './data/awakening-data.js';
@@ -281,12 +281,12 @@ export function computeNaturalPMBonus(socialEff) {
 
 /**
  * Calcula o movimento do personagem em metros.
- * Considera Atleta (STR ao invés de AGI), Prodígio em Corrida (×2) e condição Lento (÷2).
+ * Considera Atleta (STR ao invés de AGI), Prodígio em Corrida (×2) e condição Congelado (÷2).
  */
 export function computeMovement(moddedStats) {
   var iAtleta  = feitoIsActive('atleta');
   var iCorrida = feitoIsActive('prodigio_corrida');
-  var iLento   = !!(state.conditions || []).find(function(c) { return c.id === 'lento' && c.ativa !== false; });
+  var iLento   = !!(state.conditions || []).find(function(c) { return c.id === 'congelado' && c.ativa !== false; });
   var base  = iAtleta ? (moddedStats.STR + 3) : (moddedStats.AGI + 3);
   var final = iCorrida ? base * 2 : base;
   if (iLento) final = Math.floor(final / 2);
@@ -298,15 +298,18 @@ export function computeMovement(moddedStats) {
  */
 export function computeConditionAlerts() {
   var EFFECTS = {
-    charme:    ['Personagem sob controle do Narrador', 'Recuperação: 33%'],
-    panico:    ['Sem uso de Persona ou habilidades especiais', 'Recuperação: 33%'],
-    medo:      ['Desvantagem nas esquivas (2 dados, pior)', 'Recuperação: 33% — se falhar: perde uso de magia ou 1 PM'],
-    furia:     ['Dano físico causado e recebido +50%', 'Desvantagem no ataque (2 dados, pior)', 'Recuperação: 33%'],
-    atordoado: ['Desvantagem na esquiva (2 dados, pior)', 'Sem Ações Livres, Rápidas ou de Interromper', 'Recuperação: 33%'],
-    choque:    ['Ataques recebidos acertam automaticamente', 'Ataques contra você: vantagem para crítico', 'Recupera automaticamente no fim do turno'],
-    lento:     ['Movimento reduzido à metade (automático)', 'Desvantagem no ataque (2 dados, pior)', 'Recuperação: 33%'],
-    veneno:    ['Perde 20% do PV máximo por turno', 'Recuperação: 33%'],
-    derrubado: ['Esquiva: 3 dados, pega o pior', 'Recupera no fim do turno ou por aliado (ação de movimento)']
+    derrubado: ['Incapaz de esquivar do próximo efeito direcionado a ele'],
+    queimando: ['Perde 10% da Vida Atual como Dano de Fogo por turno', 'Recuperação: 33%', 'Ampliado (Vento/Nuclear): +10% de dano, até 2× (máx. 30%)'],
+    congelado: ['Movimento reduzido à metade (automático)', 'Desvantagem em testes de Agilidade', 'Recuperação: 33%', 'Ampliado (Físico/Arma/Raio): +50% de dano e consome o efeito'],
+    choque:    ['Recebe automaticamente a próxima Ofensiva de Dano contra ele', 'Se for Ofensiva Física, o atacante também fica em Choque', 'Recuperação: 33%', 'Ampliado (Nuclear): alvos adjacentes ficam em Choque por 1 rodada'],
+    atordoado: ['Desvantagem em todo teste direcionado a alvos inimigos', 'Recuperação: 33%', 'Ampliado (Físico/Arma): torna-se Derrubado automaticamente'],
+    esquecimento: ['Incapaz de utilizar qualquer Magia', 'Recuperação: 33%', 'Ampliado (Psy): perde uma magia aleatória do Deck até o próximo descanso curto (acumulável)'],
+    sono:      ['Adormecido: incapaz de agir e reagir até ser atingido', 'Enquanto dorme: recupera 25+VIT de HP e MAG×2 de mana', 'Recuperação: 33%', 'Ampliado (qualquer dano): sofre Derrubado por 1 rodada'],
+    confusao:  ['Ao agir, rola 1d6 para determinar a ação (aleatória)', 'Recuperação: 33%', 'Ampliado (Psy): ataca a si ou aliados com magia aleatória do Deck (custo dobrado)'],
+    medo:      ['Desvantagem para reagir à fonte de Medo', '50% de chance de não agir na rodada (25% vs Resistência Tirânica)', 'Recuperação: 33%', 'Ampliado (Psy): o Medo se torna Desespero'],
+    desespero: ['Incapaz de tomar qualquer ação', 'Perde 10 de PM no início de cada rodada', 'Após 3 rodadas: Incapacitado (0 de PV)', 'Recuperação: 33%', 'Ampliado (Psy): reduz em -1 o contador de Desespero'],
+    furia:     ['Só pode usar o Ataque Básico', 'Dano físico causado e recebido +50%', '-5 de bônus em acerto e esquiva', 'Recuperação: 33%', 'Ampliado (Psy): bônus vira 100% e não pode reagir a ataques físicos'],
+    charme:    ['Sob controle do Narrador (ataca aliados / cura inimigos)', 'Recuperação: 33%', 'Ampliado (Psy): 1×/rodada interpõe ataque contra a fonte do Charme']
   };
   var alerts = [];
   (state.conditions || []).forEach(function(c) {
@@ -316,6 +319,29 @@ export function computeConditionAlerts() {
     if (meta) alerts.push({ id: c.id, name: meta.name, effects: effects });
   });
   return alerts;
+}
+
+/**
+ * Efeitos automáticos das condições ativas sobre uma rolagem de teste de combate.
+ * Retorna o modo do d20 (normal/vantagem/desvantagem), a penalidade fixa somada
+ * e os rótulos das condições que influenciaram, para exibição.
+ * @param {string} category - 'combat' | 'social' (condições afetam só combate)
+ * @param {string} attrKey - atributo do teste (STR, MAG, TEC, AGI, VIT, LCK)
+ * @returns {{mode:string, penalty:number, sources:string[]}}
+ */
+export function getConditionRollEffects(category, attrKey) {
+  var out = { mode: 'normal', penalty: 0, sources: [] };
+  if (category !== 'combat') return out;
+  (state.conditions || []).forEach(function(c) {
+    if (c.ativa === false) return;
+    var eff = CONDITION_ROLL_EFFECTS[c.id];
+    if (!eff) return;
+    var hit = false;
+    if (eff.dis && (eff.dis === 'all' || eff.dis === attrKey)) { out.mode = 'dis'; hit = true; }
+    if (typeof eff.penalty === 'number' && eff.penalty !== 0) { out.penalty += eff.penalty; hit = true; }
+    if (hit) out.sources.push(eff.name + (eff.note ? ' (' + eff.note + ')' : ''));
+  });
+  return out;
 }
 
 /**

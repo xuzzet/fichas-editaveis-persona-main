@@ -97,16 +97,32 @@ export const FEITOS_LIST = [
 // =============================================
 
 export const CONDITIONS_LIST = [
-  { id: 'charme',    name: 'Charme',    desc: 'Põe o personagem sob o controle do Narrador, ou faz um inimigo atacar os próprios aliados e conjurar magias benéficas para os jogadores.\nNo final do turno, chance de recuperação: 33%.' },
-  { id: 'panico',    name: 'Pânico',    desc: 'Previne o uso da Persona ou o uso de habilidades especiais do inimigo.\nNo final do turno, chance de recuperação: 33%.' },
-  { id: 'medo',      name: 'Medo',      desc: 'Role 2 dados e pegue o pior nas esquivas.\nNo final do turno, chance de recuperação: 33%.\nSe não se recuperar, perde um uso de magia aleatória ou 1 PM.' },
-  { id: 'furia',     name: 'Fúria',     desc: 'Aumenta o dano físico causado e recebido em 50%.\nRole 2 dados e pegue o pior no ataque.\nNo final do turno, chance de recuperação: 33%.\nVocê pode optar por recusar o teste de recuperação.' },
-  { id: 'atordoado', name: 'Atordoado', desc: 'Role 2 dados e pegue o pior na esquiva.\nNão pode usar ações Livres, Rápidas ou de Interromper.\nNo final do turno, chance de recuperação: 33%.' },
-  { id: 'choque',    name: 'Choque',    desc: 'Todos os ataques recebidos têm sucesso automático.\nAtaques contra o alvo rolam 2 dados e pegam o melhor para críticos.\nNo final do turno, o alvo se recupera automaticamente.' },
-  { id: 'lento',     name: 'Lento',     desc: 'Movimento reduzido pela metade.\nRole 2 dados e pegue o pior no ataque.\nNo final do turno, chance de recuperação: 33%.' },
-  { id: 'veneno',    name: 'Veneno',    desc: 'Causa 20% do seu PV máximo como dano por turno.\nNo final do turno, chance de recuperação: 33%.' },
-  { id: 'derrubado', name: 'Derrubado', desc: 'Você joga 3 dados de esquiva e pega o pior.\nNo final do turno do personagem o mesmo se recupera.\nUm aliado pode usar ação de movimento para recuperar um personagem instantaneamente.' }
+  // --- Condições Gerais ---
+  { id: 'derrubado', name: 'Derrubado', desc: 'Um personagem Derrubado é incapaz de esquivar do próximo efeito que tiver ele como alvo.\nComo Aplicar: em um acerto crítico há 50% de chance de causar Derrubado; ou quando um alvo estiver sob um efeito/status negativo e sofrer um ataque que cause dano do tipo de fraqueza do mesmo, ele tem 50% de chance de ficar Tonto por 1 rodada.' },
+  { id: 'queimando', name: 'Queimando', desc: 'Um personagem Queimando perde 10% da Vida Atual como Dano de Fogo e tem 33% de chance de se livrar do efeito.\nAmpliado: enquanto Queimando, ao receber dano do tipo Vento ou Nuclear o status é ampliado, aumentando o dano causado em +10% até duas vezes (30% máximo).' },
+  { id: 'congelado', name: 'Congelado', desc: 'Alvos Congelados têm metade de seu movimento e recebem Desvantagem em testes baseados em Agilidade, com 33% de chance de se livrar do efeito.\nAmpliado: enquanto Congelado, ao receber dano do tipo Físico, Arma ou Raio o status é ampliado, aumentando o dano causado em +50% e consumindo o efeito após ser ampliado.' },
+  { id: 'choque',    name: 'Choque',    desc: 'Alvos sob Choque recebem automaticamente a próxima Ofensiva de Dano usada contra ele; caso seja uma Ofensiva Física, o atacante passa a sofrer o efeito de Choque. Possui 33% de chance de se livrar do efeito.\nAmpliado: enquanto sob Choque, ao receber dano do tipo Nuclear o status é ampliado — alvos adjacentes ao alvo principal do Dano Nuclear passam a sofrer Choque, mas durando apenas 1 rodada.' },
+  // --- Condições de Status ---
+  { id: 'atordoado', name: 'Atordoado', desc: 'Um personagem Atordoado recebe Desvantagem em todo e qualquer teste direcionado a alvos inimigos e tem 33% de chance de se livrar do efeito.\nAmpliado: enquanto Atordoado, ao receber dano do tipo Físico ou Arma o status é ampliado — o alvo se torna Derrubado automaticamente.' },
+  { id: 'esquecimento', name: 'Esquecimento', desc: 'Alvo sob Esquecimento se torna incapaz de utilizar qualquer tipo de Magia até se livrar do efeito, com 33% de chance de se livrar.\nAmpliado: enquanto sob Esquecimento, ao receber dano do tipo Psy o status é ampliado — o alvo fica incapaz de utilizar uma magia aleatória de seu Deck até o próximo descanso curto (acumulável).' },
+  { id: 'sono',      name: 'Sono',      desc: 'Alvos sob Sono se tornam Adormecidos: incapazes de agir e reagir até serem atingidos por um ataque. Enquanto dormem, recuperam 25+VIT de HP e o dobro da Magia como mana (MAG×2). Possui 33% de chance de se livrar do efeito.\nAmpliado: enquanto sob Sono, ao receber qualquer tipo de dano o alvo sofre automaticamente Derrubado por uma rodada.' },
+  { id: 'confusao',  name: 'Confusão',  desc: 'Ao tomar qualquer ação, o alvo Confuso rola 1d6: 1–2 joga PR fora; 3–4 joga um item consumível fora ou em um inimigo; 5 usa uma magia de auxílio/cura em um inimigo aleatório; 6 não faz nada. Em alvos inimigos, podem jogar itens, auxiliar um alvo aleatório ou não fazer nada. Possui 33% de chance de se livrar do efeito.\nAmpliado: enquanto sob Confusão, ao receber dano do tipo Psy o status é ampliado — o Confuso ataca a si mesmo ou aliados próximos com uma magia de dano aleatória de seu Deck automaticamente, com o dobro do custo.' },
+  { id: 'medo',      name: 'Medo',      desc: 'Alvo sob Medo possui Desvantagem para reagir a qualquer efeito vindo da sua fonte de Medo e possui 50% de chance de não conseguir agir em sua rodada (25% se usado em alvos com Resistência Tirânica). Possui 33% de chance de se livrar do efeito.\nAmpliado: enquanto sob Medo, ao receber dano do tipo Psy o status é ampliado — o Medo se torna Desespero.' },
+  { id: 'desespero', name: 'Desespero', desc: 'Alvo sob Desespero é incapaz de tomar qualquer ação; no início de cada rodada perde 10 de PM. Se ficar 3 rodadas sob Desespero, torna-se Incapacitado automaticamente indo a 0 de PV. Possui 33% de chance de se livrar do efeito.\nAmpliado: enquanto sob Desespero, ao receber dano do tipo Psy o status é ampliado — reduz em -1 o contador de Desespero do alvo.' },
+  { id: 'furia',     name: 'Fúria',     desc: 'Alvo sob Fúria só pode usar o Ataque Básico. Aumenta o dano físico causado e recebido em 50%, mas recebe -5 de bônus em acerto e esquiva. Possui 33% de chance de se livrar do efeito.\nAmpliado: enquanto sob Fúria, ao receber dano do tipo Psy o status é ampliado — o bônus de 50% se torna 100% e o alvo se torna incapaz de reagir a ataques físicos enquanto o efeito permanecer.' },
+  { id: 'charme',    name: 'Charme',    desc: 'Põe o personagem sob controle do Narrador, ou faz um inimigo atacar os próprios aliados e conjurar magias benéficas para os jogadores. Possui 33% de chance de se livrar do efeito.\nAmpliado: enquanto sob Charme, ao receber dano do tipo Psy o status é ampliado — alvos de Charme ampliado, 1 vez por rodada, interpõem um ataque direcionado à fonte do Charme.' }
 ];
+
+// Efeitos automáticos das condições nas rolagens de TESTE de combate (1d20 + atributo).
+//  • dis: 'all' → desvantagem em qualquer teste de combate; 'AGI' → só nesse atributo.
+//  • penalty: modificador fixo somado ao teste de combate (acerto/esquiva).
+// Aplicado por getConditionRollEffects() (calculations.js) no rolador de dados.
+export const CONDITION_ROLL_EFFECTS = {
+  congelado: { name: 'Congelado', dis: 'AGI', note: 'desvantagem em Agilidade' },
+  medo:      { name: 'Medo',      dis: 'AGI', note: 'desvantagem em reações' },
+  atordoado: { name: 'Atordoado', dis: 'all', note: 'desvantagem em testes ofensivos' },
+  furia:     { name: 'Fúria',     penalty: -5, note: '−5 em acerto/esquiva' }
+};
 
 // =============================================
 // HABILIDADES SOCIAIS — METADADOS

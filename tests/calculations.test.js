@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   applyModifiers, computeNaturalAbilityModifiers, getEffectiveSocial, recalcState,
-  computeEquipModifiers, buildBreakdown
+  computeEquipModifiers, buildBreakdown, getConditionRollEffects, computeMovement
 } from '../js/calculations.js';
 import { SOCIAL_IDS, MOD_TARGETS } from '../js/constants.js';
 import { state } from '../js/state.js';
@@ -258,5 +258,50 @@ describe('buildBreakdown', () => {
       expect(state._computed.breakdown[t].final).toBe(state._computed.modded[t]);
     });
     state.equip = [];
+  });
+});
+
+// Automação das condições (Etapa: automatize condições).
+describe('condições — efeitos automáticos', () => {
+  it('Congelado reduz o movimento à metade', () => {
+    resetState();
+    const semCond = computeMovement({ STR: 6, AGI: 6 });
+    state.conditions = [{ id: 'congelado', ativa: true }];
+    const comCond = computeMovement({ STR: 6, AGI: 6 });
+    expect(comCond.halved).toBe(true);
+    expect(comCond.final).toBe(Math.floor(semCond.final / 2));
+    state.conditions = [];
+  });
+
+  it('Congelado dá desvantagem em AGI, mas não em STR', () => {
+    resetState();
+    state.conditions = [{ id: 'congelado', ativa: true }];
+    expect(getConditionRollEffects('combat', 'AGI').mode).toBe('dis');
+    expect(getConditionRollEffects('combat', 'STR').mode).toBe('normal');
+    state.conditions = [];
+  });
+
+  it('Atordoado dá desvantagem em qualquer teste de combate', () => {
+    resetState();
+    state.conditions = [{ id: 'atordoado', ativa: true }];
+    expect(getConditionRollEffects('combat', 'STR').mode).toBe('dis');
+    expect(getConditionRollEffects('combat', 'MAG').mode).toBe('dis');
+    state.conditions = [];
+  });
+
+  it('Fúria aplica −5 de penalidade nos testes de combate', () => {
+    resetState();
+    state.conditions = [{ id: 'furia', ativa: true }];
+    expect(getConditionRollEffects('combat', 'STR').penalty).toBe(-5);
+    state.conditions = [];
+  });
+
+  it('condições não afetam rolagens sociais', () => {
+    resetState();
+    state.conditions = [{ id: 'atordoado', ativa: true }, { id: 'furia', ativa: true }];
+    const r = getConditionRollEffects('social', 'CHAPts');
+    expect(r.mode).toBe('normal');
+    expect(r.penalty).toBe(0);
+    state.conditions = [];
   });
 });

@@ -77,7 +77,7 @@ export function renderAutoSummary() {
   var movLabel = mov.final + 'm';
   if (mov.doubled && mov.halved) movLabel = mov.final + 'm <span class="autos-flag">(\u00d72, \u00f72)</span>';
   else if (mov.doubled)          movLabel = mov.final + 'm <span class="autos-flag">(\u00d72 Prod\u00edgio)</span>';
-  else if (mov.halved)           movLabel = mov.final + 'm <span class="autos-flag">(\u00f72 Lento)</span>';
+  else if (mov.halved)           movLabel = mov.final + 'm <span class="autos-flag">(\u00f72 Congelado)</span>';
 
   // Bônus automáticos de feitos
   var feitoBonusHtml = '';
