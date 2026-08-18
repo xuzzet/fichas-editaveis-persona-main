@@ -37,6 +37,55 @@ export function applyModifiers(baseValues, modifiers, targets) {
   return result;
 }
 
+/**
+ * Rótulos legíveis para cada origem de modificador (campo `source`).
+ * Usado pela UI de detalhamento para mostrar de onde vem cada número.
+ */
+export var MOD_SOURCE_LABELS = {
+  base:    'Base',
+  equip:   'Equipamento',
+  feito:   'Feito',
+  arcana:  'Arcana',
+  social:  'Habilidade Social',
+  global:  'Modificador Global'
+};
+
+/**
+ * Constrói o detalhamento ("de onde veio cada número") por alvo, reproduzindo
+ * EXATAMENTE a mesma ordem de aplicação de applyModifiers (flats → percentuais,
+ * arredondando e com clamp mínimo 0). Por isso `final` sempre coincide com o
+ * valor retornado por applyModifiers para o mesmo alvo.
+ *
+ * @param {object} baseValues - valores base por alvo
+ * @param {Array} modifiers - lista de modificadores (com source/kind opcionais)
+ * @param {Array} [targets] - alvos a detalhar (default: MOD_TARGETS)
+ * @returns {object} mapa alvo → { base, final, entries:[{nome,source,kind,tipo,valor,delta}] }
+ */
+export function buildBreakdown(baseValues, modifiers, targets) {
+  targets = targets || MOD_TARGETS;
+  var actives = (modifiers || []).filter(function(m) { return m.ativo && m.valor !== 0; });
+  var breakdown = {};
+  targets.forEach(function(t) {
+    var base = baseValues[t] || 0;
+    var running = base;
+    var entries = [];
+    // Flats primeiro (ordem irrelevante — soma é comutativa)
+    actives.filter(function(m) { return m.alvo === t && m.tipo !== 'percentual'; }).forEach(function(m) {
+      running += m.valor;
+      entries.push({ nome: m.nome, source: m.source || 'global', kind: m.kind || 'temporario', tipo: 'flat', valor: m.valor, delta: m.valor });
+    });
+    // Percentuais depois (multiplicativos, aplicados sobre o subtotal com flats)
+    actives.filter(function(m) { return m.alvo === t && m.tipo === 'percentual'; }).forEach(function(m) {
+      var before = running;
+      running = Math.round(running * (1 + m.valor / 100));
+      entries.push({ nome: m.nome, source: m.source || 'global', kind: m.kind || 'temporario', tipo: 'percentual', valor: m.valor, delta: running - before });
+    });
+    if (running < 0) running = 0;
+    breakdown[t] = { base: base, final: running, entries: entries };
+  });
+  return breakdown;
+}
+
 /** Verifica se um feito está ativo no state. */
 export function feitoIsActive(id) {
   return !!(state.feitos || []).find(function(f) { return f.id === id && f.ativo !== false; });
@@ -63,7 +112,9 @@ export function computeEquipModifiers() {
       tipo: item.bonusTipo === 'percentual' ? 'percentual' : 'flat',
       valor: valor,
       alvo: alvo,
-      ativo: true
+      ativo: true,
+      source: 'equip',
+      kind: 'permanente'
     });
   });
   return mods;
@@ -80,14 +131,14 @@ export function computeFeitoModifiers() {
 
   // Longe do Fim: +5 PM por nível
   if (feitoIsActive('longe_do_fim')) {
-    mods.push({ nome: 'Longe do Fim', tipo: 'flat', valor: 5 * lvl, alvo: 'PM', ativo: true });
+    mods.push({ nome: 'Longe do Fim', tipo: 'flat', valor: 5 * lvl, alvo: 'PM', ativo: true, source: 'feito', kind: 'permanente' });
   }
 
   // Hábil: usa feitoConfig para bônus configurados pelo jogador
   var habilConfigs = (state.feitoConfig && state.feitoConfig.habil) || [];
   habilConfigs.forEach(function(cfg) {
     if (!cfg || !cfg.alvo || !cfg.valor) return;
-    mods.push({ nome: 'Hábil (' + cfg.alvo + ')', tipo: 'flat', valor: Number(cfg.valor) || 0, alvo: cfg.alvo, ativo: true });
+    mods.push({ nome: 'Hábil (' + cfg.alvo + ')', tipo: 'flat', valor: Number(cfg.valor) || 0, alvo: cfg.alvo, ativo: true, source: 'feito', kind: 'permanente' });
   });
 
   return mods;
@@ -133,7 +184,9 @@ export function computeNaturalAbilityModifiers() {
       tipo:  'flat',
       valor: value,
       alvo:  alvo,
-      ativo: true
+      ativo: true,
+      source: 'arcana',
+      kind: 'permanente'
     });
   }
 
@@ -173,7 +226,9 @@ export function computeNaturalAbilityModifiers() {
       tipo: 'percentual',
       valor: hpPercent,
       alvo: 'HP',
-      ativo: true
+      ativo: true,
+      source: 'arcana',
+      kind: 'permanente'
     });
   }
   return mods;
@@ -215,7 +270,9 @@ export function computeNaturalPMBonus(socialEff) {
         tipo:  'flat',
         valor: total,
         alvo:  'PM',
-        ativo: true
+        ativo: true,
+        source: 'arcana',
+        kind: 'permanente'
       });
     }
   });
@@ -291,7 +348,9 @@ export function computeSocialModifiers(socialValues) {
           tipo:  eff.tipo  || 'flat',
           valor: eff.valor || 0,
           alvo:  eff.alvo,
-          ativo: true
+          ativo: true,
+          source: 'social',
+          kind: 'permanente'
         });
       });
     }
@@ -367,6 +426,14 @@ export function recalcState() {
   var equipMods   = computeEquipModifiers();
   var feitoMods   = computeFeitoModifiers();
   var naturalMods = computeNaturalAbilityModifiers();
+  // Modificadores globais definidos pelo jogador. Etiquetados como origem
+  // 'global' e categoria 'temporario' (buffs/debuffs) sem mutar o state.
+  var globalMods = (state.modifiers || []).map(function(m) {
+    return {
+      nome: m.nome, tipo: m.tipo, valor: m.valor, alvo: m.alvo, ativo: m.ativo,
+      source: 'global', kind: m.kind || 'temporario'
+    };
+  });
 
   // --- Pontos sociais EFETIVOS ---
   // base (pontos comprados) + modificadores que miram habilidades sociais
@@ -377,7 +444,7 @@ export function recalcState() {
   var socialTargetMods = equipMods
     .concat(feitoMods)
     .concat(naturalMods)
-    .concat(state.modifiers || [])
+    .concat(globalMods)
     .filter(function(m) { return SOCIAL_IDS.indexOf(m.alvo) >= 0; });
   var socialEff = applyModifiers(socialBase, socialTargetMods, SOCIAL_IDS);
 
@@ -391,7 +458,7 @@ export function recalcState() {
     .concat(naturalMods)
     .concat(naturalPMMods)
     .concat(socialMods)
-    .concat(state.modifiers || []);
+    .concat(globalMods);
   var modded = applyModifiers(baseVals, allMods);
 
   state.MaxHP = modded.HP;
@@ -405,6 +472,9 @@ export function recalcState() {
     socialMods: socialMods,
     socialBase: socialBase,
     socialEff: socialEff,
+    // Detalhamento por alvo (origem de cada número) — atributos/HP/PM e sociais.
+    breakdown: buildBreakdown(baseVals, allMods),
+    socialBreakdown: buildBreakdown(socialBase, socialTargetMods, SOCIAL_IDS),
     movement: computeMovement(modded),
     conditionAlerts: computeConditionAlerts(),
     socialEffects: computeSocialEffects(socialEff),

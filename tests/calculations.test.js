@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import {
   applyModifiers, computeNaturalAbilityModifiers, getEffectiveSocial, recalcState,
-  computeEquipModifiers
+  computeEquipModifiers, buildBreakdown
 } from '../js/calculations.js';
-import { SOCIAL_IDS } from '../js/constants.js';
+import { SOCIAL_IDS, MOD_TARGETS } from '../js/constants.js';
 import { state } from '../js/state.js';
 
 // Testes das regras de modificadores (função pura, sem DOM).
@@ -167,5 +167,96 @@ describe('computeEquipModifiers com alvo social', () => {
     expect(getEffectiveSocial('CHAPts')).toBe(6); // 2 comprados + 4 do item
     state.equip = [];
     state.CHAPts = 0;
+  });
+});
+
+// Helper para resetar o state a um estado neutro entre cenários combinados.
+function resetState() {
+  state.CharLvl = 1;
+  state.CharSTR = 6; state.CharMAG = 6; state.CharTEC = 6;
+  state.CharAGI = 6; state.CharVIT = 6; state.CharLCK = 6;
+  state.PerArcana = '';
+  state.equip = [];
+  state.feitos = [];
+  state.feitoConfig = {};
+  state.conditions = [];
+  state.modifiers = [];
+  SOCIAL_IDS.forEach(function(id) { state[id] = 0; });
+}
+
+// Interações combinadas de múltiplas fontes de modificadores (Etapa 6).
+describe('interações combinadas de modificadores', () => {
+  it('dois equipamentos no mesmo alvo somam (empilhamento aditivo)', () => {
+    resetState();
+    state.equip = [
+      { nome: 'Luvas', bonusAtivo: true, bonusAlvo: 'STR', bonusTipo: 'flat', bonusValor: 2 },
+      { nome: 'Anel', bonusAtivo: true, bonusAlvo: 'STR', bonusTipo: 'flat', bonusValor: 3 }
+    ];
+    recalcState();
+    expect(state._computed.modded.STR).toBe(6 + 2 + 3);
+  });
+
+  it('Arcana + feito + equipamento no mesmo atributo somam corretamente', () => {
+    resetState();
+    state.PerArcana = 'XI - Justiça'; // +4 Disciplina (social), sem STR
+    state.equip = [{ nome: 'Espada', bonusAtivo: true, bonusAlvo: 'STR', bonusTipo: 'flat', bonusValor: 2 }];
+    state.feitos = [{ id: 'longe_do_fim', ativo: true }]; // +5 PM/nível
+    recalcState();
+    expect(state._computed.modded.STR).toBe(6 + 2);
+    // PM base (nível 1, MAG 6): 15 + (11*2) + 0 = 37; +5 de Longe do Fim
+    expect(state._computed.modded.PM).toBe(37 + 5);
+  });
+
+  it('buff e debuff no mesmo alvo se anulam parcialmente', () => {
+    resetState();
+    state.modifiers = [
+      { nome: 'Buff', tipo: 'flat', valor: 4, alvo: 'AGI', ativo: true },
+      { nome: 'Debuff', tipo: 'flat', valor: -6, alvo: 'AGI', ativo: true }
+    ];
+    recalcState();
+    expect(state._computed.modded.AGI).toBe(6 + 4 - 6);
+  });
+
+  it('percentual é aplicado após todos os flats (multiplicador por último)', () => {
+    resetState();
+    state.modifiers = [
+      { nome: 'Flat', tipo: 'flat', valor: 4, alvo: 'STR', ativo: true },
+      { nome: 'Mult', tipo: 'percentual', valor: 50, alvo: 'STR', ativo: true }
+    ];
+    recalcState();
+    // (6 + 4) * 1.5 = 15
+    expect(state._computed.modded.STR).toBe(15);
+  });
+});
+
+// Detalhamento (origem de cada número) deve sempre bater com o valor final.
+describe('buildBreakdown', () => {
+  it('final do detalhamento coincide com applyModifiers', () => {
+    const base = { STR: 10, HP: 100 };
+    const mods = [
+      { nome: 'A', tipo: 'flat', valor: 5, alvo: 'STR', ativo: true, source: 'equip' },
+      { nome: 'B', tipo: 'percentual', valor: 20, alvo: 'STR', ativo: true, source: 'arcana' },
+      { nome: 'C', tipo: 'percentual', valor: 25, alvo: 'HP', ativo: true, source: 'arcana' }
+    ];
+    const bd = buildBreakdown(base, mods, ['STR', 'HP']);
+    const modded = applyModifiers(base, mods, ['STR', 'HP']);
+    expect(bd.STR.final).toBe(modded.STR);
+    expect(bd.HP.final).toBe(modded.HP);
+    expect(bd.STR.base).toBe(10);
+    expect(bd.STR.entries).toHaveLength(2);
+  });
+
+  it('recalcState popula breakdown com a origem correta', () => {
+    resetState();
+    state.equip = [{ nome: 'Bracelete', bonusAtivo: true, bonusAlvo: 'VIT', bonusTipo: 'flat', bonusValor: 2 }];
+    recalcState();
+    const vit = state._computed.breakdown.VIT;
+    expect(vit.base).toBe(6);
+    expect(vit.final).toBe(8);
+    expect(vit.entries[0].source).toBe('equip');
+    MOD_TARGETS.forEach((t) => {
+      expect(state._computed.breakdown[t].final).toBe(state._computed.modded[t]);
+    });
+    state.equip = [];
   });
 });

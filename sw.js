@@ -10,7 +10,7 @@
    navegador ignora SW. Ao publicar mudanças, incremente CACHE_VERSION.
    ============================================================= */
 
-const CACHE_VERSION = 'persona-ficha-v61';
+const CACHE_VERSION = 'persona-ficha-v62';
 
 // Assets essenciais para a app abrir offline. Os CSS/JS são
 // carregados sob demanda e cacheados dinamicamente no fetch.

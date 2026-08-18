@@ -2,8 +2,9 @@
 // UI - PAINEL DE RESUMO AUTOMATICO
 // =============================================
 import { state } from '../state.js';
-import { feitoIsActive } from '../calculations.js';
+import { feitoIsActive, MOD_SOURCE_LABELS } from '../calculations.js';
 import { SOCIAL_IDS, SOCIAL_SKILL_META } from '../constants.js';
+import { escapeHtml } from '../utils.js';
 
 // =============================================
 // PAINEL DE RESUMO AUTOMÁTICO
@@ -169,6 +170,48 @@ export function renderAutoSummary() {
     '</div>' +
     '</div>';
 
+  // Detalhamento de cálculo — mostra a origem de cada número (Base → contribuições → Resultado).
+  var breakdown = comp.breakdown || {};
+  var socialBreakdown = comp.socialBreakdown || {};
+  var BD_LABELS = {
+    HP: 'PV M\u00e1x', PM: 'PM M\u00e1x', STR: 'STR', MAG: 'MAG',
+    TEC: 'TEC', AGI: 'AGI', VIT: 'VIT', LCK: 'LCK'
+  };
+  var BD_ORDER = ['HP', 'PM', 'STR', 'MAG', 'TEC', 'AGI', 'VIT', 'LCK'];
+
+  function breakdownBlock(label, bd) {
+    if (!bd || !bd.entries || bd.entries.length === 0) return '';
+    var rows = '<div class="autos-bd-row autos-bd-base"><span>Base</span><b>' + bd.base + '</b></div>';
+    rows += bd.entries.map(function(e) {
+      var origin = MOD_SOURCE_LABELS[e.source] || 'Modificador';
+      var val = (e.tipo === 'percentual')
+        ? (e.valor >= 0 ? '+' : '') + e.valor + '% (' + (e.delta >= 0 ? '+' : '') + e.delta + ')'
+        : (e.valor >= 0 ? '+' : '') + e.valor;
+      return '<div class="autos-bd-row">' +
+        '<span><span class="autos-bd-origin autos-bd-origin--' + e.source + '">' + origin + '</span> ' +
+        escapeHtml(e.nome) + '</span>' +
+        '<span class="autos-bd-val">' + val + '</span></div>';
+    }).join('');
+    rows += '<div class="autos-bd-row autos-bd-final"><span>Resultado</span><b>' + bd.final + '</b></div>';
+    return '<div class="autos-bd-item"><div class="autos-bd-title">' + label + '</div>' + rows + '</div>';
+  }
+
+  var breakdownItems = BD_ORDER
+    .map(function(t) { return breakdownBlock(BD_LABELS[t], breakdown[t]); })
+    .filter(Boolean);
+  SOCIAL_IDS.forEach(function(id) {
+    breakdownItems.push(breakdownBlock((SOCIAL_SKILL_META[id] || {}).name || id, socialBreakdown[id]));
+  });
+  breakdownItems = breakdownItems.filter(Boolean);
+  var breakdownHtml = '';
+  if (breakdownItems.length > 0) {
+    breakdownHtml =
+      '<details class="autos-section autos-breakdown">' +
+      '<summary class="autos-label">Detalhamento de C\u00e1lculo</summary>' +
+      '<div class="autos-bd-list">' + breakdownItems.join('') + '</div>' +
+      '</details>';
+  }
+
   var html =
     '<div class="autos-grid">' +
       '<div class="autos-stat"><span class="autos-key">STR</span>'   + statStr('STR') + '</div>' +
@@ -188,7 +231,8 @@ export function renderAutoSummary() {
     flagsHtml +
     alertsHtml +
     socialEffectsHtml +
-    socialManualHtml;
+    socialManualHtml +
+    breakdownHtml;
 
   // Dirty-check: só reescreve o DOM quando o conteúdo realmente muda.
   // Evita reparse/reflow do innerHTML a cada tecla digitada em campos
