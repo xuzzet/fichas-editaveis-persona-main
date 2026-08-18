@@ -1,11 +1,33 @@
 /* =============================================
    CONDIÇÕES — LISTA COM CHECKBOXES
+   (mesmo estilo de Feitos; sotaque em --danger)
    ============================================= */
 #conditions-list {
+  margin-top: var(--space-4);
+}
+
+.cond-group {
+  margin-bottom: var(--space-5);
+}
+
+.cond-cat-title {
+  font-size: 14px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--danger);
+  margin: 0 0 var(--space-3) 0;
+  padding: var(--space-2) var(--space-4);
+  background: color-mix(in srgb, var(--danger) 8%, var(--bg));
+  border-radius: 8px;
+  border-left: 4px solid var(--danger);
+  font-family: 'Barlow Condensed', Inter, sans-serif;
+}
+
+.cond-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: var(--space-3);
-  margin-top: var(--space-3);
 }
 
 .cond-item {
@@ -20,7 +42,7 @@
     transform 0.2s ease;
 }
 .cond-item:hover {
-  border-color: color-mix(in srgb, var(--accent) 40%, var(--stroke));
+  border-color: color-mix(in srgb, var(--danger) 40%, var(--stroke));
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   transform: translateY(-1px);
 }
@@ -41,7 +63,7 @@
   letter-spacing: 0.04em;
   margin-bottom: var(--space-1);
 }
-.cond-label input[type="checkbox"] {
+.cond-label input[type='checkbox'] {
   width: 18px;
   height: 18px;
   accent-color: var(--danger);
@@ -50,7 +72,7 @@
   border-radius: 4px;
   transition: transform 0.15s ease;
 }
-.cond-label input[type="checkbox"]:hover {
+.cond-label input[type='checkbox']:hover {
   transform: scale(1.1);
 }
 
@@ -67,9 +89,21 @@
   color: var(--ink-dim);
   line-height: 1.45;
 }
+.cond-desc-text .cond-tag {
+  font-style: normal;
+  font-weight: 800;
+  color: var(--danger);
+}
 
-@media (max-width: 600px) {
-  #conditions-list {
+.cond-auto {
+  font-size: 11px;
+  color: var(--accent-2);
+  margin-top: var(--space-1);
+  font-style: italic;
+}
+
+@media (max-width: 720px) {
+  .cond-grid {
     grid-template-columns: 1fr;
   }
 }
